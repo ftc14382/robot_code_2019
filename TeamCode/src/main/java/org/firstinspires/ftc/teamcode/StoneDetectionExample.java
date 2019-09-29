@@ -33,8 +33,6 @@ import java.util.List;
 // as the file.
 public class StoneDetectionExample extends LinearOpMode {
 
-    private static final String VUFORIA_KEY = "ASiIF9r/////AAABmbB85zU3k0g3qzF1DLbC7GUnvGVHWKDgtHLp6I/mzHMkcRm8A0oZl2woG1jqog81fIG7hAfVTp50Fj3sgLTQCqJ/sy9mZ/SQzMh2E3EBTIqS4ndxzRR0KGqW62bmVqQN69a7cuamH1QC4y3yiTaEDha8JoQF7kS3K32S6bziY2MYoBO8PCegD6dsnhtAH4VnAwIeiM/dCvhDXh1FuLFfLZmoExZGKasu20D3hqlvVRFoa7jUIIdzEEbuCM70asfMyzHk1ZdqgpBAqFOtxoyVgF0/ackncBT+hYFqfBbPkFGwiLiFED/8OBiMWRLVm4raAYo9NIgXqDFJhghNXqL8OMPwyuYYJuhZfqeg0z39M3fr";
-    
     //Useful constants.
     private static final float mmPerInch        = 25.4f;
     private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
@@ -47,7 +45,6 @@ public class StoneDetectionExample extends LinearOpMode {
         telemetry.update();
 
         camSensor = new CamSensor();
-        camSensor.VUFORIA_KEY = VUFORIA_KEY;
         camSensor.init(hardwareMap);
 
         waitForStart();
@@ -62,6 +59,9 @@ public class StoneDetectionExample extends LinearOpMode {
 
             telemetry.addData("Gamepad1:", "%s", gamepad1.toString());
             telemetry.addData("Skystone State:", "%d", detectionState.detectedState);
+
+            // Send telemetry.
+            telemetry.update();
         }
     }
 }
