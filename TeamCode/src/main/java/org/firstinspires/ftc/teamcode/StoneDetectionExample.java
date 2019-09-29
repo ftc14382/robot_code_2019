@@ -6,7 +6,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
 // Classes for doing navigation
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -33,6 +32,8 @@ import java.util.List;
 // Java has one class per file. The class the same name (minus ".java")
 // as the file.
 public class StoneDetectionExample extends LinearOpMode {
+
+    private static final String VUFORIA_KEY = "ASiIF9r/////AAABmbB85zU3k0g3qzF1DLbC7GUnvGVHWKDgtHLp6I/mzHMkcRm8A0oZl2woG1jqog81fIG7hAfVTp50Fj3sgLTQCqJ/sy9mZ/SQzMh2E3EBTIqS4ndxzRR0KGqW62bmVqQN69a7cuamH1QC4y3yiTaEDha8JoQF7kS3K32S6bziY2MYoBO8PCegD6dsnhtAH4VnAwIeiM/dCvhDXh1FuLFfLZmoExZGKasu20D3hqlvVRFoa7jUIIdzEEbuCM70asfMyzHk1ZdqgpBAqFOtxoyVgF0/ackncBT+hYFqfBbPkFGwiLiFED/8OBiMWRLVm4raAYo9NIgXqDFJhghNXqL8OMPwyuYYJuhZfqeg0z39M3fr";
     
     //Useful constants.
     private static final float mmPerInch        = 25.4f;
@@ -46,7 +47,7 @@ public class StoneDetectionExample extends LinearOpMode {
         telemetry.update();
 
         camSensor = new CamSensor();
-
+        camSensor.VUFORIA_KEY = VUFORIA_KEY;
         camSensor.init(hardwareMap);
 
         waitForStart();
