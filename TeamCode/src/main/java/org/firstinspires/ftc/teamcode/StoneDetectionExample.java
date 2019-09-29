@@ -3,8 +3,9 @@
 package org.firstinspires.ftc.teamcode;
 
 // Opmode classes from FTC.
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 
 // Classes for doing navigation
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -40,15 +41,16 @@ public class StoneDetectionExample extends LinearOpMode {
     public CamSensor camSensor;
 
     public void runOpMode() {
-        SkysteonDetectionState detectionState;
+        SkystoneDetectionState detectionState;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        camSensor = new CamSensor(hardwareMap);
-    
+        camSensor = new CamSensor();
+
+        camSensor.init(hardwareMap);
+
         waitForStart();
-        runtime.reset();
-        
+
         // Run until the end of the match (driver presses STOP).
         while (opModeIsActive()) {
 //            if (gamepad1.a) {
@@ -57,9 +59,8 @@ public class StoneDetectionExample extends LinearOpMode {
 
             detectionState = camSensor.detector.currentDetectionState;
 
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Gamepad1:", "%s",gamepad1.toString());
+            telemetry.addData("Gamepad1:", "%s", gamepad1.toString());
             telemetry.addData("Skystone State:", "%d", detectionState.detectedState);
         }
-
+    }
 }

@@ -22,10 +22,10 @@ public class SkystoneDetector extends DogeCVDetector {
     private Mat workingMat = new Mat(); // Used for pre-processing and working with (blurring as an example)
     private Mat maskYellow = new Mat(); // Yellow Mask returned by color filter
     private Mat hierarchy  = new Mat(); // hierarchy used by contours
-    public SkystoneDetecionState currentDetectionState;
+    public SkystoneDetectionState currentDetectionState;
 
     // This is our constructor. Call the constructor on our parent.
-    public GoldAlignDetector() {
+    public SkystoneDetector() {
         super();
         detectorName = "Skystone Detector"; // Set the detector name
         currentDetectionState = new SkystoneDetectionState();
@@ -59,8 +59,8 @@ public class SkystoneDetector extends DogeCVDetector {
         imageSize = getAdjustedSize();
 
         // Start and end of a horizontal line through the center.
-        lineStart = Point(0, imageSize.height/2);
-        lineEnd   = point(imageSize.width, imageSize.height/2);
+        lineStart = new Point(0, imageSize.height/2);
+        lineEnd   = new Point(imageSize.width, imageSize.height/2);
 
         Imgproc.line(displayMat, lineStart, lineEnd, colorRed, lineThickness, lineType);
 
@@ -69,4 +69,10 @@ public class SkystoneDetector extends DogeCVDetector {
 
         return displayMat;
     }
+
+     @Override
+    public void useDefaults() {
+
+     }
+
 }

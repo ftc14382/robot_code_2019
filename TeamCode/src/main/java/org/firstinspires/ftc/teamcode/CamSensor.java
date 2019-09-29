@@ -5,6 +5,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.Dogeforia;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,7 @@ public class CamSensor {
     public boolean detectorEnabled = false;
 
     public void init(HardwareMap ahwMap) {
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); //Retrieves the webcam from the hardware map
+        webcamName = ahwMap.get(WebcamName.class, "Webcam 1"); //Retrieves the webcam from the hardware map
         detector   = new SkystoneDetector();
         //
         // A detector inherits from OpenCVPipeline in the DogeCV code. The init
