@@ -60,6 +60,13 @@ public class StoneDetectionExample extends LinearOpMode {
             telemetry.addData("Gamepad1:", "%s", gamepad1.toString());
             telemetry.addData("Skystone State:", "%d", detectionState.detectedState);
 
+            if (!detectionState.telemetry1.isEmpty()){
+                telemetry.addData("Skystone: ",  detectionState.telemetry1 );
+            }
+            if (!detectionState.telemetry2.isEmpty()){
+                telemetry.addData("Skystone: ", detectionState.telemetry2 );
+            }
+
             // Send telemetry.
             telemetry.update();
         }

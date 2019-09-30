@@ -24,13 +24,14 @@ public class SkystoneDetector extends DogeCVDetector {
     // Defining Mats to be used.
     private Mat displayMat = new Mat(); // Display debug info to the screen (this is what is returned)
     private Mat workingMat = new Mat(); // Used for pre-processing and working with (blurring as an example)
+    private Mat workingMatHsv = new Mat(); //
     private Mat maskYellow = new Mat(); // Yellow Mask returned by color filter
     private Mat hierarchy  = new Mat(); // hierarchy used by contours
     private Mat maskRgb    = new Mat(); // Used to display the mask
     public SkystoneDetectionState currentDetectionState;
 
     // Note: You can change the behavior threshold and
-    public DogeCVColorFilter yellowFilter = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW);
+//    public DogeCVColorFilter yellowFilter = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW);
 
     // This is our constructor. Call the constructor on our parent.
     public SkystoneDetector() {
@@ -49,6 +50,9 @@ public class SkystoneDetector extends DogeCVDetector {
     // that is the same size as input. We can put whatever we want on the image that we
     // return.
     //
+    // Note: the input image is 480x640 in RGB format. We transpose it to
+    // 640x480 while working with it to match up with the orientation of the camera.
+    // We transpose the output back to 480x640 before returning it.
     @Override
     public Mat process(Mat input) {
         Size imageSize;
@@ -67,27 +71,40 @@ public class SkystoneDetector extends DogeCVDetector {
         displayMat.copyTo(workingMat);
         input.release();
 
-        yellowFilter.process(workingMat.clone(), maskYellow);
-        //Imgproc.cvtColor(displayMat, maskYellow, Imgproc.COLOR_GRAY2BGR, 3);
+        // Create an HSV copy of workingMat and detect the yellow "Hue".
+        Imgproc.cvtColor(workingMat, workingMatHsv, Imgproc.COLOR_RGB2HSV);
+        Scalar lowerYellow = new Scalar(20, 50, 50);
+        Scalar upperYellow = new Scalar(40, 255, 255);
+        // The output of inRange is a "grayscale" image. A grayscale image
+        // only has one number per pixel (usually called "Y"). Compare to
+        // BGR which has three numbers per pixel (Blue, Green, and Red).
+        // In fact, the output of inRange is an image in which all pixels are
+        // either one or zero. This is sometimes called a "binary image" or
+        // simply "a mask".
+        Core.inRange(workingMatHsv, lowerYellow, upperYellow, maskYellow);
 
+        // Now we take our grayscale maskYellow image and create an RGB image.
+        Imgproc.cvtColor(maskYellow, displayMat, Imgproc.COLOR_GRAY2RGB);
+
+        // This finds the contours in the yellowMask image.
         List<MatOfPoint> contoursYellow = new ArrayList<>();
         Imgproc.findContours(maskYellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        // This draws the contours that we found onto displayMat in a greenish color.
         Imgproc.drawContours(displayMat, contoursYellow, -1, new Scalar(50, 230, 50), 2);
 
-        // getAdjustedSize is defined on our parent, DogeCVDetector.
-        // An openCV Size object has a 'height' and 'width' properties.
+        // Get the size (width, height) of the image.
         imageSize = displayMat.size();
 
-        // Start and end of a horizontal line through the center.
+        // Draw a horizontal line through the center as an example
         lineStart = new Point(0, imageSize.height/2);
         lineEnd   = new Point(imageSize.width, imageSize.height/2);
-
         Imgproc.line(displayMat, lineStart, lineEnd, colorRed, lineThickness, lineType);
 
-        // If we detect the Skystone block state, we should create a new currentDetectionState
-        // and fill it in.
+        // If we detect the Skystone block state, we update currentDetectionState.
+        currentDetectionState.telemetry1 = "Nothing to see here.";
 
+        // This gets displayMat back to the portrait mode that the rest of the pipeline is expecting.
         Core.transpose(displayMat,displayMat);
         return displayMat;
     }
