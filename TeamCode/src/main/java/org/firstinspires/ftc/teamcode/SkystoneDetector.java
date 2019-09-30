@@ -30,9 +30,6 @@ public class SkystoneDetector extends DogeCVDetector {
     private Mat maskRgb    = new Mat(); // Used to display the mask
     public SkystoneDetectionState currentDetectionState;
 
-    // Note: You can change the behavior threshold and
-//    public DogeCVColorFilter yellowFilter = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW);
-
     // This is our constructor. Call the constructor on our parent.
     public SkystoneDetector() {
         super();
@@ -129,5 +126,4 @@ public class SkystoneDetector extends DogeCVDetector {
     public void useDefaults() {
         // We don't need to do anything here, but we have to define this method.
      }
-
 }
