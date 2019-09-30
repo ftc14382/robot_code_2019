@@ -88,10 +88,26 @@ public class SkystoneDetector extends DogeCVDetector {
 
         // This finds the contours in the yellowMask image.
         List<MatOfPoint> contoursYellow = new ArrayList<>();
+        List<MatOfPoint> contoursYellowBig = new ArrayList<>();
+
         Imgproc.findContours(maskYellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
+        MatOfPoint biggestContour;
+        double area;
+        double maxArea = 0.0;
+        for (MatOfPoint c : contoursYellow) {
+            area = Imgproc.contourArea(c);
+            if (area > maxArea) {
+                maxArea = area;
+                biggestContour = c;
+            }
+            if (Imgproc.contourArea(c) > 300 ) {
+                contoursYellowBig.add(c);
+            }
+        }
+
         // This draws the contours that we found onto displayMat in a greenish color.
-        Imgproc.drawContours(displayMat, contoursYellow, -1, new Scalar(50, 230, 50), 2);
+        Imgproc.drawContours(displayMat, contoursYellowBig, -1, new Scalar(50, 230, 50), 2);
 
         // Get the size (width, height) of the image.
         imageSize = displayMat.size();
