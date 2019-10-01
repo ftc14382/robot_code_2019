@@ -4,8 +4,8 @@ import cv2
 from matplotlib import pyplot as plt
 
 #cap = cv2.VideoCapture(0)
-#cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture(1)
 w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 outImg = np.zeros((h, w * 3, 3), np.uint8)
