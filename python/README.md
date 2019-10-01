@@ -35,9 +35,6 @@ pip to install additional packages:
    pip install scikit-learn
    pip install scikit-image
 
-
-
-
 III. Download OPenCV
 --------------------
 
@@ -86,3 +83,8 @@ Trouble
 The only trouble that I encountered was that I had to turn on access
 in: Settings | Privacy | Camera. I couldn't access the camera until
 Turned access on and allowed desktop apps to access the camera.
+
+
+When I was having trouble, I tried using the generic "USB Video Device" instead of the "HD Pro Webcam C920"
+but that didn't have any effect. After I got the camera working, I switched back to the "HD Pro Webcam C920"
+driver and Python/OpenCV continued to work.
