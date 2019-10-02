@@ -1,4 +1,4 @@
-# How to install Python 3 and OpenCV 4 for Windows 20
+# How to install Python 3 and OpenCV 4 for Windows 10
 
 I was able to install Python 3 and OpenCV 4 under Windows 10
 by following the steps below.
