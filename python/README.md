@@ -47,7 +47,7 @@ Go to:
 
       https://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv
 
-Find the opencv package fro OpenCV 4.1.1 and python 3.7 (64-bit version):
+Find the opencv package for OpenCV 4.1.1 and python 3.7 (64-bit version):
 
      opencv_python‑4.1.1+contrib‑cp37‑cp37m‑win_amd64.whl
 
