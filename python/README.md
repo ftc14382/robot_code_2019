@@ -64,21 +64,26 @@ IV. Install OpenCV
    the OpenCV "whl" file above.
 3. Run:
 
+``` shell
         pip install .\opencv_python‑4.1.1+contrib‑cp37‑cp37m‑win_amd64.whl
-
+```
 
 V. Verify the installation.
 
 1. Open PowerShell or DOS Command Prompt and run:
 
+``` shell
      python
+```
 
 You should see a message about "Python 3.7.4" and a prompt ">>>".
 At the prompt, type:
 
+``` shell
    import cv2
    import numpy
    exit()
+```
 
 If you don't get an error when you input "import cv2", cv2 is installed.
 
