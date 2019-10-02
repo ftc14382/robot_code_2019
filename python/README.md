@@ -21,6 +21,8 @@ I. Install Python 3.7.4:
 
 6. When it is finished, click close.
 
+It is very important that you choose the option to update your PATH. If you forget to,
+just re-install.
 
 II. Install Additional Packages
 -------------------------------
@@ -28,12 +30,15 @@ II. Install Additional Packages
 Open Power Shell or DOS Command Prompt and use
 pip to install additional packages:
 
+``` shell
    python -m pip install --upgrade pip
    pip install numpy
    pip install scipy
    pip install matplotlib
    pip install scikit-learn
    pip install scikit-image
+```
+
 
 III. Download OPenCV
 --------------------
@@ -46,8 +51,9 @@ Find the opencv package fro OpenCV 4.1.1 and python 3.7 (64-bit version):
 
      opencv_python‑4.1.1+contrib‑cp37‑cp37m‑win_amd64.whl
 
+and click to download OpenCV.
 
-Download it.
+I would give a direct link, but the link just runs some javascript to do the download.
 
 
 IV. Install OpenCV
