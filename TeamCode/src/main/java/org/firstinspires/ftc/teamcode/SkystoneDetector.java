@@ -30,6 +30,7 @@ public class SkystoneDetector extends DogeCVDetector {
     private Mat maskRgb    = new Mat(); // Used to display the mask
     public SkystoneDetectionState currentDetectionState;
 
+
     // This is our constructor. Call the constructor on our parent.
     public SkystoneDetector() {
         super();
@@ -86,6 +87,8 @@ public class SkystoneDetector extends DogeCVDetector {
         // This finds the contours in the yellowMask image.
         List<MatOfPoint> contoursYellow = new ArrayList<>();
         List<MatOfPoint> contoursYellowBig = new ArrayList<>();
+        List<MatOfPoint> greatestContour = new ArrayList<>();
+        List<MatOfPoint> ratioContour = new ArrayList<>();
 
         Imgproc.findContours(maskYellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -93,32 +96,51 @@ public class SkystoneDetector extends DogeCVDetector {
         double area;
         double maxArea = 0.0;
         for (MatOfPoint c : contoursYellow) {
-            area = Imgproc.contourArea(c);
+            area = Imgproc.contourArea(c);//Detect biggest yellow area
             if (area > maxArea) {
                 maxArea = area;
                 biggestContour = c;
+                greatestContour.clear();
+                greatestContour.add(biggestContour);
             }
-            if (Imgproc.contourArea(c) > 300 ) {
+            if (Imgproc.contourArea(c) > 500 ) {
                 contoursYellowBig.add(c);
+            }
+        }
+        double ratio = 0.0;
+        double maxRatio = -2.0;
+        for(MatOfPoint c : contoursYellowBig) {
+            ratio = Imgproc.boundingRect(c).width / Imgproc.boundingRect(c).height;//Detect skystone with best height:width ratio
+            if(-Math.abs(ratio - 1.6) > maxRatio) {
+                maxRatio = ratio;
+                ratioContour.clear();
+                ratioContour.add(c);
             }
         }
 
         // This draws the contours that we found onto displayMat in a greenish color.
-        Imgproc.drawContours(displayMat, contoursYellowBig, -1, new Scalar(50, 230, 50), 2);
+        //Imgproc.drawContours(displayMat, contoursYellowBig, -1, new Scalar(50, 230, 50), 2);
+        //Draw contour with the biggest area
+        Imgproc.drawContours(displayMat, greatestContour, -1, new Scalar(30, 250, 60), 2);
+        //Draw contour with the best height:width ratio
+        Imgproc.drawContours(displayMat, ratioContour, -1, new Scalar(250, 0, 0), 2);
 
         // Get the size (width, height) of the image.
         imageSize = displayMat.size();
 
-        // Draw a horizontal line through the center as an example
+        // Draw a horizontal line through the center as an example(the image is rotated)
         lineStart = new Point(0, imageSize.height/2);
         lineEnd   = new Point(imageSize.width, imageSize.height/2);
         Imgproc.line(displayMat, lineStart, lineEnd, colorRed, lineThickness, lineType);
 
+
         // If we detect the Skystone block state, we update currentDetectionState.
-        currentDetectionState.telemetry1 = "Nothing to see here.";
+        //currentDetectionState.telemetry1 = "Nothing to see here.";
+
 
         // This gets displayMat back to the portrait mode that the rest of the pipeline is expecting.
         Core.transpose(displayMat,displayMat);
+        //System.out.println(ratio);
         return displayMat;
     }
 
