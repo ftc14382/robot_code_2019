@@ -125,6 +125,7 @@ public class SkystoneDetector extends DogeCVDetector {
         //Draw contour with the best height:width ratio
         Imgproc.drawContours(displayMat, ratioContour, -1, new Scalar(250, 0, 0), 2);
 
+
         // Get the size (width, height) of the image.
         imageSize = displayMat.size();
 
