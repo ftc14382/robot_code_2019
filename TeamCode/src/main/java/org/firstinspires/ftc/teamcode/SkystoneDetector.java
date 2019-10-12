@@ -17,6 +17,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.nio.channels.Pipe;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -90,6 +91,14 @@ public class SkystoneDetector extends DogeCVDetector {
         List<MatOfPoint> greatestContour = new ArrayList<>();
         List<MatOfPoint> ratioContour = new ArrayList<>();
 
+
+        Point topLeft = new Point(0, 0);
+        Point topRight = new Point(0, 0);
+        Point bottomRight = new Point(0, 0);
+        Point bottomLeft = new Point(0, 0);
+
+        int numbBlocks = 0;
+
         Imgproc.findContours(maskYellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
         MatOfPoint biggestContour;
@@ -103,36 +112,67 @@ public class SkystoneDetector extends DogeCVDetector {
                 greatestContour.clear();
                 greatestContour.add(biggestContour);
             }
-            if (Imgproc.contourArea(c) > 500 ) {
+            if (Imgproc.contourArea(c) > 500 ) {//Create seperate array for possible skystones
                 contoursYellowBig.add(c);
             }
         }
         double ratio = 0.0;
         double maxRatio = -2.0;
         for(MatOfPoint c : contoursYellowBig) {
-            ratio = Imgproc.boundingRect(c).width / Imgproc.boundingRect(c).height;//Detect skystone with best height:width ratio
-            if(-Math.abs(ratio - 1.6) > maxRatio) {
+            ratio = Imgproc.boundingRect(c).height / Imgproc.boundingRect(c).width;//Calculate ratio
+            if(-Math.abs(ratio - 1.6) > maxRatio) {//Detect skystone with best height:width ratio
                 maxRatio = ratio;
-                ratioContour.clear();
+                ratioContour.clear();//Make sure we only have one selected countour
                 ratioContour.add(c);
+
+                //double transition = (ratio / 1.6);
+                numbBlocks = (int)Math.round(ratio/1.6);//find the number of blocks inside the box you're outlining
+                if(numbBlocks > 1) {//Make sure we actually need the array
+                    double blockLength = Imgproc.boundingRect(c).height / numbBlocks;
+                    Point[] topPoints = new Point[numbBlocks - 1];//create array with number of points equal to the lines between blocks
+                    for (int i = 1; i < numbBlocks; i++) {
+                        topPoints[i - 1] = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y + blockLength*i);
+                    }
+                    Point[] bottomPoints = new Point[numbBlocks - 1];
+                    for (int i = 1; i < numbBlocks; i++) {
+                        bottomPoints[i - 1] = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y + blockLength*i);
+                    }
+                    for (int i = 0; i < numbBlocks - 1; i++) {
+                        Imgproc.line(displayMat, topPoints[i], bottomPoints[i], new Scalar(30, 100, 250), 3);
+                    }
+                }//draw lines between stones if needed
+
+                //create points to draw box around selected area
+                topLeft = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y);
+                topRight = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height);
+                bottomLeft = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y);
+                bottomRight = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height);
             }
         }
 
         // This draws the contours that we found onto displayMat in a greenish color.
         //Imgproc.drawContours(displayMat, contoursYellowBig, -1, new Scalar(50, 230, 50), 2);
-        //Draw contour with the biggest area
+        //Draw contour with the biggest area in green
         Imgproc.drawContours(displayMat, greatestContour, -1, new Scalar(30, 250, 60), 2);
-        //Draw contour with the best height:width ratio
+        //Draw contour with the best height:width ratio in red
         Imgproc.drawContours(displayMat, ratioContour, -1, new Scalar(250, 0, 0), 2);
+
+
 
 
         // Get the size (width, height) of the image.
         imageSize = displayMat.size();
 
         // Draw a horizontal line through the center as an example(the image is rotated)
-        lineStart = new Point(0, imageSize.height/2);
-        lineEnd   = new Point(imageSize.width, imageSize.height/2);
+        lineStart = new Point(imageSize.width/2, 0);
+        lineEnd = new Point(imageSize.width/2, imageSize.height);
         Imgproc.line(displayMat, lineStart, lineEnd, colorRed, lineThickness, lineType);
+        //Draw box around selected area in blue
+        Imgproc.line(displayMat, topLeft, topRight, new Scalar(30, 30, 250), 3);
+        Imgproc.line(displayMat, topLeft, bottomLeft, new Scalar(30, 30, 250), 3);
+        Imgproc.line(displayMat, bottomLeft, bottomRight, new Scalar(30, 30, 250), 3);
+        Imgproc.line(displayMat, bottomRight, topRight, new Scalar(30, 30, 250), 3);
+
 
 
         // If we detect the Skystone block state, we update currentDetectionState.
