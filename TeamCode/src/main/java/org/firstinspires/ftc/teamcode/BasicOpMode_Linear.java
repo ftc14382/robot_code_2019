@@ -110,7 +110,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             //driving for mecanum wheels
             double h = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-            double maxSpeed = Math.sin(robotAngle) * Math.sqrt(2);
+            double maxSpeed = Math.abs(Math.sin(robotAngle) * Math.sqrt(2));
             double turn = gamepad1.right_trigger - gamepad1.left_trigger;
             final double v1 = h * Math.cos(robotAngle) * maxSpeed + turn;
             final double v2 = h * Math.sin(robotAngle) * maxSpeed + turn;
