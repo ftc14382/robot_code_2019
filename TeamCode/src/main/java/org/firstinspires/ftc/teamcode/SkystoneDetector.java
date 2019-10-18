@@ -117,7 +117,7 @@ public class SkystoneDetector extends DogeCVDetector {
             }
         }
         double ratio = 0.0;
-        double maxRatio = -2.0;
+        double maxRatio = -3.0;
         for(MatOfPoint c : contoursYellowBig) {
             ratio = Imgproc.boundingRect(c).height / Imgproc.boundingRect(c).width;//Calculate ratio
             if(-Math.abs(ratio - 1.6) > maxRatio) {//Detect skystone with best height:width ratio
@@ -125,22 +125,23 @@ public class SkystoneDetector extends DogeCVDetector {
                 ratioContour.clear();//Make sure we only have one selected countour
                 ratioContour.add(c);
 
-                //double transition = (ratio / 1.6);
-                numbBlocks = (int)Math.round(ratio/1.6);//find the number of blocks inside the box you're outlining
-                if(numbBlocks > 1) {//Make sure we actually need the array
-                    double blockLength = Imgproc.boundingRect(c).height / numbBlocks;
-                    Point[] topPoints = new Point[numbBlocks - 1];//create array with number of points equal to the lines between blocks
-                    for (int i = 1; i < numbBlocks; i++) {
-                        topPoints[i - 1] = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y + blockLength*i);
-                    }
-                    Point[] bottomPoints = new Point[numbBlocks - 1];
-                    for (int i = 1; i < numbBlocks; i++) {
-                        bottomPoints[i - 1] = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y + blockLength*i);
-                    }
-                    for (int i = 0; i < numbBlocks - 1; i++) {
-                        Imgproc.line(displayMat, topPoints[i], bottomPoints[i], new Scalar(30, 100, 250), 3);
-                    }
-                }//draw lines between stones if needed
+                if(false) {
+                    numbBlocks = (int) (ratio / 1.6);//find the number of blocks inside the box you're outlining
+                    if (numbBlocks > 1) {//Make sure we actually need the array
+                        int blockLength = (Imgproc.boundingRect(c).height / numbBlocks) + 1;
+                        Point[] topPoints = new Point[numbBlocks - 1];//create array with number of points equal to the lines between blocks
+                        for (int i = 1; i < numbBlocks; i++) {//Find end points on top of the blocks
+                            topPoints[i - 1] = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y + blockLength * i);
+                        }
+                        Point[] bottomPoints = new Point[numbBlocks - 1];
+                        for (int i = 1; i < numbBlocks; i++) {//Find end points bellow the blocks
+                            bottomPoints[i - 1] = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y + blockLength * i);
+                        }
+                        for (int i = 0; i < numbBlocks - 1; i++) {//Draw lines between blocks
+                            Imgproc.line(displayMat, topPoints[i], bottomPoints[i], new Scalar(30, 250, 60), 3);
+                        }
+                    }//draw lines between stones if needed
+                }//don't focus on this right now
 
                 //create points to draw box around selected area
                 topLeft = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y);
@@ -149,6 +150,7 @@ public class SkystoneDetector extends DogeCVDetector {
                 bottomRight = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height);
             }
         }
+
 
         // This draws the contours that we found onto displayMat in a greenish color.
         //Imgproc.drawContours(displayMat, contoursYellowBig, -1, new Scalar(50, 230, 50), 2);
