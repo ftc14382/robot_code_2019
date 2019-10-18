@@ -7,6 +7,7 @@ import com.disnodeteam.dogecv.filters.LeviColorFilter;
 import com.disnodeteam.dogecv.scoring.MaxAreaScorer;
 import com.disnodeteam.dogecv.scoring.PerfectAreaScorer;
 import com.disnodeteam.dogecv.scoring.RatioScorer;
+import com.vuforia.Rectangle;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Core;
@@ -70,6 +71,11 @@ public class SkystoneDetector extends DogeCVDetector {
         displayMat.copyTo(workingMat);
         input.release();
 
+
+        Rect rectCrop = new Rect(20, 20, 50, 100);//look at https://stackoverflow.com/questions/35666255/get-a-sub-image-using-opencv-java
+        Mat cropMat = new Mat(workingMat, rectCrop);
+
+
         // Create an HSV copy of workingMat and detect the yellow "Hue".
         Imgproc.cvtColor(workingMat, workingMatHsv, Imgproc.COLOR_RGB2HSV);
         Scalar lowerYellow = new Scalar(20, 50, 50);
@@ -124,6 +130,8 @@ public class SkystoneDetector extends DogeCVDetector {
                 maxRatio = ratio;
                 ratioContour.clear();//Make sure we only have one selected countour
                 ratioContour.add(c);
+
+
 
                 if(false) {
                     numbBlocks = (int) (ratio / 1.6);//find the number of blocks inside the box you're outlining
