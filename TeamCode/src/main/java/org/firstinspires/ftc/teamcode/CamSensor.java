@@ -15,14 +15,16 @@ public class CamSensor {
     //public Dogeforia dogeforia;
     public WebcamName webcamName;
     public int cameraMonitorViewId;
-    public SkystoneDetector detector;
+    //public SkystoneDetector detector;
+    public SkystoneDetectorCrop detector;
     public boolean detectorEnabled = false;
 
     private static final String VUFORIA_KEY = "ASiIF9r/////AAABmbB85zU3k0g3qzF1DLbC7GUnvGVHWKDgtHLp6I/mzHMkcRm8A0oZl2woG1jqog81fIG7hAfVTp50Fj3sgLTQCqJ/sy9mZ/SQzMh2E3EBTIqS4ndxzRR0KGqW62bmVqQN69a7cuamH1QC4y3yiTaEDha8JoQF7kS3K32S6bziY2MYoBO8PCegD6dsnhtAH4VnAwIeiM/dCvhDXh1FuLFfLZmoExZGKasu20D3hqlvVRFoa7jUIIdzEEbuCM70asfMyzHk1ZdqgpBAqFOtxoyVgF0/ackncBT+hYFqfBbPkFGwiLiFED/8OBiMWRLVm4raAYo9NIgXqDFJhghNXqL8OMPwyuYYJuhZfqeg0z39M3fr";
 
     public void init(HardwareMap ahwMap) {
         //webcamName = ahwMap.get(WebcamName.class, "Webcam 1"); //Retrieves the webcam from the hardware map
-        detector   = new SkystoneDetector();
+        //detector   = new SkystoneDetector();
+        detector = new SkystoneDetectorCrop();
         //
         // A detector inherits from OpenCVPipeline in the DogeCV code. The init
         // function is just the init function on OpenCVPipeline.
