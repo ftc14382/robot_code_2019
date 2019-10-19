@@ -53,9 +53,9 @@ import javax.sql.RowSetEvent;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Move", group="Linear Opmode")
+@TeleOp(name="Linear Opmode", group="Linear Opmode")
 //@Disabled
-public class BasicOpMode_Linear extends LinearOpMode {
+public class OpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -63,6 +63,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor leftBack = null;
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
+    private DcMotor lifter = null;
 
     @Override
     public void runOpMode() {
@@ -76,6 +77,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         leftBack = hardwareMap.get(DcMotor.class, "left_back");
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         rightBack = hardwareMap.get(DcMotor.class, "right_back");
+        lifter = hardwareMap.get(DcMotor.class, "lifter");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -83,6 +85,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
+        lifter.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -96,6 +99,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double leftBackPower;
             double rightFrontPower;
             double rightBackPower;
+            double lifterPower;
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -136,10 +140,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
             //leftDrive.setPower(leftPower);
             //rightDrive.setPower(rightPower);
 
+            double lp = gamepad2.right_trigger - gamepad2.left_trigger;
+            lifter.setPower(lp);
+            lifterPower = lp;
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
+            telemetry.addData("Lifter", "power (%.2f)", lifterPower);
             telemetry.update();
         }
     }
