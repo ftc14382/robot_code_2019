@@ -107,6 +107,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
         double areaCrop;
         double maxAreaCrop = 0.0;
+        int skystoneY=0;
         Imgproc.findContours(cropMask, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         for (MatOfPoint c : contoursYellow) {
             areaCrop = Imgproc.contourArea(c);//Detect biggest yellow area
@@ -114,8 +115,8 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                 maxAreaCrop = areaCrop;
                 greatestContour.clear();
                 greatestContour.add(c);
-
-                circleCenter = new Point((int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2), (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2));
+                skystoneY = (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2);
+                circleCenter = new Point((int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2), skystoneY);
             }
         }
         Imgproc.circle(displayCrop, circleCenter, 3, new Scalar(250, 10,10), -1);
@@ -205,8 +206,15 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
         // If we detect the Skystone block state, we update currentDetectionState.
         //currentDetectionState.telemetry1 = "Nothing to see here.";
-
-
+        if(maxAreaCrop<40000 && maxAreaCrop>18000){
+            currentDetectionState.telemetry1 = "sky stone found.";
+            currentDetectionState.telemetry2 = "" + skystoneY;
+            currentDetectionState.detected = true;
+        } else{
+            currentDetectionState.telemetry1 = "Nothing to see here.";
+            currentDetectionState.telemetry2 = "";
+            currentDetectionState.detected = false;
+        }
         // This gets displayMat back to the portrait mode that the rest of the pipeline is expecting.
         Core.transpose(displayMat,displayMat);
         //System.out.println(ratio);
