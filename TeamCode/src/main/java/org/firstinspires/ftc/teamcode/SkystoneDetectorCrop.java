@@ -51,8 +51,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         Scalar colorRed   = new Scalar(0, 0, 255);
         int lineThickness = 2;
         int lineType      = Imgproc.LINE_8;
-        Point lineStart;
-        Point lineEnd;
+
 
         // Copy the input mat to our working mats, then release it for memory.
         // Note that the image that we get is portrait mode. The transpose
@@ -77,125 +76,63 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         // simply "a mask".
         Core.inRange(workingMatHsv, lowerYellow, upperYellow, maskYellow);
 
+        //Define what area we are cropping
         int cropX = 160;
         int cropY = 0;
         int cropWidth = 100;
         int cropHeight = 640;
         Rect rectCrop = new Rect(cropX, cropY, cropWidth, cropHeight);//look at https://stackoverflow.com/questions/35666255/get-a-sub-image-using-opencv-java
         Mat reverseMask = new Mat();
-        Core.bitwise_not(maskYellow, reverseMask);
-        Mat cropMask = new Mat(reverseMask, rectCrop);
+        Core.bitwise_not(maskYellow, reverseMask);//Invert mask
+        Mat cropMask = new Mat(reverseMask, rectCrop);//Crop mask
 
         // Now we take our grayscale maskYellow image and create an RGB image.
         Imgproc.cvtColor(reverseMask, displayMat, Imgproc.COLOR_GRAY2RGB);
 
-        Mat displayCrop = new Mat(displayMat, rectCrop);
+        Mat displayCrop = new Mat(displayMat, rectCrop);//Crop image
 
         // This finds the contours in the yellowMask image.
         List<MatOfPoint> contoursYellow = new ArrayList<>();
-        List<MatOfPoint> contoursYellowBig = new ArrayList<>();
         List<MatOfPoint> greatestContour = new ArrayList<>();
-        List<MatOfPoint> ratioContour = new ArrayList<>();
 
-
+        //Create points for rectangle that shows where we are cropping
         Point topLeft = new Point(cropX, cropY);
         Point topRight = new Point(cropX, cropY+cropHeight);
         Point bottomRight = new Point(cropX+cropWidth, cropY+cropHeight);
         Point bottomLeft = new Point(cropX+cropWidth, cropY);
 
-        Point circleCenter = new Point(0,0);
+        Point circleCenter = new Point(0,0);//Initalize point for center of the circle
 
+        //Initialize variables
         double areaCrop;
         double maxAreaCrop = 0.0;
         int skystoneY=0;
-        Imgproc.findContours(cropMask, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(cropMask, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);//Find contours
         for (MatOfPoint c : contoursYellow) {
             areaCrop = Imgproc.contourArea(c);//Detect biggest yellow area
             if (areaCrop > maxAreaCrop) {
                 maxAreaCrop = areaCrop;
                 greatestContour.clear();
-                greatestContour.add(c);
-                skystoneY = (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2);
-                circleCenter = new Point((int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2), skystoneY);
+                greatestContour.add(c);//Make sure we are only selecting one countour
+                skystoneY = (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2);//Middle of selected area
+                circleCenter = new Point((int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2), skystoneY);//Create point for the center of the selected image
             }
         }
-        Imgproc.circle(displayCrop, circleCenter, 3, new Scalar(250, 10,10), -1);
-
-        if(false) {
-        int numbBlocks = 0;
-        Imgproc.findContours(maskYellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        MatOfPoint biggestContour;
-
-            double area;
-            double maxArea = 0.0;
-            for (MatOfPoint c : contoursYellow) {
-                area = Imgproc.contourArea(c);//Detect biggest yellow area
-                if (area > maxArea) {
-                    maxArea = area;
-                    biggestContour = c;
-                    greatestContour.clear();
-                    greatestContour.add(biggestContour);
-                }
-                if (Imgproc.contourArea(c) > 500) {//Create seperate array for possible skystones
-                    contoursYellowBig.add(c);
-                }
-            }
-            double ratio = 0.0;
-            double maxRatio = -3.0;
-            for (MatOfPoint c : contoursYellowBig) {
-                ratio = Imgproc.boundingRect(c).height / Imgproc.boundingRect(c).width;//Calculate ratio
-                if (-Math.abs(ratio - 1.6) > maxRatio) {//Detect skystone with best height:width ratio
-                    maxRatio = ratio;
-                    ratioContour.clear();//Make sure we only have one selected countour
-                    ratioContour.add(c);
+        Imgproc.circle(displayCrop, circleCenter, 3, new Scalar(250, 10,10), -1);//Draw circle in middle of slected area
 
 
-                    if (false) {
-                        numbBlocks = (int) (ratio / 1.6);//find the number of blocks inside the box you're outlining
-                        if (numbBlocks > 1) {//Make sure we actually need the array
-                            int blockLength = (Imgproc.boundingRect(c).height / numbBlocks) + 1;
-                            Point[] topPoints = new Point[numbBlocks - 1];//create array with number of points equal to the lines between blocks
-                            for (int i = 1; i < numbBlocks; i++) {//Find end points on top of the blocks
-                                topPoints[i - 1] = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y + blockLength * i);
-                            }
-                            Point[] bottomPoints = new Point[numbBlocks - 1];
-                            for (int i = 1; i < numbBlocks; i++) {//Find end points bellow the blocks
-                                bottomPoints[i - 1] = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y + blockLength * i);
-                            }
-                            for (int i = 0; i < numbBlocks - 1; i++) {//Draw lines between blocks
-                                Imgproc.line(displayMat, topPoints[i], bottomPoints[i], new Scalar(30, 250, 60), 3);
-                            }
-                        }//draw lines between stones if needed
-                    }//don't focus on this right now
-
-                    //create points to draw box around selected area
-                    topLeft = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y);
-                    topRight = new Point(Imgproc.boundingRect(c).x, Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height);
-                    bottomLeft = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y);
-                    bottomRight = new Point(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width, Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height);
-                }
-            }
-        }
 
 
-        // This draws the contours that we found onto displayMat in a greenish color.
-        //Imgproc.drawContours(displayMat, contoursYellowBig, -1, new Scalar(50, 230, 50), 2);
+
         //Draw contour with the biggest area in green
         Imgproc.drawContours(displayCrop, greatestContour, -1, new Scalar(30, 250, 60), 2);
-        //Draw contour with the best height:width ratio in red
-        //Imgproc.drawContours(displayMat, ratioContour, -1, new Scalar(250, 0, 0), 2);
-
 
 
 
         // Get the size (width, height) of the image.
         imageSize = displayMat.size();
 
-        // Draw a horizontal line through the center as an example(the image is rotated)
-        /*lineStart = new Point(imageSize.width/2, 0);
-        lineEnd = new Point(imageSize.width/2, imageSize.height);
-        Imgproc.line(displayMat, lineStart, lineEnd, colorRed, lineThickness, lineType);*/
+
         //Draw box around selected area in blue
         Imgproc.line(displayMat, topLeft, topRight, new Scalar(30, 30, 250), 3);
         Imgproc.line(displayMat, topLeft, bottomLeft, new Scalar(30, 30, 250), 3);
