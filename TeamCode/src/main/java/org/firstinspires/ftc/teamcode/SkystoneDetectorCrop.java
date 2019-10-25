@@ -21,8 +21,9 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
     private Mat workingMatHsv = new Mat(); //
     private Mat maskYellow = new Mat(); // Yellow Mask returned by color filter
     private Mat hierarchy  = new Mat(); // hierarchy used by contours
-    private Mat maskRgb    = new Mat(); // Used to display the mask
+    private Mat cropMask    = new Mat();
     public SkystoneDetectionState currentDetectionState;
+    public int detectorType = 0;//0=skyStone, 1=redFoundation, 2=blueFoundation
 
 
     // This is our constructor. Call the constructor on our parent.
@@ -62,37 +63,83 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         displayMat.copyTo(workingMat);
         input.release();
 
+        //Define upper and lower range of color
+        Scalar lowerMask = new Scalar(0,0,0);
+        Scalar upperMask = new Scalar(1,1,1);
+        //Define what area we are cropping
+        int cropX = 0;
+        int cropY = 0;
+        int cropWidth = 0;
+        int cropHeight = 0;
+
+        if(detectorType == 0) {
+            //Define upper and lower range of color
+            lowerMask = new Scalar(20, 50, 50);
+            upperMask = new Scalar(40, 255, 255);
+            //Define what area we are cropping
+            cropX = 160;
+            cropY = 0;
+            cropWidth = 100;
+            cropHeight = 640;
+        } //Skystone
+        else if(detectorType == 1) {
+            //Define upper and lower range of color
+            lowerMask = new Scalar(350, 50, 50);
+            upperMask = new Scalar(10, 250, 250);
+            //Define what area we are cropping
+            cropX = 0;
+            cropY = 0;
+            cropWidth = 480;
+            cropHeight = 640;
+        } //Red foundation
+        else if(detectorType == 2) {
+            //Define upper and lower range of color
+            lowerMask = new Scalar(230, 50, 50);
+            upperMask = new Scalar(250, 250, 250);
+            //Define what area we are cropping
+            cropX = 0;
+            cropY = 0;
+            cropWidth = 480;
+            cropHeight = 640;
+        } //Blue foundation
 
 
-        // Create an HSV copy of workingMat and detect the yellow "Hue".
+
+
+        // Create an HSV copy of workingMat and detect the yellow/blue/red "Hue".
         Imgproc.cvtColor(workingMat, workingMatHsv, Imgproc.COLOR_RGB2HSV);
-        Scalar lowerYellow = new Scalar(20, 50, 50);
-        Scalar upperYellow = new Scalar(40, 255, 255);
         // The output of inRange is a "grayscale" image. A grayscale image
         // only has one number per pixel (usually called "Y"). Compare to
         // BGR which has three numbers per pixel (Blue, Green, and Red).
         // In fact, the output of inRange is an image in which all pixels are
         // either one or zero. This is sometimes called a "binary image" or
         // simply "a mask".
-        Core.inRange(workingMatHsv, lowerYellow, upperYellow, maskYellow);
+        Core.inRange(workingMatHsv, lowerMask, upperMask, maskYellow);
 
-        //Define what area we are cropping
-        int cropX = 160;
-        int cropY = 0;
-        int cropWidth = 100;
-        int cropHeight = 640;
+        //Invert and crop
         Rect rectCrop = new Rect(cropX, cropY, cropWidth, cropHeight);//look at https://stackoverflow.com/questions/35666255/get-a-sub-image-using-opencv-java
-        Mat reverseMask = new Mat();
-        Core.bitwise_not(maskYellow, reverseMask);//Invert mask
-        Mat cropMask = new Mat(reverseMask, rectCrop);//Crop mask
+        if(detectorType == 0) {
+            Mat reverseMask = new Mat();
+            Core.bitwise_not(maskYellow, reverseMask);//Invert mask
+            cropMask = new Mat(reverseMask, rectCrop);//Crop mask
 
-        // Now we take our grayscale maskYellow image and create an RGB image.
-        Imgproc.cvtColor(reverseMask, displayMat, Imgproc.COLOR_GRAY2RGB);
+            // Now we take our grayscale maskYellow image and create an RGB image.
+            Imgproc.cvtColor(reverseMask, displayMat, Imgproc.COLOR_GRAY2RGB);
+        }//For skystone
+        else {
+            cropMask = new Mat(maskYellow, rectCrop);//Crop mask
 
-        Mat displayCrop = new Mat(displayMat, rectCrop);//Crop image
+            // Now we take our grayscale maskYellow image and create an RGB image.
+            Imgproc.cvtColor(maskYellow, displayMat, Imgproc.COLOR_GRAY2RGB);
+        }//For foundations
+
+
+
+        //Crop image
+        Mat displayCrop = new Mat(displayMat, rectCrop);
 
         // This finds the contours in the yellowMask image.
-        List<MatOfPoint> contoursYellow = new ArrayList<>();
+        List<MatOfPoint> contoursColor = new ArrayList<>();
         List<MatOfPoint> greatestContour = new ArrayList<>();
 
         //Create points for rectangle that shows where we are cropping
@@ -106,16 +153,16 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         //Initialize variables
         double areaCrop;
         double maxAreaCrop = 0.0;
-        int skystoneY=0;
-        Imgproc.findContours(cropMask, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);//Find contours
-        for (MatOfPoint c : contoursYellow) {
+        int detectedY=0;
+        Imgproc.findContours(cropMask, contoursColor, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);//Find contours
+        for (MatOfPoint c : contoursColor) {
             areaCrop = Imgproc.contourArea(c);//Detect biggest yellow area
             if (areaCrop > maxAreaCrop) {
                 maxAreaCrop = areaCrop;
                 greatestContour.clear();
                 greatestContour.add(c);//Make sure we are only selecting one countour
-                skystoneY = (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2);//Middle of selected area
-                circleCenter = new Point((int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2), skystoneY);//Create point for the center of the selected image
+                detectedY = (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2);//Middle of selected area
+                circleCenter = new Point((int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2), detectedY);//Create point for the center of the selected image
             }
         }
         Imgproc.circle(displayCrop, circleCenter, 3, new Scalar(250, 10,10), -1);//Draw circle in middle of slected area
@@ -141,13 +188,18 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
 
 
-        // If we detect the Skystone block state, we update currentDetectionState.
-        //currentDetectionState.telemetry1 = "Nothing to see here.";
-        if(maxAreaCrop<40000 && maxAreaCrop>18000){
-            currentDetectionState.telemetry1 = "sky stone found.";
-            currentDetectionState.telemetry2 = "" + skystoneY;
+        // If we detect something, we update currentDetectionState.
+        if(detectorType == 0 && (maxAreaCrop<40000 && maxAreaCrop>18000)) {
+            currentDetectionState.telemetry1 = "Skystone found!";
+            currentDetectionState.telemetry2 = "" + detectedY;
             currentDetectionState.detected = true;
-        } else{
+        }
+        else if((detectorType == 1 || detectorType == 2) && maxAreaCrop > 700) {
+            currentDetectionState.telemetry1 = "Foundation found!";
+            currentDetectionState.telemetry2 = "" + detectedY;
+            currentDetectionState.detected = true;
+        }
+        else{
             currentDetectionState.telemetry1 = "Nothing to see here.";
             currentDetectionState.telemetry2 = "";
             currentDetectionState.detected = false;
