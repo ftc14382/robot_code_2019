@@ -56,40 +56,35 @@ import javax.sql.RowSetEvent;
 @TeleOp(name="Linear Opmode", group="Linear Opmode")
 //@Disabled
 public class OpMode_Linear extends LinearOpMode {
-
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFront = null;
-    private DcMotor leftBack = null;
-    private DcMotor rightFront = null;
-    private DcMotor rightBack = null;
-    private DcMotor lifter = null;
-
+    public Mecanum chassis;
+    public DcMotor lifter;
     @Override
     public void runOpMode() {
+        chassis = new Mecanum();
+        lifter = hardwareMap.get(DcMotor.class, "lifter");
         telemetry.addData(":)", "Initialized");
         telemetry.update();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftFront  = hardwareMap.get(DcMotor.class, "left_front");
-        leftBack = hardwareMap.get(DcMotor.class, "left_back");
-        rightFront = hardwareMap.get(DcMotor.class, "right_front");
-        rightBack = hardwareMap.get(DcMotor.class, "right_back");
+        chassis.leftFront  = hardwareMap.get(DcMotor.class, "left_front");
+        chassis.leftBack = hardwareMap.get(DcMotor.class, "left_back");
+        chassis.rightFront = hardwareMap.get(DcMotor.class, "right_front");
+        chassis.rightBack = hardwareMap.get(DcMotor.class, "right_back");
         lifter = hardwareMap.get(DcMotor.class, "lifter");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        chassis.leftFront.setDirection(DcMotor.Direction.FORWARD);
+        chassis.leftBack.setDirection(DcMotor.Direction.FORWARD);
+        chassis.rightFront.setDirection(DcMotor.Direction.REVERSE);
+        chassis.rightBack.setDirection(DcMotor.Direction.REVERSE);
         lifter.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
+        chassis.runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -121,10 +116,10 @@ public class OpMode_Linear extends LinearOpMode {
             final double v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
             final double v4 = h * Math.cos(robotAngle) * maxSpeed - turn;
 
-            leftFront.setPower(v1);
-            leftBack.setPower(v2);
-            rightFront.setPower(v3);
-            rightBack.setPower(v4);
+            chassis.leftFront.setPower(v1);
+            chassis.leftBack.setPower(v2);
+            chassis.rightFront.setPower(v3);
+            chassis.rightBack.setPower(v4);
 
             leftFrontPower = v1;
             leftBackPower = v2;
@@ -145,7 +140,7 @@ public class OpMode_Linear extends LinearOpMode {
             lifterPower = lp;
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
             telemetry.addData("Lifter", "power (%.2f)", lifterPower);
