@@ -47,6 +47,8 @@ public class StoneDetectionExample extends LinearOpMode {
         camSensor = new CamSensor();
         camSensor.init(hardwareMap);
 
+        camSensor.detector.detectorType = 1;
+
         waitForStart();
 
         // Run until the end of the match (driver presses STOP).
@@ -66,6 +68,7 @@ public class StoneDetectionExample extends LinearOpMode {
             if (!detectionState.telemetry2.isEmpty()){
                 telemetry.addData("Skystone: ", detectionState.telemetry2 );
             }
+
 
             // Send telemetry.
             telemetry.update();
