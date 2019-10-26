@@ -61,7 +61,9 @@ public class OpMode_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
+        chassis.init(hardwareMap, this);
         function = new Function();
+        function.init(hardwareMap);
         telemetry.addData(":)", "Initialized");
         telemetry.update();
 
@@ -69,6 +71,23 @@ public class OpMode_Linear extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
 
+        // Setup a variable for each drive wheel to save power level for telemetry
+        double leftFrontPower;
+        double leftBackPower;
+        double rightFrontPower;
+        double rightBackPower;
+        double lifterPower;
+        double h;
+        double robotAngle;
+        double maxSpeed;
+        double turn;
+        double speedChange;
+        double v1;
+        double v2;
+        double v3;
+        double v4;
+        double functionSpeedChange;
+        double grabberPower;
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -80,12 +99,6 @@ public class OpMode_Linear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftFrontPower;
-            double leftBackPower;
-            double rightFrontPower;
-            double rightBackPower;
-            double lifterPower;
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -98,8 +111,8 @@ public class OpMode_Linear extends LinearOpMode {
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ; */
 
             //driving for mecanum wheels
-            double h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            double robotAngle = Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
+            h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
+            robotAngle = Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
             if(gamepad1.dpad_up) {
                 h = 1;
                 robotAngle = Math.PI * 0.75;
@@ -113,23 +126,22 @@ public class OpMode_Linear extends LinearOpMode {
                 h = 1;
                 robotAngle = Math.PI * 1.25;
             }
-            double maxSpeed = Math.abs(Math.sin(robotAngle - Math.PI / 4) * Math.sqrt(2));
-            double turn;
-            double speedChange = 1-(gamepad1.right_trigger * 0.8);//Slow down the robot
+            maxSpeed = Math.abs(Math.sin(robotAngle - Math.PI / 4) * Math.sqrt(2));
+            speedChange = 1-(gamepad1.right_trigger * 0.8);//Slow down the robot
             //double turn = gamepad1.right_trigger - gamepad1.left_trigger;
             if(gamepad1.b){
                 turn = 0.9;
             } else if(gamepad1.x) {
                 turn = -0.9;
             } else {
-                turn = 0;
+                turn = 0.0;
             }
             h *= speedChange;
             turn *= speedChange;
-            final double v1 = h * Math.cos(robotAngle) * maxSpeed + turn;
-            final double v2 = h * Math.sin(robotAngle) * maxSpeed + turn;
-            final double v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
-            final double v4 = h * Math.cos(robotAngle) * maxSpeed - turn;
+            v1 = h * Math.cos(robotAngle) * maxSpeed + turn;
+            v2 = h * Math.sin(robotAngle) * maxSpeed + turn;
+            v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
+            v4 = h * Math.cos(robotAngle) * maxSpeed - turn;
 
 
             chassis.leftFront.setPower(v1);
@@ -151,23 +163,23 @@ public class OpMode_Linear extends LinearOpMode {
             //leftDrive.setPower(leftPower);
             //rightDrive.setPower(rightPower);
 
-            double functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
+            functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
             if(gamepad2.dpad_up) {
-                lifterPower = 1;
+                lifterPower = 1.0;
             } else if(gamepad2.dpad_down) {
-                lifterPower = -1;
+                lifterPower = -1.0;
             } else {
-                lifterPower = 0;
+                lifterPower = 0.0;
             }
             function.lifter.setPower(functionSpeedChange*lifterPower);
 
-            double grabberPower;
+
             if (gamepad2.x) {
-                grabberPower = .5;
+                grabberPower = -0.5;
             } else if (gamepad2.b) {
-                grabberPower = -.5;
+                grabberPower = 0.5;
             } else {
-                grabberPower = 0;
+                grabberPower = 0.0;
             }
             function.grabber.setPower(functionSpeedChange*grabberPower);
 
