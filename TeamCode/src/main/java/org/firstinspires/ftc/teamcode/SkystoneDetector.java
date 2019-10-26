@@ -72,9 +72,6 @@ public class SkystoneDetector extends DogeCVDetector {
         input.release();
 
 
-        Rect rectCrop = new Rect(20, 20, 50, 100);//look at https://stackoverflow.com/questions/35666255/get-a-sub-image-using-opencv-java
-        Mat cropMat = new Mat(workingMat, rectCrop);
-
 
         // Create an HSV copy of workingMat and detect the yellow "Hue".
         Imgproc.cvtColor(workingMat, workingMatHsv, Imgproc.COLOR_RGB2HSV);
@@ -87,6 +84,10 @@ public class SkystoneDetector extends DogeCVDetector {
         // either one or zero. This is sometimes called a "binary image" or
         // simply "a mask".
         Core.inRange(workingMatHsv, lowerYellow, upperYellow, maskYellow);
+
+
+        Rect rectCrop = new Rect(20, 20, 50, 100);//look at https://stackoverflow.com/questions/35666255/get-a-sub-image-using-opencv-java
+        Mat cropMask = new Mat(maskYellow, rectCrop);
 
         // Now we take our grayscale maskYellow image and create an RGB image.
         Imgproc.cvtColor(maskYellow, displayMat, Imgproc.COLOR_GRAY2RGB);

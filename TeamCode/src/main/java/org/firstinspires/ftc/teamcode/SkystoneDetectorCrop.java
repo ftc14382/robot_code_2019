@@ -84,8 +84,8 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         } //Skystone
         else if(detectorType == 1) {
             //Define upper and lower range of color
-            lowerMask = new Scalar(350, 50, 50);
-            upperMask = new Scalar(10, 250, 250);
+            lowerMask = new Scalar(11, 50, 40);//The color red is 0 hue so we either have to create two masks or find all of the non-red and invert it
+            upperMask = new Scalar(349, 255, 255);//The range that these masks create is all the color that is not red
             //Define what area we are cropping
             cropX = 0;
             cropY = 0;
@@ -94,8 +94,8 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         } //Red foundation
         else if(detectorType == 2) {
             //Define upper and lower range of color
-            lowerMask = new Scalar(230, 50, 50);
-            upperMask = new Scalar(250, 250, 250);
+            lowerMask = new Scalar(225, 50, 19);
+            upperMask = new Scalar(260, 255, 250);
             //Define what area we are cropping
             cropX = 0;
             cropY = 0;
@@ -118,20 +118,20 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
         //Invert and crop
         Rect rectCrop = new Rect(cropX, cropY, cropWidth, cropHeight);//look at https://stackoverflow.com/questions/35666255/get-a-sub-image-using-opencv-java
-        if(detectorType == 0) {
+        if(detectorType == 0 || detectorType == 1) {
             Mat reverseMask = new Mat();
             Core.bitwise_not(maskYellow, reverseMask);//Invert mask
             cropMask = new Mat(reverseMask, rectCrop);//Crop mask
 
             // Now we take our grayscale maskYellow image and create an RGB image.
             Imgproc.cvtColor(reverseMask, displayMat, Imgproc.COLOR_GRAY2RGB);
-        }//For skystone
+        }//For skystone and red foundation
         else {
             cropMask = new Mat(maskYellow, rectCrop);//Crop mask
 
             // Now we take our grayscale maskYellow image and create an RGB image.
             Imgproc.cvtColor(maskYellow, displayMat, Imgproc.COLOR_GRAY2RGB);
-        }//For foundations
+        }//For blue foundations
 
 
 

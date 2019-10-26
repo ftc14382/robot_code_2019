@@ -57,30 +57,21 @@ import javax.sql.RowSetEvent;
 //@Disabled
 public class OpMode_Linear extends LinearOpMode {
     public Mecanum chassis;
-    public DcMotor lifter;
+    public Function function;
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
-        lifter = hardwareMap.get(DcMotor.class, "lifter");
+        function = new Function();
         telemetry.addData(":)", "Initialized");
         telemetry.update();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        chassis.leftFront  = hardwareMap.get(DcMotor.class, "left_front");
-        chassis.leftBack = hardwareMap.get(DcMotor.class, "left_back");
-        chassis.rightFront = hardwareMap.get(DcMotor.class, "right_front");
-        chassis.rightBack = hardwareMap.get(DcMotor.class, "right_back");
-        lifter = hardwareMap.get(DcMotor.class, "lifter");
+
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        chassis.leftFront.setDirection(DcMotor.Direction.FORWARD);
-        chassis.leftBack.setDirection(DcMotor.Direction.FORWARD);
-        chassis.rightFront.setDirection(DcMotor.Direction.REVERSE);
-        chassis.rightBack.setDirection(DcMotor.Direction.REVERSE);
-        lifter.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -107,14 +98,39 @@ public class OpMode_Linear extends LinearOpMode {
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ; */
 
             //driving for mecanum wheels
-            double h = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) + Math.PI / 4;
-            double maxSpeed = Math.abs(Math.sin(robotAngle) * Math.sqrt(2));
-            double turn = gamepad1.right_trigger - gamepad1.left_trigger;
+            double h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
+            double robotAngle = Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
+            if(gamepad1.dpad_up) {
+                h = 1;
+                robotAngle = Math.PI * 0.75;
+            } else if(gamepad1.dpad_down) {
+                h = 1;
+                robotAngle = Math.PI * 1.75;
+            } else if(gamepad1.dpad_right) {
+                h = 1;
+                robotAngle = Math.PI * 0.25;
+            } else if(gamepad1.dpad_left) {
+                h = 1;
+                robotAngle = Math.PI * 1.25;
+            }
+            double maxSpeed = Math.abs(Math.sin(robotAngle - Math.PI / 4) * Math.sqrt(2));
+            double turn;
+            double speedChange = 1-(gamepad1.right_trigger * 0.8);//Slow down the robot
+            //double turn = gamepad1.right_trigger - gamepad1.left_trigger;
+            if(gamepad1.b){
+                turn = 0.9;
+            } else if(gamepad1.x) {
+                turn = -0.9;
+            } else {
+                turn = 0;
+            }
+            h *= speedChange;
+            turn *= speedChange;
             final double v1 = h * Math.cos(robotAngle) * maxSpeed + turn;
             final double v2 = h * Math.sin(robotAngle) * maxSpeed + turn;
             final double v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
             final double v4 = h * Math.cos(robotAngle) * maxSpeed - turn;
+
 
             chassis.leftFront.setPower(v1);
             chassis.leftBack.setPower(v2);
@@ -135,15 +151,34 @@ public class OpMode_Linear extends LinearOpMode {
             //leftDrive.setPower(leftPower);
             //rightDrive.setPower(rightPower);
 
-            double lp = gamepad2.right_trigger - gamepad2.left_trigger;
-            lifter.setPower(lp);
-            lifterPower = lp;
+            double functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
+            if(gamepad2.dpad_up) {
+                lifterPower = 1;
+            } else if(gamepad2.dpad_down) {
+                lifterPower = -1;
+            } else {
+                lifterPower = 0;
+            }
+            function.lifter.setPower(functionSpeedChange*lifterPower);
+
+            double grabberPower;
+            if (gamepad2.x) {
+                grabberPower = .5;
+            } else if (gamepad2.b) {
+                grabberPower = -.5;
+            } else {
+                grabberPower = 0;
+            }
+            function.grabber.setPower(functionSpeedChange*grabberPower);
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
             telemetry.addData("Lifter", "power (%.2f)", lifterPower);
+            telemetry.addData("Grabber","power (%.2f)", grabberPower);
+
             telemetry.update();
         }
     }
