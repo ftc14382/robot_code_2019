@@ -15,6 +15,7 @@ package org.firstinspires.ftc.teamcode;
 public class SkystoneDetectionState {
     public boolean detected       = false;
     public int     detectedState = 0;
+    public int     detectedPosition = 0;
     public String  telemetry1    = "";
     public String  telemetry2    = "";
 }
