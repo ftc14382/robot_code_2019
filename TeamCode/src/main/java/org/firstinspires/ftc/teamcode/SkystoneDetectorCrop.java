@@ -84,18 +84,18 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         } //Skystone
         else if(detectorType == 1) {
             //Define upper and lower range of color
-            lowerMask = new Scalar(11, 50, 40);//The color red is 0 hue so we either have to create two masks or find all of the non-red and invert it
-            upperMask = new Scalar(349, 255, 255);//The range that these masks create is all the color that is not red
+            lowerMask = new Scalar(10, 50, 40);//The color red is 0 hue so we either have to create two masks or find all of the non-red and invert it
+            upperMask = new Scalar(170, 255, 255);//The range that these masks create is all the color that is not red
             //Define what area we are cropping
             cropX = 0;
             cropY = 0;
             cropWidth = 480;
             cropHeight = 640;
-        } //Red foundation
+        } //Red foundation(hue value is from 0-180)
         else if(detectorType == 2) {
             //Define upper and lower range of color
-            lowerMask = new Scalar(225, 50, 19);
-            upperMask = new Scalar(260, 255, 250);
+            lowerMask = new Scalar(110, 50, 19);
+            upperMask = new Scalar(130, 255, 250);
             //Define what area we are cropping
             cropX = 0;
             cropY = 0;
@@ -193,16 +193,19 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             currentDetectionState.telemetry1 = "Skystone found!";
             currentDetectionState.telemetry2 = "" + detectedY;
             currentDetectionState.detected = true;
+            currentDetectionState.detectedPosition = detectedY;
         }
         else if((detectorType == 1 || detectorType == 2) && maxAreaCrop > 700) {
             currentDetectionState.telemetry1 = "Foundation found!";
             currentDetectionState.telemetry2 = "" + detectedY;
             currentDetectionState.detected = true;
+            currentDetectionState.detectedPosition = detectedY;
         }
         else{
             currentDetectionState.telemetry1 = "Nothing to see here.";
             currentDetectionState.telemetry2 = "";
             currentDetectionState.detected = false;
+            currentDetectionState.detectedPosition = 0;
         }
         // This gets displayMat back to the portrait mode that the rest of the pipeline is expecting.
         Core.transpose(displayMat,displayMat);
