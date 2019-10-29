@@ -112,23 +112,30 @@ public class OpMode_Linear extends LinearOpMode {
 
             //driving for mecanum wheels
             h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            robotAngle = Math.atan2(gamepad1.right_stick_x, gamepad1.right_stick_y) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
+            v1 = gamepad1.right_stick_y-gamepad1.right_stick_x;
+            v2 = gamepad1.right_stick_x + gamepad1.right_stick_y;
+            //robotAngle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
             if(gamepad1.dpad_up) {
                 h = 1;
-                robotAngle = Math.PI * 0.75;
+                //robotAngle = Math.PI * 0.75;
+                v1 = 1;
+                v2 = 1;
             } else if(gamepad1.dpad_down) {
                 h = 1;
-                robotAngle = Math.PI * 1.75;
+                //robotAngle = Math.PI * 1.75;
+                v1 = -1;
+                v2 = -1;
             } else if(gamepad1.dpad_right) {
                 h = 1;
-                robotAngle = Math.PI * 0.25;
+                //robotAngle = Math.PI * 0.25;
+                v1 = -1;
+                v2 = 1;
             } else if(gamepad1.dpad_left) {
                 h = 1;
-                robotAngle = Math.PI * 1.25;
+                //robotAngle = Math.PI * 1.25;
+                v1 = 1;
+                v2 = -1;
             }
-            maxSpeed = Math.abs(Math.sin(robotAngle - Math.PI / 4) * Math.sqrt(2));
-            speedChange = 1-(gamepad1.right_trigger * 0.8);//Slow down the robot
-            //double turn = gamepad1.right_trigger - gamepad1.left_trigger;
             if(gamepad1.b){
                 turn = 0.9;
             } else if(gamepad1.x) {
@@ -136,12 +143,26 @@ public class OpMode_Linear extends LinearOpMode {
             } else {
                 turn = 0.0;
             }
+            speedChange = 1-(gamepad1.right_trigger * 0.8);//Slow down the robot
+            v4 = v1 + turn;
+            v1 = v1 - turn;
+            v3 = v2 + turn;
+            v2 = v2 - turn;
+            maxSpeed = Math.max(Math.abs(v1), Math.abs(v2));
+            maxSpeed = Math.max(maxSpeed, Math.abs(v3));
+            maxSpeed = Math.max(maxSpeed, Math.abs(v4));
+            v1 = v1/maxSpeed*h*speedChange;
+            v2 = v2/maxSpeed*h*speedChange;
+            v3 = v3/maxSpeed*h*speedChange;
+            v4 = v4/maxSpeed*h*speedChange;
+            /*maxSpeed = Math.abs(Math.sin(robotAngle - Math.PI / 4) * Math.sqrt(2));
+            //double turn = gamepad1.right_trigger - gamepad1.left_trigger;
             h *= speedChange;
             turn *= speedChange;
             v1 = h * Math.cos(robotAngle) * maxSpeed + turn;
             v2 = h * Math.sin(robotAngle) * maxSpeed + turn;
             v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
-            v4 = h * Math.cos(robotAngle) * maxSpeed - turn;
+            v4 = h * Math.cos(robotAngle) * maxSpeed - turn;*/
 
 
             chassis.leftFront.setPower(v1);
