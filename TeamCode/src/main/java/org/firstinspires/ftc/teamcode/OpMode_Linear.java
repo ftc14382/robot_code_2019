@@ -112,8 +112,8 @@ public class OpMode_Linear extends LinearOpMode {
 
             //driving for mecanum wheels
             h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            v1 = gamepad1.right_stick_y-gamepad1.right_stick_x;
-            v2 = gamepad1.right_stick_x + gamepad1.right_stick_y;
+            v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
+            v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
             //robotAngle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
             if(gamepad1.dpad_up) {
                 h = 1;
@@ -128,18 +128,20 @@ public class OpMode_Linear extends LinearOpMode {
             } else if(gamepad1.dpad_right) {
                 h = 1;
                 //robotAngle = Math.PI * 0.25;
-                v1 = -1;
-                v2 = 1;
+                v1 = 1;
+                v2 = -1;
             } else if(gamepad1.dpad_left) {
                 h = 1;
                 //robotAngle = Math.PI * 1.25;
-                v1 = 1;
-                v2 = -1;
+                v1 = -1;
+                v2 = 1;
             }
             if(gamepad1.b){
-                turn = 0.9;
+                turn = -0.8;
+                h = 1;
             } else if(gamepad1.x) {
-                turn = -0.9;
+                turn = 0.8;
+                h = 1;
             } else {
                 turn = 0.0;
             }
@@ -163,6 +165,13 @@ public class OpMode_Linear extends LinearOpMode {
             v2 = h * Math.sin(robotAngle) * maxSpeed + turn;
             v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
             v4 = h * Math.cos(robotAngle) * maxSpeed - turn;*/
+
+            if(gamepad1.left_stick_x != 0){//Normal, 2 wheeled drive
+                v1=-gamepad1.left_stick_y+gamepad1.left_stick_x;
+                v2=v1;
+                v3=-gamepad1.left_stick_y-gamepad1.left_stick_x;
+                v4=v3;
+            }
 
 
             chassis.leftFront.setPower(v1);
@@ -209,6 +218,7 @@ public class OpMode_Linear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
+            telemetry.addData("Position", "left front (%d), left back (%d), right front (%d), right back (%d)", chassis.leftBack.getCurrentPosition(), chassis.leftFront.getCurrentPosition(), chassis.rightFront.getCurrentPosition(), chassis.rightBack.getCurrentPosition());
             telemetry.addData("Lifter", "power (%.2f)", lifterPower);
             telemetry.addData("Grabber","power (%.2f)", grabberPower);
 
