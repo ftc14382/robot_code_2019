@@ -61,7 +61,7 @@ public class OpMode_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
-        chassis.init(hardwareMap, this);
+        chassis.init(hardwareMap, this, false);
         function = new Function();
         function.init(hardwareMap);
         telemetry.addData(":)", "Initialized");
@@ -166,7 +166,7 @@ public class OpMode_Linear extends LinearOpMode {
             v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
             v4 = h * Math.cos(robotAngle) * maxSpeed - turn;*/
 
-            if(gamepad1.left_stick_x != 0){//Normal, 2 wheeled drive
+            if(gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0){//Normal, 2 wheeled drive
                 v1=-gamepad1.left_stick_y+gamepad1.left_stick_x;
                 v2=v1;
                 v3=-gamepad1.left_stick_y-gamepad1.left_stick_x;
@@ -197,7 +197,7 @@ public class OpMode_Linear extends LinearOpMode {
             if(gamepad2.dpad_up) {
                 lifterPower = 1.0;
             } else if(gamepad2.dpad_down) {
-                lifterPower = -1.0;
+                lifterPower = -0.7;
             } else {
                 lifterPower = 0.0;
             }
