@@ -29,12 +29,16 @@ public class Mecanum {
     //(WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    static final double COUNTS_PER_INCH = 1;
-    static final double COUNTS_PER_DEGREE = 1;
+    static final double COUNTS_PER_INCH_FORWARD = 30.36;
+    static final double COUNTS_PER_INCH_SIDE = 32.29;
+    static final double COUNTS_PER_DEGREE = 4.79;
 
-    public void init(HardwareMap ahwMap, LinearOpMode Arobot) {
+    public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
         robot = Arobot;
-        iMU.init(ahwMap, Arobot);
+        if(useIMU) {
+            iMU = new IMU();
+            iMU.init(ahwMap, Arobot);
+        }
         leftFront = ahwMap.get(DcMotor.class, "left_front");
         leftBack = ahwMap.get(DcMotor.class, "left_back");
         rightFront = ahwMap.get(DcMotor.class, "right_front");
@@ -61,10 +65,10 @@ public class Mecanum {
         int rFTarget;
         int rBTarget;
         if(robot.opModeIsActive()) {
-            lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-            lBTarget = leftBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-            rFTarget = rightFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-            rBTarget = rightBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
+            lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
+            lBTarget = leftBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
+            rFTarget = rightFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
+            rBTarget = rightBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
 
             leftFront.setTargetPosition(lFTarget);
             leftBack.setTargetPosition(lBTarget);
@@ -82,7 +86,7 @@ public class Mecanum {
             rightBack.setPower(dir);
 
         }
-        robot.telemetry.addData("Path", "Running forwards %2d inches", distance);
+        robot.telemetry.addData("Path", "Running forwards %.2f inches", distance);
         robot.telemetry.update();
         while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) {
             robot.telemetry.addData("Path", "Running. . .");
@@ -128,7 +132,7 @@ public class Mecanum {
 
         }
 
-        robot.telemetry.addData("Path", "Turning %7d degrees", degrees);
+        robot.telemetry.addData("Path", "Turning %.2f degrees", degrees);
         robot.telemetry.update();
 
 
@@ -156,10 +160,10 @@ public class Mecanum {
         int rFTarget;
         int rBTarget;
         if(robot.opModeIsActive()) {
-            lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
-            lBTarget = leftBack.getCurrentPosition() - (int)(distance * COUNTS_PER_INCH);
-            rFTarget = rightFront.getCurrentPosition() - (int)(distance * COUNTS_PER_INCH);
-            rBTarget = rightBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH);
+            lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_SIDE);
+            lBTarget = leftBack.getCurrentPosition() - (int)(distance * COUNTS_PER_INCH_SIDE);
+            rFTarget = rightFront.getCurrentPosition() - (int)(distance * COUNTS_PER_INCH_SIDE);
+            rBTarget = rightBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_SIDE);
 
             leftFront.setTargetPosition(lFTarget);
             leftBack.setTargetPosition(lBTarget);
@@ -177,7 +181,7 @@ public class Mecanum {
             rightBack.setPower(dir);
 
         }
-            robot.telemetry.addData("Path", "Moving %2d inches sideways", distance);
+            robot.telemetry.addData("Path", "Moving %.2f inches sideways", distance);
             robot.telemetry.update();
 
             while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()){
@@ -245,7 +249,7 @@ public class Mecanum {
     }
 
     public double getIMUAngle() {
-        return -iMU.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        return iMU.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
     }
 
     public double getIMUField() {
@@ -267,7 +271,7 @@ public class Mecanum {
             robot.telemetry.addData("Path", "Moving towards %2d, %2d", upInches, rightInches);
             robot.telemetry.update();
             while (robot.opModeIsActive() &&
-                    leftFront.getCurrentPosition() < distance * COUNTS_PER_INCH) {
+                    leftFront.getCurrentPosition() < distance * COUNTS_PER_INCH_FORWARD) {
                 robot.telemetry.addData("Path", "Running. . .");
                 robot.telemetry.update();
             }
