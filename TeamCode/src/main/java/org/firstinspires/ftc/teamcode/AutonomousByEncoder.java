@@ -13,7 +13,7 @@ public class AutonomousByEncoder extends LinearOpMode{
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
-        chassis.init(hardwareMap, this);
+        chassis.init(hardwareMap, this, true);
         telemetry.addData(":)", "Initialized");
         telemetry.update();
 
@@ -24,9 +24,11 @@ public class AutonomousByEncoder extends LinearOpMode{
 
         waitForStart();
 
-        chassis.simpleDrive(12, 1);
-        chassis.turn(90, 1);
-        chassis.sideDrive(12, 1);
+        chassis.simpleDrive(3, 1);
+        chassis.sideDrive(40, 1);
+
+        //chassis.turn(90, 1);
+        //chassis.sideDrive(12, 1);
         //encoderDrive(36.0, 36.0, 30.0);
     }
 
