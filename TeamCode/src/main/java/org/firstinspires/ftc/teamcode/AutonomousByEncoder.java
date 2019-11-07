@@ -22,6 +22,8 @@ public class AutonomousByEncoder extends LinearOpMode{
     private Position bl1 = new Position();
     private Position bl2 = new Position();
     private Position bl3 = new Position();
+    private Position backup = new Position();
+    private Position side = new Position();
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
@@ -56,9 +58,13 @@ public class AutonomousByEncoder extends LinearOpMode{
         bl2.y = bl2SetUp.y;
         bl3.x = bl1.x;
         bl3.y = bl3SetUp.y;
+        backup.x = 61;
+        side.x = 61;
+        side.y = 12;
+
+        chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
         telemetry.addData(":)", "Initialized");
-
         telemetry.addData("Ready", "Starting at %7d :%7d",
                 chassis.leftFront.getCurrentPosition(),
                 chassis.rightFront.getCurrentPosition());
@@ -83,22 +89,25 @@ public class AutonomousByEncoder extends LinearOpMode{
 
 
         if(detectionState.detectedState == 1) {
-            chassis.driveTo(robotInfo,bl1SetUp);
+            chassis.quickDrive(robotInfo,bl1SetUp);
             chassis.driveTo(robotInfo,bl1);
+            backup.y = bl1.y;
         } else if(detectionState.detectedState == 2) {
-            chassis.driveTo(robotInfo,bl2SetUp);
-            chassis.driveTo(robotInfo,bl2);
+            chassis.quickDrive(robotInfo,bl2SetUp);
+            chassis.driveTo(robotInfo,bl2);chassis.driveTo(robotInfo,bl1);
+            backup.y = bl2.y;
         } else if(detectionState.detectedState == 3){
-            chassis.driveTo(robotInfo,bl3SetUp);
-            chassis.driveTo(robotInfo,bl3);
+            chassis.quickDrive(robotInfo,bl3SetUp);
+            chassis.driveTo(robotInfo,bl3);chassis.driveTo(robotInfo,bl1);
+            backup.y = bl3.y;
         }
 
         function.grabber.setPower(0.8);
         sleep(900);
         function.grabber.setPower(-0.5);
 
-        chassis.simpleDrive(-19, 1);
-        chassis.sideDrive(33, 1);
+        chassis.quickDrive(robotInfo, backup);
+        chassis.quickDrive(robotInfo, side);
 
 
         //chassis.simpleDrive(3, 1);
