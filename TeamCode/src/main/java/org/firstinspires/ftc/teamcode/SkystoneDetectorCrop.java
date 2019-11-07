@@ -77,10 +77,10 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             lowerMask = new Scalar(20, 50, 50);
             upperMask = new Scalar(40, 255, 255);
             //Define what area we are cropping
-            cropX = 160;
-            cropY = 0;
-            cropWidth = 100;
-            cropHeight = 640;
+            cropX = 0;
+            cropY = 270;//Was 160
+            cropWidth = 480;
+            cropHeight = 100;
         } //Skystone
         else if(detectorType == 1) {
             //Define upper and lower range of color
@@ -99,8 +99,8 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             //Define what area we are cropping
             cropX = 0;
             cropY = 0;
-            cropWidth = 480;
-            cropHeight = 640;
+            cropWidth = 640;
+            cropHeight = 480;
         } //Blue foundation
 
 
@@ -153,7 +153,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         //Initialize variables
         double areaCrop;
         double maxAreaCrop = 0.0;
-        int detectedY=0;
+        int detectedX=0;
         Imgproc.findContours(cropMask, contoursColor, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);//Find contours
         for (MatOfPoint c : contoursColor) {
             areaCrop = Imgproc.contourArea(c);//Detect biggest yellow area
@@ -161,24 +161,15 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                 maxAreaCrop = areaCrop;
                 greatestContour.clear();
                 greatestContour.add(c);//Make sure we are only selecting one countour
-                detectedY = (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2);//Middle of selected area
-                circleCenter = new Point((int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2), detectedY);//Create point for the center of the selected image
+                detectedX = (int)(Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width/2);//Middle of selected area
+                circleCenter = new Point(detectedX, (int)(Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height/2));//Create point for the center of the selected image
             }
         }
         Imgproc.circle(displayCrop, circleCenter, 3, new Scalar(250, 10,10), -1);//Draw circle in middle of slected area
-
-
-
-
-
         //Draw contour with the biggest area in green
         Imgproc.drawContours(displayCrop, greatestContour, -1, new Scalar(30, 250, 60), 2);
-
-
-
         // Get the size (width, height) of the image.
         imageSize = displayMat.size();
-
 
         //Draw box around selected area in blue
         Imgproc.line(displayMat, topLeft, topRight, new Scalar(30, 30, 250), 3);
@@ -187,23 +178,33 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         Imgproc.line(displayMat, bottomRight, topRight, new Scalar(30, 30, 250), 3);
 
 
+        if(detectedX < 270 && detectedX>190 && detectorType == 0) {
+            currentDetectionState.detectedState = 1;
+        }
+        else if(detectedX < 390 && detectedX > 310 && detectorType == 0) {
+            currentDetectionState.detectedState = 2;
+        }
+        else if(detectedX < 150 && detectedX > 60 && detectorType == 0) {
+            currentDetectionState.detectedState = 3;
+        }
+
 
         // If we detect something, we update currentDetectionState.
-        if(detectorType == 0 && (maxAreaCrop<40000 && maxAreaCrop>18000)) {
+        if(detectorType == 0 && (maxAreaCrop<50000 && maxAreaCrop>9000)) {
             currentDetectionState.telemetry1 = "Skystone found!";
-            currentDetectionState.telemetry2 = "" + detectedY;
+            currentDetectionState.telemetry2 = detectedX + "," + maxAreaCrop;
             currentDetectionState.detected = true;
-            currentDetectionState.detectedPosition = detectedY;
+            currentDetectionState.detectedPosition = detectedX;
         }
         else if((detectorType == 1 || detectorType == 2) && maxAreaCrop > 700) {
             currentDetectionState.telemetry1 = "Foundation found!";
-            currentDetectionState.telemetry2 = "" + detectedY;
+            currentDetectionState.telemetry2 = "" + detectedX;
             currentDetectionState.detected = true;
-            currentDetectionState.detectedPosition = detectedY;
+            currentDetectionState.detectedPosition = detectedX;
         }
         else{
             currentDetectionState.telemetry1 = "Nothing to see here.";
-            currentDetectionState.telemetry2 = "";
+            currentDetectionState.telemetry2 = "M.A.C." + maxAreaCrop;
             currentDetectionState.detected = false;
             currentDetectionState.detectedPosition = 0;
         }

@@ -200,10 +200,135 @@ public class Mecanum {
 
     }
 
-    public void driveTo(RobotInfo r, Position p, boolean brake) {
+    public void driveTo(RobotInfo r, Position p/*, boolean brake*/) {
         double deltaX = p.x - r.x;
         double deltaY = p.y - r.y;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double theta = Math.atan2(deltaY, deltaX);
+        double turn = Math.toDegrees(theta) - r.degrees;
+
+        double startIMUangle = getIMUAngle();//for loging
+        double IMUTurned;
+
+        //RobotLog.ii(Tag, "driveTo: initial(x,y,degrees): %.2f, %.2f, %.2f", r.x, r.y, r.degrees);
+        //RobotLog.ii(Tag, "driveTo: target(x,y,degrees): %.2f, %.2f", p.x, p.y);
+
+        if (turn > 180) {
+            turn -= 360;
+        }
+        if (turn < -180) {
+            turn += 360;
+        }
+        //RobotLog.ii(Tag, "DriveTo: comanded angle: %.2f", turn);
+        /*if(brake == true) {
+            robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }*/
+
+
+        turn(turn, 0.5);
+        simpleDrive(distance, 0.7);
+
+        /*if(brake == true) {
+            robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }*/
+        IMUTurned = getIMUField();
+
+        r.x = p.x;
+        r.y = p.y;
+        if(Math.abs(IMUTurned - Math.toDegrees(theta)) < 9) {
+            r.degrees = getIMUField();
+        } else {
+            r.degrees = Math.toDegrees(theta);
+        }
+
+        /*telemetry.addData("RobotX:", r.x);
+        telemetry.addData("RobotY", r.y);
+        telemetry.addData("Robot Heading", r.degrees);*/
+        //RobotLog.ii(Tag, "DriveTo: turned IMU angle: %.2f", getIMUAngle() - startIMUangle);
+    }
+
+    public void quickDrive(RobotInfo r, Position p/*, boolean brake*/) {
+        double deltaX = p.x - r.x;
+        double deltaY = p.y - r.y;
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double theta = Math.atan2(deltaY, deltaX);
+        double turn = Math.toDegrees(theta) - r.degrees;
+        double turnBack;
+        double turnSide;
+
+        double startIMUangle = getIMUAngle();//for loging
+        double IMUTurned;
+
+        //RobotLog.ii(Tag, "driveTo: initial(x,y,degrees): %.2f, %.2f, %.2f", r.x, r.y, r.degrees);
+        //RobotLog.ii(Tag, "driveTo: target(x,y,degrees): %.2f, %.2f", p.x, p.y);
+
+        //Make sure the robot isn't turing more than 180
+        if (turn > 180) {
+            turn -= 360;
+        }
+        if (turn < -180) {
+            turn += 360;
+        }
+
+        //Calculate values
+        turnBack = turn - 180;
+        turnSide = turn - 90;
+        //Go backwards
+        if (turnBack > 180) {
+            turnBack -= 360;
+        } else if (turnBack < -180) {
+            turnBack += 360;
+        }
+        if(Math.abs(turnBack) < 30){
+            turn = turnBack;
+            distance *= -1;
+        }
+
+        //Go sideways
+        if (turnSide > 90) {
+            turnSide -= 180;
+        } else if (turnSide < -90) {
+            turnSide += 180;
+        }
+        if(Math.abs(turnSide) < 20){
+            turn = turnSide;
+            distance = 0;
+        }
+
+        //RobotLog.ii(Tag, "DriveTo: comanded angle: %.2f", turn);
+        /*if(brake == true) {
+            robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }*/
+
+
+        turn(turn, 1);//was 0.5
+        simpleDrive(distance, 1);//was 0.7
+        if(Math.abs(turnSide) < 20) {
+            sideDrive(distance, 1);
+        }
+
+        /*if(brake == true) {
+            robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }*/
+        IMUTurned = getIMUField();
+
+        r.x = p.x;
+        r.y = p.y;
+        r.degrees = getIMUField();
+
+        /*telemetry.addData("RobotX:", r.x);
+        telemetry.addData("RobotY", r.y);
+        telemetry.addData("Robot Heading", r.degrees);*/
+        //RobotLog.ii(Tag, "DriveTo: turned IMU angle: %.2f", getIMUAngle() - startIMUangle);
+    }
+
+    public void turnTo(RobotInfo r, Position p) {
+        double deltaX = p.x - r.x;
+        double deltaY = p.y - r.y;
         double theta = Math.atan2(deltaY, deltaX);
         double turn = Math.toDegrees(theta) - r.degrees;
         double startIMUangle = getIMUAngle();//for loging
@@ -226,7 +351,6 @@ public class Mecanum {
 
 
         turn(turn, 0.5);
-        simpleDrive(distance, 0.7);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
