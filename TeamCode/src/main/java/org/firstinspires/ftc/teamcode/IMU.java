@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class IMU {
     // The IMU sensor object
     BNO055IMU imu;
-    public double startIMUOffset;
+    public double startIMUOffset = 0;
 
 
 
