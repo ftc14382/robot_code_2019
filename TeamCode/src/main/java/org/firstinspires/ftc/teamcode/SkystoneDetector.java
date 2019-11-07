@@ -46,7 +46,7 @@ public class SkystoneDetector extends DogeCVDetector {
     // We constantly get new frames and we keep track of the last or last few detections.
     //
     // The input image is, oddly enough, named "input".
-    // We can do anything that we want in the proces function as long as we return an image
+    // We can do anything that we want in the process function as long as we return an image
     // that is the same size as input. We can put whatever we want on the image that we
     // return.
     //
