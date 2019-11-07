@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import javax.sql.RowSetEvent;
 
@@ -136,7 +137,7 @@ public class OpMode_Linear extends LinearOpMode {
                 v1 = -1;
                 v2 = 1;
             }
-            if(gamepad1.b){
+            if(gamepad1.b) {
                 turn = -0.8;
                 h = 1;
             } else if(gamepad1.x) {
