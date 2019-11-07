@@ -47,7 +47,7 @@ public class StoneDetectionExample extends LinearOpMode {
         camSensor = new CamSensor();
         camSensor.init(hardwareMap);
 
-        camSensor.detector.detectorType = 2;//0=Skyston, 1=Red foundation, 2=Blue foundation
+        camSensor.detector.detectorType = 0;//0=Skyston, 1=Red foundation, 2=Blue foundation
 
         waitForStart();
 
