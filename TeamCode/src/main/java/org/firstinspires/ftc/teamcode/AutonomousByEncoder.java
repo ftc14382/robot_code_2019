@@ -24,6 +24,8 @@ public class AutonomousByEncoder extends LinearOpMode{
     private Position bl3 = new Position();
     private Position backup = new Position();
     private Position side = new Position();
+    private Position leave = new Position();
+    private Position line = new Position();
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
@@ -61,6 +63,11 @@ public class AutonomousByEncoder extends LinearOpMode{
         backup.x = 61;
         side.x = 61;
         side.y = 12;
+        leave.x = 61;
+        leave.y = 19;
+        line.x = 60;
+        line.y = 0;
+
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
@@ -102,12 +109,24 @@ public class AutonomousByEncoder extends LinearOpMode{
             backup.y = bl3.y;
         }
 
-        function.grabber.setPower(0.8);
+        //grab block
+        function.grabber.setPower(-0.8);
         sleep(900);
         function.grabber.setPower(-0.5);
-
+        //raise lifter slightly
+        function.lifter.setPower(1);
+        sleep(90);
+        function.lifter.setPower(0);
+        //Drive to other side
         chassis.quickDrive(robotInfo, backup);
         chassis.quickDrive(robotInfo, side);
+        //release skystone
+        function.grabber.setPower(0.8);
+        sleep(900);
+        function.grabber.setPower(0);
+        chassis.turnTo(robotInfo, leave);
+        //park on line
+        chassis.quickDrive(robotInfo, line);
 
 
         //chassis.simpleDrive(3, 1);
