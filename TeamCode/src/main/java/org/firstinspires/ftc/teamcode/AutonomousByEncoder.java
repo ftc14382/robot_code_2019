@@ -63,9 +63,9 @@ public class AutonomousByEncoder extends LinearOpMode{
         backup.x = 61;
         side.x = 61;
         side.y = 12;
-        leave.x = 61;
+        leave.x = 60.5;
         leave.y = 19;
-        line.x = 60;
+        line.x = 61;
         line.y = 0;
 
 
@@ -81,7 +81,7 @@ public class AutonomousByEncoder extends LinearOpMode{
 
         chassis.driveTo(robotInfo, forward);
         chassis.turnTo(robotInfo, turntoPosition);
-        sleep(500);
+        sleep(900);
 
         //For Camera
         detectionState = camSensor.detector.currentDetectionState;
@@ -101,11 +101,11 @@ public class AutonomousByEncoder extends LinearOpMode{
             backup.y = bl1.y;
         } else if(detectionState.detectedState == 2) {
             chassis.quickDrive(robotInfo,bl2SetUp);
-            chassis.driveTo(robotInfo,bl2);chassis.driveTo(robotInfo,bl1);
+            chassis.driveTo(robotInfo,bl2);
             backup.y = bl2.y;
         } else if(detectionState.detectedState == 3){
             chassis.quickDrive(robotInfo,bl3SetUp);
-            chassis.driveTo(robotInfo,bl3);chassis.driveTo(robotInfo,bl1);
+            chassis.driveTo(robotInfo,bl3);
             backup.y = bl3.y;
         }
 
