@@ -281,7 +281,7 @@ public class Mecanum {
         } else if (turnBack < -180) {
             turnBack += 360;
         }
-        if(Math.abs(turnBack) < 30){
+        if(Math.abs(turnBack) < 45){
             turn = turnBack;
             distance *= -1;
         }
@@ -292,9 +292,8 @@ public class Mecanum {
         } else if (turnSide < -90) {
             turnSide += 180;
         }
-        if(Math.abs(turnSide) < 20){
+        if(Math.abs(turnSide) < 45){
             turn = turnSide;
-            distance = 0;
         }
 
         //RobotLog.ii(Tag, "DriveTo: comanded angle: %.2f", turn);
@@ -305,9 +304,10 @@ public class Mecanum {
 
 
         turn(turn, 1);//was 0.5
-        simpleDrive(distance, 1);//was 0.7
         if(Math.abs(turnSide) < 20) {
             sideDrive(distance, 1);
+        } else {
+            simpleDrive(distance, 1);//was 0.7
         }
 
         /*if(brake == true) {
