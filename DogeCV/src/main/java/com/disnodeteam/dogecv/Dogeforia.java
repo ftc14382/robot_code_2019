@@ -141,7 +141,7 @@ public abstract class Dogeforia extends VuforiaLocalizerImpl {
                 e.printStackTrace();
             }
         } else{
-            Log.v("DogeCV", "Frame is empty. Que Size: " + getFrameQueueCapacity());
+            //Log.v("DogeCV", "Frame is empty. Que Size: " + getFrameQueueCapacity());
         }
 
     }
