@@ -359,7 +359,7 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 0.5);
+        turn(turn, 0.9);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -367,8 +367,7 @@ public class Mecanum {
         }*/
         IMUTurned = getIMUField();
 
-        r.x = p.x;
-        r.y = p.y;
+
         if(Math.abs(IMUTurned - Math.toDegrees(theta)) < 9) {
             r.degrees = getIMUField();
         } else {
