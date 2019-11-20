@@ -77,6 +77,7 @@ public class NewTeleOp extends LinearOpMode {
         double leftBackPower;
         double rightFrontPower;
         double rightBackPower;
+        double servoPosition = 0;
         //normal drive
         double h;
         double robotAngle;
@@ -145,7 +146,7 @@ public class NewTeleOp extends LinearOpMode {
                 v1 = -1;
                 v2 = 1;
             }
-            turn = (gamepad1.right_trigger - gamepad1.left_trigger);
+            turn = .8*(gamepad1.right_trigger - gamepad1.left_trigger);
             //speedChange = 1-(gamepad1.right_trigger * 0.8);//Slow down the robot
             v1 = v1;
             v2 = v2;
@@ -189,7 +190,7 @@ public class NewTeleOp extends LinearOpMode {
             v3s = (v3s / 2) * hs;
             v4s = (v4s / 2) * hs;
 
-            if (gamepad1.left_stick_x != 0 && gamepad1.left_stick_x != 0) {
+            if (gamepad1.left_stick_x != 0 && gamepad1.left_stick_y != 0) {
                 v1 = v1s;
                 v2 = v2s;
                 v3 = v3s;
@@ -263,12 +264,20 @@ public class NewTeleOp extends LinearOpMode {
             }
             function.grabber.setPower(functionSpeedChange*grabberPower);
 
+            if(gamepad2.left_bumper) {
+                servoPosition = 90;
+            } else if(gamepad2.right_bumper) {
+                servoPosition = 0;
+            }
+            function.foundMover.setPosition(servoPosition);
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
             telemetry.addData("Turn", "Turn Value: " + turn);
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
             telemetry.addData("Position", "left front (%d), left back (%d), right front (%d), right back (%d)", chassis.leftBack.getCurrentPosition(), chassis.leftFront.getCurrentPosition(), chassis.rightFront.getCurrentPosition(), chassis.rightBack.getCurrentPosition());
+            telemetry.addData("Servo", "Position %.1f", servoPosition);
             //telemetry.addData("Lifter", "power (%.2f)", lifterPower);
             //telemetry.addData("Grabber","power (%.2f)", grabberPower);
 
