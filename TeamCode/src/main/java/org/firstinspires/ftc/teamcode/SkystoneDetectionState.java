@@ -4,6 +4,8 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import org.opencv.core.Mat;
+
 //
 // detectedState should be:
 //
@@ -14,8 +16,9 @@ package org.firstinspires.ftc.teamcode;
 //
 public class SkystoneDetectionState {
     public boolean detected       = false;
-    public int     detectedState = 0;
-    public int     detectedPosition = 0;
+    public int     detectedState = 0;//1,2,3
+    public int     detectedPosition = 0;//Pixel x position
     public String  telemetry1    = "";
     public String  telemetry2    = "";
+    public Mat display;
 }
