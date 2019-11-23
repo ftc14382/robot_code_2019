@@ -277,7 +277,7 @@ public class NewTeleOp extends LinearOpMode {
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
             telemetry.addData("Position", "left front (%d), left back (%d), right front (%d), right back (%d)", chassis.leftBack.getCurrentPosition(), chassis.leftFront.getCurrentPosition(), chassis.rightFront.getCurrentPosition(), chassis.rightBack.getCurrentPosition());
-            telemetry.addData("Servo", "Position %.1f", servoPosition);
+            telemetry.addData("Servo", "Position %.2f", servoPosition);
             //telemetry.addData("Lifter", "power (%.2f)", lifterPower);
             //telemetry.addData("Grabber","power (%.2f)", grabberPower);
 
