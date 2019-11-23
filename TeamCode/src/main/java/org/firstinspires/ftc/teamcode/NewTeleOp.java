@@ -62,7 +62,7 @@ public class NewTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
-        chassis.init(hardwareMap, this, false);
+        chassis.init(hardwareMap, this, true);
         function = new Function();
         function.init(hardwareMap);
         telemetry.addData(":)", "Initialized");
@@ -100,6 +100,10 @@ public class NewTeleOp extends LinearOpMode {
         int lifterPos;
 
         int COUNTS_PER_LEVEL;
+        double startIMUAngle;
+        double offset;
+        double offsetDegrees;
+        double originalAngle;
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -107,46 +111,24 @@ public class NewTeleOp extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         chassis.runtime.reset();
+        startIMUAngle = chassis.getIMUAngle()+180;
+        originalAngle = startIMUAngle;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
-
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            /*double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ; */
-
             //driving for mecanum wheels
             h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
             v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
             //robotAngle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
-            if(gamepad1.dpad_up) {
-                h = 1;
-                //robotAngle = Math.PI * 0.75;
-                v1 = 1;
-                v2 = 1;
-            } else if(gamepad1.dpad_down) {
-                h = 1;
-                //robotAngle = Math.PI * 1.75;
-                v1 = -1;
-                v2 = -1;
-            } else if(gamepad1.dpad_right) {
-                h = 1;
-                //robotAngle = Math.PI * 0.25;
-                v1 = 1;
-                v2 = -1;
-            } else if(gamepad1.dpad_left) {
-                h = 1;
-                //robotAngle = Math.PI * 1.25;
-                v1 = -1;
-                v2 = 1;
+
+            //non trig
+            /*turn = (gamepad1.right_trigger - gamepad1.left_trigger);
+            if (gamepad1.left_bumper) {
+                turn = -.3;
+            } else if (gamepad1.right_bumper) {
+                turn = .3;
             }
-            turn = .8*(gamepad1.right_trigger - gamepad1.left_trigger);
             //speedChange = 1-(gamepad1.right_trigger * 0.8);//Slow down the robot
             v1 = v1;
             v2 = v2;
@@ -166,16 +148,38 @@ public class NewTeleOp extends LinearOpMode {
                 v3 = 0;
                 v4 = 0;
             }
-            /*maxSpeed = Math.abs(Math.sin(robotAngle - Math.PI / 4) * Math.sqrt(2));
-            //double turn = gamepad1.right_trigger - gamepad1.left_trigger;
-            //h *= speedChange;
-            //turn *= speedChange;
-            v1 = h * Math.cos(robotAngle) * maxSpeed + turn;
-            v2 = h * Math.sin(robotAngle) * maxSpeed + turn;
-            v3 = h * Math.sin(robotAngle) * maxSpeed - turn;
-            v4 = h * Math.cos(robotAngle) * maxSpeed - turn;*/
+            */
+
+            if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
+            if (gamepad1.b) startIMUAngle = originalAngle;
+
+            //trig
+            offsetDegrees = startIMUAngle-chassis.getIMUAngle();
+            offset = Math.toRadians(offsetDegrees);
+            turn = gamepad1.right_trigger - gamepad1.left_trigger;
+            h = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
+            robotAngle = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x) + offset; //+offset
+            if(gamepad1.dpad_up) {
+                h = 1;
+                robotAngle = Math.PI * .5 + offset;
+            } else if(gamepad1.dpad_down) {
+                h = 1;
+                robotAngle = Math.PI + offset;
+            } else if(gamepad1.dpad_right) {
+                h = 1;
+                robotAngle = Math.PI * 1.5 + offset;
+            } else if(gamepad1.dpad_left) {
+                h = 1;
+                robotAngle = Math.PI * 0 + offset;
+            }
+            v1 = h * (Math.sin(robotAngle) + Math.cos(robotAngle));
+            v2 = h * (Math.sin(robotAngle) - Math.cos(robotAngle));
+            v3 = v2;
+            v4 = v1;
 
             //left stick is half speed
+            //non trig
+            /*
             hs = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             v1s = -gamepad1.left_stick_y + gamepad1.left_stick_x;
             v2s = -gamepad1.left_stick_y - gamepad1.left_stick_x;
@@ -189,13 +193,22 @@ public class NewTeleOp extends LinearOpMode {
             v2s = (v2s / 2) * hs;
             v3s = (v3s / 2) * hs;
             v4s = (v4s / 2) * hs;
+            */
+            //trig
+            h = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x);
+            robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) + offset;
+            v1s = .5 * h * (Math.sin(robotAngle) + Math.cos(robotAngle));
+            v2s = .5 * h * (Math.sin(robotAngle) - Math.cos(robotAngle));
+            v3s = v2s;
+            v4s = v1s;
 
-            if (gamepad1.left_stick_x != 0 && gamepad1.left_stick_y != 0) {
+            if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
                 v1 = v1s;
                 v2 = v2s;
                 v3 = v3s;
                 v4 = v4s;
             }
+
             //set power
             chassis.leftFront.setPower(v1 + turn);
             chassis.leftBack.setPower(v2 + turn);
@@ -207,18 +220,9 @@ public class NewTeleOp extends LinearOpMode {
             leftBackPower = v2;
             rightFrontPower = v3;
             rightBackPower = v4;
-            ///.clip?
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
 
-            // Send calculated power to wheels
-            //leftDrive.setPower(leftPower);
-            //rightDrive.setPower(rightPower);
-            /*
             functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
-
+            /*
             COUNTS_PER_LEVEL = 1;
             lifterPos = function.lifter.getCurrentPosition();
             if (gamepad2.dpad_up) {
@@ -226,11 +230,11 @@ public class NewTeleOp extends LinearOpMode {
             } else if(gamepad2.dpad_down) {
                 function.lifter.setTargetPosition(lifterPos - COUNTS_PER_LEVEL);
             } else if (!function.lifter.isBusy()) {
-                function.lifter.setTargetPosition(0);
+                function.lifter.setPower(0);
             }
 
             function.lifter.setPower(1);
-
+            */
 
 
             if (gamepad2.x) {
@@ -241,7 +245,7 @@ public class NewTeleOp extends LinearOpMode {
                 grabberPower = 0.0;
             }
             function.grabber.setPower(functionSpeedChange*grabberPower);
-            */
+
 
             //normal lifter control
             functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
@@ -277,7 +281,6 @@ public class NewTeleOp extends LinearOpMode {
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
             telemetry.addData("Position", "left front (%d), left back (%d), right front (%d), right back (%d)", chassis.leftBack.getCurrentPosition(), chassis.leftFront.getCurrentPosition(), chassis.rightFront.getCurrentPosition(), chassis.rightBack.getCurrentPosition());
-            telemetry.addData("Servo", "Position %.2f", servoPosition);
             //telemetry.addData("Lifter", "power (%.2f)", lifterPower);
             //telemetry.addData("Grabber","power (%.2f)", grabberPower);
 
