@@ -22,6 +22,7 @@ public class Function {
         grabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         grabber.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        foundMover.setPosition(1);
     }
 
 }
