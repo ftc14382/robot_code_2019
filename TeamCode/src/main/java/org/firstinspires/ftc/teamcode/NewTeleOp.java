@@ -269,7 +269,7 @@ public class NewTeleOp extends LinearOpMode {
             function.grabber.setPower(functionSpeedChange*grabberPower);
 
             if(gamepad2.left_bumper) {
-                servoPosition = 90;
+                servoPosition = 1;
             } else if(gamepad2.right_bumper) {
                 servoPosition = 0;
             }
