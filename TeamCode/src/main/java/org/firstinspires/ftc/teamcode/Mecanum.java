@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -201,6 +202,8 @@ public class Mecanum {
     }
 
     public void driveTo(RobotInfo r, Position p/*, boolean brake*/) {
+        String tag = "Drive To";
+        RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
         double deltaX = p.x - r.x;
         double deltaY = p.y - r.y;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -242,6 +245,7 @@ public class Mecanum {
         } else {
             r.degrees = Math.toDegrees(theta);
         }
+        RobotLog.ii(tag, "End Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
 
         /*telemetry.addData("RobotX:", r.x);
         telemetry.addData("RobotY", r.y);
@@ -250,6 +254,8 @@ public class Mecanum {
     }
 
     public void quickDrive(RobotInfo r, Position p/*, boolean brake*/) {
+        String tag = "Quick Drive";
+        RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
         double deltaX = p.x - r.x;
         double deltaY = p.y - r.y;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -319,6 +325,7 @@ public class Mecanum {
         r.x = p.x;
         r.y = p.y;
         r.degrees = getIMUField();
+        RobotLog.ii(tag, "End Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
 
         /*telemetry.addData("RobotX:", r.x);
         telemetry.addData("RobotY", r.y);
@@ -327,6 +334,8 @@ public class Mecanum {
     }
 
     public void turnTo(RobotInfo r, Position p) {
+        String tag = "Turn to";
+        RobotLog.ii(tag, "Start Pos: %.2f", r.degrees);
         double deltaX = p.x - r.x;
         double deltaY = p.y - r.y;
         double theta = Math.atan2(deltaY, deltaX);
@@ -350,7 +359,7 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 0.5);
+        turn(turn, 0.9);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -358,13 +367,13 @@ public class Mecanum {
         }*/
         IMUTurned = getIMUField();
 
-        r.x = p.x;
-        r.y = p.y;
+
         if(Math.abs(IMUTurned - Math.toDegrees(theta)) < 9) {
             r.degrees = getIMUField();
         } else {
             r.degrees = Math.toDegrees(theta);
         }
+        RobotLog.ii(tag, "End Pos: %.2f", r.degrees);
 
         /*telemetry.addData("RobotX:", r.x);
         telemetry.addData("RobotY", r.y);

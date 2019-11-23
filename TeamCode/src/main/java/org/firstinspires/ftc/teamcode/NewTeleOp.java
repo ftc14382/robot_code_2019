@@ -77,6 +77,7 @@ public class NewTeleOp extends LinearOpMode {
         double leftBackPower;
         double rightFrontPower;
         double rightBackPower;
+        double servoPosition = 0;
         //normal drive
         double h;
         double robotAngle;
@@ -267,6 +268,13 @@ public class NewTeleOp extends LinearOpMode {
                 grabberPower = 0.0;
             }
             function.grabber.setPower(functionSpeedChange*grabberPower);
+
+            if(gamepad2.left_bumper) {
+                servoPosition = 90;
+            } else if(gamepad2.right_bumper) {
+                servoPosition = 0;
+            }
+            function.foundMover.setPosition(servoPosition);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());

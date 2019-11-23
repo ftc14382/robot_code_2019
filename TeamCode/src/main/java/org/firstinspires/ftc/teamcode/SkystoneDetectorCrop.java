@@ -24,6 +24,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
     private Mat cropMask    = new Mat();
     public SkystoneDetectionState currentDetectionState;
     public int detectorType = 0;//0=skyStone, 1=redFoundation, 2=blueFoundation
+    public int color = 0;//0=red, 1=blue
 
 
     // This is our constructor. Call the constructor on our parent.
@@ -178,15 +179,26 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         Imgproc.line(displayMat, bottomRight, topRight, new Scalar(30, 30, 250), 3);
 
 
-        if(detectedX < 270 && detectedX>190 && detectorType == 0) {
-            currentDetectionState.detectedState = 1;
-        }
-        else if(detectedX < 390 && detectedX > 310 && detectorType == 0) {
-            currentDetectionState.detectedState = 2;
-        }
-        else if(detectedX < 150 && detectedX > 60 && detectorType == 0) {
-            currentDetectionState.detectedState = 3;
-        }
+        if(color == 1 && detectorType == 0) {
+            if(detectedX > 210 && detectedX<290) {//270,190
+                currentDetectionState.detectedState = 1;
+            }
+            else if(detectedX > 90 && detectedX < 170) {//390,310
+                currentDetectionState.detectedState = 2;
+            }
+            else if(detectedX < 330 && detectedX > 420) {//150,60
+                currentDetectionState.detectedState = 3;
+            }
+        }//blue side
+        else if(color == 0) {
+            if (detectedX < 270 && detectedX > 190 && detectorType == 0) {
+                currentDetectionState.detectedState = 1;
+            } else if (detectedX < 390 && detectedX > 310 && detectorType == 0) {
+                currentDetectionState.detectedState = 2;
+            } else if (detectedX < 150 && detectedX > 60 && detectorType == 0) {
+                currentDetectionState.detectedState = 3;
+            }
+        }//Red side
 
 
         // If we detect something, we update currentDetectionState.
@@ -211,6 +223,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
         // This gets displayMat back to the portrait mode that the rest of the pipeline is expecting.
         Core.transpose(displayMat,displayMat);
         //System.out.println(ratio);
+        currentDetectionState.display = displayMat;
         return displayMat;
     }
 
