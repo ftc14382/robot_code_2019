@@ -229,8 +229,8 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 0.5);
-        simpleDrive(distance, 0.7);
+        turn(turn, 1);
+        simpleDrive(distance, 1);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -264,7 +264,7 @@ public class Mecanum {
         double turnBack;
         double turnSide;
 
-        double startIMUangle = getIMUAngle();//for loging
+        double startIMUangle = getIMUAngle();//for logging
         double IMUTurned;
 
         //RobotLog.ii(Tag, "driveTo: initial(x,y,degrees): %.2f, %.2f, %.2f", r.x, r.y, r.degrees);
@@ -289,6 +289,7 @@ public class Mecanum {
         }
 
 
+
         //Go sideways
         if (turnSide > 90) {
             turnSide -= 180;
@@ -296,11 +297,15 @@ public class Mecanum {
             turnSide += 180;
         }
         if(Math.abs(turnSide) < 45){
+            if(turn - turnSide > 0){
+                distance = -distance;
+            }
             turn = turnSide;
         } else if(Math.abs(turnBack) < 45){
             turn = turnBack;
             distance *= -1;
         }
+
 
         //RobotLog.ii(Tag, "DriveTo: comanded angle: %.2f", turn);
         /*if(brake == true) {
