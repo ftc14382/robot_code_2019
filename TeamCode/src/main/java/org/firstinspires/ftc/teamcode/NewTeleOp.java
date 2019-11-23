@@ -103,6 +103,7 @@ public class NewTeleOp extends LinearOpMode {
         double startIMUAngle;
         double offset;
         double offsetDegrees;
+        double originalAngle;
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -110,7 +111,8 @@ public class NewTeleOp extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         chassis.runtime.reset();
-        startIMUAngle = chassis.getIMUAngle();
+        startIMUAngle = chassis.getIMUAngle()+180;
+        originalAngle = startIMUAngle;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -119,27 +121,7 @@ public class NewTeleOp extends LinearOpMode {
             v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
             v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
             //robotAngle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
-            if(gamepad1.dpad_up) {
-                h = 1;
-                //robotAngle = Math.PI * 0.75;
-                v1 = 1;
-                v2 = 1;
-            } else if(gamepad1.dpad_down) {
-                h = 1;
-                //robotAngle = Math.PI * 1.75;
-                v1 = -1;
-                v2 = -1;
-            } else if(gamepad1.dpad_right) {
-                h = 1;
-                //robotAngle = Math.PI * 0.25;
-                v1 = 1;
-                v2 = -1;
-            } else if(gamepad1.dpad_left) {
-                h = 1;
-                //robotAngle = Math.PI * 1.25;
-                v1 = -1;
-                v2 = 1;
-            }
+
             //non trig
             /*turn = (gamepad1.right_trigger - gamepad1.left_trigger);
             if (gamepad1.left_bumper) {
@@ -168,12 +150,28 @@ public class NewTeleOp extends LinearOpMode {
             }
             */
 
+            if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
+            if (gamepad1.b) startIMUAngle = originalAngle;
+
             //trig
             offsetDegrees = startIMUAngle-chassis.getIMUAngle();
-            offset = offsetDegrees * (Math.PI / 180);
+            offset = Math.toRadians(offsetDegrees);
             turn = gamepad1.right_trigger - gamepad1.left_trigger;
             h = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
             robotAngle = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x) + offset; //+offset
+            if(gamepad1.dpad_up) {
+                h = 1;
+                robotAngle = Math.PI * .5 + offset;
+            } else if(gamepad1.dpad_down) {
+                h = 1;
+                robotAngle = Math.PI + offset;
+            } else if(gamepad1.dpad_right) {
+                h = 1;
+                robotAngle = Math.PI * 1.5 + offset;
+            } else if(gamepad1.dpad_left) {
+                h = 1;
+                robotAngle = Math.PI * 0 + offset;
+            }
             v1 = h * (Math.sin(robotAngle) + Math.cos(robotAngle));
             v2 = h * (Math.sin(robotAngle) - Math.cos(robotAngle));
             v3 = v2;
@@ -210,6 +208,7 @@ public class NewTeleOp extends LinearOpMode {
                 v3 = v3s;
                 v4 = v4s;
             }
+
             //set power
             chassis.leftFront.setPower(v1 + turn);
             chassis.leftBack.setPower(v2 + turn);
