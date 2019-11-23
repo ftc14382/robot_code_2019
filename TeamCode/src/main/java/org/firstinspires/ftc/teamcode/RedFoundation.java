@@ -12,7 +12,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Autonomous(name="Foundation Move(RED)", group="Linear OpMode")
 public class RedFoundation extends LinearOpMode{
@@ -23,6 +25,9 @@ public class RedFoundation extends LinearOpMode{
     private Position setUp = new Position();
     private Position turn = new Position();
     private Position foundation = new Position();
+    List<Position> foundationOutPositions = new ArrayList<>();
+    private Position templateP = new Position();
+    private Position line = new Position();
     private double changeX = 1;//1=red,-1=blue.  Change this, robotinfo, and detector.color
     @Override
     public void runOpMode() {
@@ -48,11 +53,18 @@ public class RedFoundation extends LinearOpMode{
         forward.x = 48*changeX;
         forward.y = robotInfo.y;
         setUp.x = forward.x;
-        setUp.y = 49;
+        setUp.y = 50.5;
         turn.x = setUp.x;
         turn.y = setUp.y + 5*changeX;
         foundation.y = setUp.y;
-        foundation.x = 24;
+        foundation.x = 24.5*changeX;
+        templateP.y = foundation.y;
+        for(int i=1; i<9; i ++) {
+            templateP.x = foundation.x + 5*i*changeX;
+            foundationOutPositions.add(templateP);
+        }
+        line.x = 65;
+        line.y = 0;
 
 
 
@@ -70,6 +82,13 @@ public class RedFoundation extends LinearOpMode{
         chassis.turnTo(robotInfo, turn);
         chassis.quickDrive(robotInfo, setUp);
         chassis.quickDrive(robotInfo, foundation);
+        function.foundMover.setPosition(0);
+        for(Position p : foundationOutPositions) {
+            chassis.quickDrive(robotInfo, p);
+        }
+        function.foundMover.setPosition(0.7);
+        chassis.quickDrive(robotInfo, line);
+
 
         //For Camera
         /*detectionState = new SkystoneDetectionState();
