@@ -159,23 +159,31 @@ public class NewTeleOp extends LinearOpMode {
             turn = gamepad1.right_trigger - gamepad1.left_trigger;
             h = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
             robotAngle = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x) + offset; //+offset
-            if(gamepad1.dpad_up) {
-                h = 1;
-                robotAngle = Math.PI * .5 + offset;
-            } else if(gamepad1.dpad_down) {
-                h = 1;
-                robotAngle = Math.PI + offset;
-            } else if(gamepad1.dpad_right) {
-                h = 1;
-                robotAngle = Math.PI * 1.5 + offset;
-            } else if(gamepad1.dpad_left) {
-                h = 1;
-                robotAngle = Math.PI * 0 + offset;
-            }
             v1 = h * (Math.sin(robotAngle) + Math.cos(robotAngle));
             v2 = h * (Math.sin(robotAngle) - Math.cos(robotAngle));
             v3 = v2;
             v4 = v1;
+            if(gamepad1.dpad_up) {
+               v1 = 0.5;
+               v2 = 0.5;
+               v3 = 0.5;
+               v4 = 0.5;
+            } else if(gamepad1.dpad_down) {
+                v1 = -0.5;
+                v2 = -0.5;
+                v3 = -0.5;
+                v4 = -0.5;
+            } else if(gamepad1.dpad_right) {
+                v1 = 0.5;
+                v4 = 0.5;
+                v2 = -0.5;
+                v3 = -0.5;
+            } else if(gamepad1.dpad_left) {
+                v1 = -0.5;
+                v4 = -0.5;
+                v2 = 0.5;
+                v3 = 0.5;
+            }
 
             //left stick is half speed
             //non trig
@@ -238,9 +246,9 @@ public class NewTeleOp extends LinearOpMode {
 
 
             if (gamepad2.x) {
-                grabberPower = -0.5;
+                grabberPower = -0.5 - gamepad2.left_trigger*0.5;
             } else if (gamepad2.b) {
-                grabberPower = 0.5;
+                grabberPower = 0.5 + gamepad2.left_trigger*0.5;
             } else {
                 grabberPower = 0.0;
             }
@@ -258,15 +266,7 @@ public class NewTeleOp extends LinearOpMode {
             }
             function.lifter.setPower(functionSpeedChange*lifterPower);
 
-            grabberPower = gamepad2.left_trigger - gamepad2.right_trigger;
-            if (gamepad2.x) {
-                grabberPower = -0.5;
-            } else if (gamepad2.b) {
-                grabberPower = 0.5;
-            } else {
-                grabberPower = 0.0;
-            }
-            function.grabber.setPower(functionSpeedChange*grabberPower);
+            
 
             if(gamepad2.left_bumper) {
                 servoPosition = 1;
