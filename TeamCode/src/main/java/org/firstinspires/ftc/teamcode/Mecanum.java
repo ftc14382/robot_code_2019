@@ -105,7 +105,7 @@ public class Mecanum {
 
     }
 
-    public void turn(double degrees, double dir) {
+    public void turn(double degrees, double dir, double timeoutS) {
         int lFTarget;
         int lBTarget;
         int rFTarget;
@@ -135,9 +135,10 @@ public class Mecanum {
 
         robot.telemetry.addData("Path", "Turning %.2f degrees", degrees);
         robot.telemetry.update();
+        runtime.reset();
 
 
-        while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()){
+        while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy() && (runtime.seconds() < timeoutS)){
             robot.telemetry.addData("Path", "Turning. . .");
             robot.telemetry.update();
         }
@@ -229,7 +230,7 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 1);
+        turn(turn, 1, 1.64);
         simpleDrive(distance, 1);
 
         /*if(brake == true) {
@@ -314,7 +315,7 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 1);//was 0.5
+        turn(turn, 1, 0.8);
         if(Math.abs(turnSide) < 45) {
             sideDrive(distance, 1);
         } else {
@@ -364,7 +365,7 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 0.9);
+        turn(turn, 0.9, 2.4);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
