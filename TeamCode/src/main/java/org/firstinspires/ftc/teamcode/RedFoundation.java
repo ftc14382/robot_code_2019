@@ -57,10 +57,10 @@ public class RedFoundation extends LinearOpMode{
         turn.x = setUp.x;
         turn.y = setUp.y + 5*changeX;
         foundation.y = setUp.y;
-        foundation.x = 24.5*changeX;
+        foundation.x = 30*changeX;
         templateP.y = foundation.y;
         for(int i=1; i<9; i ++) {
-            templateP.x = foundation.x + 5*i*changeX;
+            templateP.x = foundation.x + 5.1*i*changeX;
             foundationOutPositions.add(templateP);
         }
         line.x = 65;
