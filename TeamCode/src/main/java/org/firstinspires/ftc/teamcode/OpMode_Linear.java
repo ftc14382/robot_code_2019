@@ -55,7 +55,7 @@ import javax.sql.RowSetEvent;
  */
 
 @TeleOp(name="Linear Opmode", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class OpMode_Linear extends LinearOpMode {
     public Mecanum chassis;
     public Function function;
@@ -89,6 +89,7 @@ public class OpMode_Linear extends LinearOpMode {
         double v4;
         double functionSpeedChange;
         double grabberPower;
+        //double lifterStart = function.lifter.getCurrentPosition();
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
