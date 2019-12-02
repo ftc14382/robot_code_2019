@@ -75,8 +75,8 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
         if(detectorType == 0) {
             //Define upper and lower range of color
-            lowerMask = new Scalar(20, 50, 50);
-            upperMask = new Scalar(40, 255, 255);
+            lowerMask = new Scalar(10, 40, 40);//was(20, 50, 50)  I am trying to change it so it sees better
+            upperMask = new Scalar(60, 255, 255);//was(40, 255, 255)
             //Define what area we are cropping
             cropX = 0;
             cropY = 270;//Was 160
@@ -180,22 +180,22 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
 
         if(color == 1 && detectorType == 0) {
-            if(detectedX > 210 && detectedX<290) {//270,190
+            if(detectedX > 210 && detectedX<300) {//270,180
                 currentDetectionState.detectedState = 1;
             }
-            else if(detectedX > 90 && detectedX < 170) {//390,310
+            else if(detectedX > 90 && detectedX < 180) {//390,300
                 currentDetectionState.detectedState = 2;
             }
-            else if(detectedX < 330 && detectedX > 420) {//150,60
+            else if((detectedX < 325 && detectedX > 425) || (detectedX < 80 && detectedX > 30)) {//155,55 and 450,400
                 currentDetectionState.detectedState = 3;
             }
         }//blue side
         else if(color == 0) {
-            if (detectedX < 270 && detectedX > 190 && detectorType == 0) {
+            if (detectedX < 270 && detectedX > 180 && detectorType == 0) {
                 currentDetectionState.detectedState = 1;
-            } else if (detectedX < 390 && detectedX > 310 && detectorType == 0) {
+            } else if (detectedX < 390 && detectedX > 300 && detectorType == 0) {
                 currentDetectionState.detectedState = 2;
-            } else if (detectedX < 150 && detectedX > 60 && detectorType == 0) {
+            } else if (((detectedX < 155 && detectedX > 55) || (detectedX < 450 && detectedX > 400)) && detectorType == 0 ) {
                 currentDetectionState.detectedState = 3;
             }
         }//Red side
