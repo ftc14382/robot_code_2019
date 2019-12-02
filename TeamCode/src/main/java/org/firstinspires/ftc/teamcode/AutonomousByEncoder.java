@@ -35,7 +35,10 @@ public class AutonomousByEncoder extends LinearOpMode{
     private Position side = new Position();
     private Position leave = new Position();
     private Position line = new Position();
-    private double changeX = 1;//1=red,-1=blue.  Change this, robotinfo, and detector.color
+    private Position foundation = new Position();
+    private Position foundMove = new Position();
+    private Position lineClose = new Position();
+    private double changeX = 1;//1=red,-1=blue.  Change this, robotinfo, and detector.color!!!
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
@@ -47,7 +50,7 @@ public class AutonomousByEncoder extends LinearOpMode{
         //For Camera
         SkystoneDetectionState detectionState;
         camSensor.detector.detectorType = 0;//0=Skystone, 1=Red foundation, 2=Blue foundation
-        camSensor.detector.color = 0;//0=red, 1=blue.  This needs changed for different sides
+        camSensor.detector.color = 0;//0=red, 1=blue.  This needs changed for different sides!!!!!
         String tag = "Detection";
         String tag2 = "Block";
 
@@ -55,7 +58,7 @@ public class AutonomousByEncoder extends LinearOpMode{
         RobotInfo robotInfo = new RobotInfo();
         robotInfo.x = 65*changeX;
         robotInfo.y = -40.3;
-        robotInfo.degrees = 180;//This needs changed for different sides
+        robotInfo.degrees = 180;//This needs changed for different sides!!!!
         //Set up positions
         forward.x = 55*changeX;
         forward.y = -40.1;
@@ -76,10 +79,17 @@ public class AutonomousByEncoder extends LinearOpMode{
         backup.x = 61*changeX;
         side.x = 61*changeX;//changed
         side.y = 15;
-        leave.x = 60.5*changeX;//60
-        leave.y = 19;
+        foundation.x = 18.75*changeX;
+        foundation.y = 27;
+        leave.x = foundation.x;//60
+        leave.y = foundation.y + 3;
+        foundMove.x = foundation.x;
+        foundMove.y = foundation.y - 6;
         line.x = 61*changeX;//changed
         line.y = 0.99;
+        lineClose.x = line.x;
+        lineClose.y = foundMove.y;
+
 
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
@@ -94,7 +104,7 @@ public class AutonomousByEncoder extends LinearOpMode{
 
         chassis.driveTo(robotInfo, forward);
         chassis.turnTo(robotInfo, turntoPosition);
-        sleep(1000);
+        sleep(850);//Was 1000
 
         //For Camera
         detectionState = new SkystoneDetectionState();
@@ -144,17 +154,30 @@ public class AutonomousByEncoder extends LinearOpMode{
         function.grabber.setPower(-0.5);
         //raise lifter slightly
         function.lifter.setPower(1);
-        sleep(90);
+        sleep(50);
         function.lifter.setPower(0);
         //Drive to other side
         chassis.quickDrive(robotInfo, backup);
         chassis.quickDrive(robotInfo, side);
+        //raise lifter slightly
+        function.lifter.setPower(1);
+        sleep(500);
+        function.lifter.setPower(0);
+        //Move to foundation
+        chassis.driveTo(robotInfo, lineClose);
+        chassis.quickDrive(robotInfo, foundMove);
+        chassis.driveTo(robotInfo, foundation);
+        //chassis.turnTo(robotInfo, leave);
         //release skystone
         function.grabber.setPower(0.8);
         sleep(900);
         function.grabber.setPower(0);
-        chassis.turnTo(robotInfo, leave);
         //park on line
+        chassis.quickDrive(robotInfo, foundMove);
+        //raise lifter slightly
+        function.lifter.setPower(-0.44);
+        chassis.quickDrive(robotInfo, lineClose);
+        function.lifter.setPower(0);
         chassis.quickDrive(robotInfo, line);
 
 
