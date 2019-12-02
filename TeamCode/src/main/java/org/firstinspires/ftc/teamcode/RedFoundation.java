@@ -57,14 +57,14 @@ public class RedFoundation extends LinearOpMode{
         turn.x = setUp.x;
         turn.y = setUp.y + 5*changeX;
         foundation.y = setUp.y;
-        foundation.x = 30*changeX;
+        foundation.x = 29*changeX;
         templateP.y = foundation.y;
         for(int i=1; i<9; i ++) {
-            templateP.x = foundation.x + 5.1*i*changeX;
+            templateP.x = foundation.x + 4.5*i*changeX;
             foundationOutPositions.add(templateP);
         }
-        line.x = 65;
-        line.y = 0;
+        line.x = 65*changeX;
+        line.y = -2;
 
 
 
@@ -86,6 +86,8 @@ public class RedFoundation extends LinearOpMode{
         for(Position p : foundationOutPositions) {
             chassis.quickDrive(robotInfo, p);
         }
+        chassis.turn(-90*changeX, 1, 1.3);
+        robotInfo.degrees = chassis.getIMUField();
         function.foundMover.setPosition(0.7);
         chassis.quickDrive(robotInfo, line);
 
