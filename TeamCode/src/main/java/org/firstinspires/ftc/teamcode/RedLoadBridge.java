@@ -14,7 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Autonomous(name="Autonomous by Encoder(RED)", group="Linear OpMode")
+@Autonomous(name="Autonomous by Encoder(RED)(Neutral)", group="Linear OpMode")
 public class RedLoadBridge extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
