@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 import java.io.File;
 
-@Autonomous(name="Autonomous by Encoder(RED)", group="Linear OpMode")
+@Autonomous(name="Autonomous by Encoder(RED)(Wall)", group="Linear OpMode")
 public class AutonomousByEncoder extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
