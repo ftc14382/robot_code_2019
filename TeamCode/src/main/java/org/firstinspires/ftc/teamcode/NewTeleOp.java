@@ -97,7 +97,7 @@ public class NewTeleOp extends LinearOpMode {
         double functionSpeedChange;
         double grabberPower;
         double lifterPower;
-        int lifterPos;
+        int bottomPos;
 
         int COUNTS_PER_LEVEL;
         double startIMUAngle;
@@ -111,8 +111,9 @@ public class NewTeleOp extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         chassis.runtime.reset();
-        startIMUAngle = chassis.getIMUAngle()+180;
-        originalAngle = startIMUAngle;
+        startIMUAngle = 0;
+        originalAngle = 0;
+        bottomPos = function.lifter.getCurrentPosition() - 50;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -259,14 +260,14 @@ public class NewTeleOp extends LinearOpMode {
             functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
             if(gamepad2.dpad_up) {
                 lifterPower = 1.0;
-            } else if(gamepad2.dpad_down) {
+            } else if(gamepad2.dpad_down && function.lifter.getCurrentPosition() > bottomPos) {
                 lifterPower = -1.0;
             } else {
                 lifterPower = 0.0;
             }
             function.lifter.setPower(functionSpeedChange*lifterPower);
 
-            
+
 
             if(gamepad2.left_bumper) {
                 servoPosition = 1;
