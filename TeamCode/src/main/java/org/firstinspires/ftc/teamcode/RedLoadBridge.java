@@ -72,8 +72,8 @@ public class RedLoadBridge extends LinearOpMode{
         bl2.y = bl2SetUp.y;
         bl3.x = bl1.x;
         bl3.y = bl3SetUp.y;
-        backup.x = 41*changeX;
-        side.x = 41*changeX;//changed
+        backup.x = 44*changeX;
+        side.x = backup.x;//changed
         side.y = 15;
         foundation.x = 18.75*changeX;
         foundation.y = 27;
@@ -100,7 +100,7 @@ public class RedLoadBridge extends LinearOpMode{
 
         chassis.driveTo(robotInfo, forward);
         chassis.turnTo(robotInfo, turntoPosition);
-        sleep(850);//Was 1000
+        sleep(800);//Was 1000
 
         //For Camera
         detectionState = new SkystoneDetectionState();
@@ -128,17 +128,17 @@ public class RedLoadBridge extends LinearOpMode{
 
 
         if(detectionState.detectedState == 1) {
-            chassis.quickDrive(robotInfo,bl1SetUp);
+            chassis.quickDrive(robotInfo,bl1SetUp, 0.4);
             chassis.driveTo(robotInfo,bl1);
             backup.y = bl1.y;
             RobotLog.ii(tag2, "Block 1");
         } else if(detectionState.detectedState == 2) {
-            chassis.quickDrive(robotInfo,bl2SetUp);
+            chassis.quickDrive(robotInfo,bl2SetUp, 0.4);
             chassis.driveTo(robotInfo,bl2);
             backup.y = bl2.y;
             RobotLog.ii(tag2, "Block 2");
         } else if(detectionState.detectedState == 3){
-            chassis.quickDrive(robotInfo,bl3SetUp);
+            chassis.quickDrive(robotInfo,bl3SetUp, 0.4);
             chassis.driveTo(robotInfo,bl3);
             backup.y = bl3.y;
             RobotLog.ii(tag2, "Block 3");
@@ -153,15 +153,16 @@ public class RedLoadBridge extends LinearOpMode{
         sleep(50);
         function.lifter.setPower(0);
         //Drive to other side
-        chassis.quickDrive(robotInfo, backup);
-        chassis.quickDrive(robotInfo, side);
+        chassis.quickDrive(robotInfo, backup, 0.4);
+        chassis.quickDrive(robotInfo, side, 0.4);
         //raise lifter slightly
-        function.lifter.setPower(1);
-        sleep(500);
-        function.lifter.setPower(0);
+        function.lifter.setPower(0.76);
+        //sleep(500);
+        //function.lifter.setPower(0);
         //Move to foundation
         chassis.driveTo(robotInfo, lineClose);
-        chassis.quickDrive(robotInfo, foundMove);
+        function.lifter.setPower(0);
+        chassis.quickDrive(robotInfo, foundMove, 0.4);
         chassis.driveTo(robotInfo, foundation);
         //chassis.turnTo(robotInfo, leave);
         //release skystone
@@ -169,12 +170,12 @@ public class RedLoadBridge extends LinearOpMode{
         sleep(900);
         function.grabber.setPower(0);
         //park on line
-        chassis.quickDrive(robotInfo, foundMove);
+        chassis.quickDrive(robotInfo, foundMove, 0.4);
         //raise lifter slightly
-        function.lifter.setPower(-0.44);
-        chassis.quickDrive(robotInfo, lineClose);
+        function.lifter.setPower(-0.5);//changed
+        chassis.quickDrive(robotInfo, lineClose, 0.4);
         function.lifter.setPower(0);
-        chassis.quickDrive(robotInfo, line);
+        chassis.quickDrive(robotInfo, line, 0.4);
 
 
         //chassis.simpleDrive(3, 1);
