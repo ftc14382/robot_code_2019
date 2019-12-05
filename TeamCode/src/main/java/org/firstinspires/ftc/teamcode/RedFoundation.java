@@ -53,17 +53,19 @@ public class RedFoundation extends LinearOpMode{
         forward.x = 48*changeX;
         forward.y = robotInfo.y;
         setUp.x = forward.x;
-        setUp.y = 50.5;
+        setUp.y = 47;//Was 50.05
         turn.x = setUp.x;
         turn.y = setUp.y + 5*changeX;
         foundation.y = setUp.y;
         foundation.x = 29*changeX;
         templateP.y = foundation.y;
-        for(int i=1; i<9; i ++) {
-            templateP.x = foundation.x + 4.5*i*changeX;
+        templateP.x = 70;
+        /*for(int i=1; i<9; i ++) {
+            templateP.x = foundation.x + 4.63*i*changeX;
             foundationOutPositions.add(templateP);
-        }
-        line.x = 65*changeX;
+        }*/
+
+        line.x = 70*changeX;//changed
         line.y = -2;
 
 
@@ -80,16 +82,17 @@ public class RedFoundation extends LinearOpMode{
 
         chassis.driveTo(robotInfo, forward);
         chassis.turnTo(robotInfo, turn);
-        chassis.quickDrive(robotInfo, setUp);
-        chassis.quickDrive(robotInfo, foundation);
+        chassis.quickDrive(robotInfo, setUp, 0.5);
+        chassis.quickDrive(robotInfo, foundation, 0.5);
         function.foundMover.setPosition(0);
-        for(Position p : foundationOutPositions) {
-            chassis.quickDrive(robotInfo, p);
-        }
-        chassis.turn(-90*changeX, 1, 1.3);
-        robotInfo.degrees = chassis.getIMUField();
+        /*for(Position p : foundationOutPositions) {
+            chassis.quickDrive(robotInfo, p, 0.5);
+        }*/
+        chassis.quickDrive(robotInfo, templateP, 0.5);
+        /*chassis.turn(-90*changeX, 1, 1.3);
+        robotInfo.degrees = chassis.getIMUField();*/
         function.foundMover.setPosition(0.7);
-        chassis.quickDrive(robotInfo, line);
+        chassis.quickDrive(robotInfo, line, 1);
 
 
         //For Camera
