@@ -254,7 +254,11 @@ public class Mecanum {
         //RobotLog.ii(Tag, "DriveTo: turned IMU angle: %.2f", getIMUAngle() - startIMUangle);
     }
 
-    public void quickDrive(RobotInfo r, Position p/*, boolean brake*/) {
+    public void quickDrive(RobotInfo r, Position p) {
+        quickDrive(r, p, 0.8);
+    }
+
+    public void quickDrive(RobotInfo r, Position p, double timeOut/*, boolean brake*/) {
         String tag = "Quick Drive";
         RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
         double deltaX = p.x - r.x;
@@ -315,7 +319,7 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 1, 0.8);
+        turn(turn, 1, timeOut);
         if(Math.abs(turnSide) < 45) {
             sideDrive(distance, 1);
         } else {
