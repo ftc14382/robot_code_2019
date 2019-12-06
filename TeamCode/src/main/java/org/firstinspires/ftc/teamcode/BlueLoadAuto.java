@@ -1,9 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.opencv.imgcodecs.Imgcodecs;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Autonomous(name="Autonomous by Encoder(BLUE)(Neutral)", group="Linear OpMode")
 public class BlueLoadAuto extends LinearOpMode{
@@ -22,6 +31,9 @@ public class BlueLoadAuto extends LinearOpMode{
     private Position side = new Position();
     private Position leave = new Position();
     private Position line = new Position();
+    private Position foundation = new Position();
+    private Position foundMove = new Position();
+    private Position lineClose = new Position();
     private double changeX = -1;//1=red,-1=blue.  Change this, robotinfo, and detector.color
     @Override
     public void runOpMode() {
@@ -35,11 +47,13 @@ public class BlueLoadAuto extends LinearOpMode{
         SkystoneDetectionState detectionState;
         camSensor.detector.detectorType = 0;//0=Skystone, 1=Red foundation, 2=Blue foundation
         camSensor.detector.color = 1;//0=red, 1=blue.  This needs changed for different sides
+        String tag = "Detection";
+        String tag2 = "Block";
 
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
         robotInfo.x = 65*changeX;
-        robotInfo.y = -40.1;
+        robotInfo.y = -40.3;
         robotInfo.degrees = 0;//This needs changed for different sides
         //Set up positions
         forward.x = 55*changeX;
@@ -58,13 +72,20 @@ public class BlueLoadAuto extends LinearOpMode{
         bl2.y = bl2SetUp.y;
         bl3.x = bl1.x;
         bl3.y = bl3SetUp.y;
-        backup.x = 55*changeX;
-        side.x = 40*changeX;//changed
+        backup.x = 44*changeX;
+        side.x = backup.x;//changed
         side.y = 15;
-        leave.x = 40*changeX;//60.6
-        leave.y = 19;
+        foundation.x = 18.75*changeX;
+        foundation.y = 27;
+        leave.x = foundation.x;//60
+        leave.y = foundation.y + 3;
+        foundMove.x = foundation.x;
+        foundMove.y = foundation.y - 6;
         line.x = 40*changeX;//changed
         line.y = 0.99;
+        lineClose.x = line.x;
+        lineClose.y = foundMove.y;
+
 
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
@@ -79,10 +100,15 @@ public class BlueLoadAuto extends LinearOpMode{
 
         chassis.driveTo(robotInfo, forward);
         chassis.turnTo(robotInfo, turntoPosition);
-        sleep(1000);
+        sleep(800);//Was 1000
 
         //For Camera
-        detectionState = camSensor.detector.currentDetectionState;
+        detectionState = new SkystoneDetectionState();
+        detectionState.detectedPosition = camSensor.detector.currentDetectionState.detectedPosition;
+        detectionState.detectedState = camSensor.detector.currentDetectionState.detectedState;
+        detectionState.telemetry1 = camSensor.detector.currentDetectionState.telemetry1;
+        detectionState.telemetry2 = camSensor.detector.currentDetectionState.telemetry2;
+        detectionState.display = camSensor.detector.currentDetectionState.display;
         telemetry.addData("Skystone State:", "%d", detectionState.detectedState);
         if (!detectionState.telemetry1.isEmpty()){
             telemetry.addData("Skystone: ",  detectionState.telemetry1 );
@@ -91,20 +117,31 @@ public class BlueLoadAuto extends LinearOpMode{
             telemetry.addData("Skystone: ", detectionState.telemetry2 );
         }
         telemetry.update();
+        //Log detected info
+        RobotLog.ii(tag, "Stone %d", detectionState.detectedState);
+        RobotLog.ii(tag, "X Position: %2d", detectionState.detectedPosition);
+        Date now = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyymmddhhmmss");
+        String imgFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + dateFormat.format(now) + "-robocap.png";
+        Imgcodecs.imwrite(imgFileName, detectionState.display);
+
 
 
         if(detectionState.detectedState == 1) {
-            chassis.quickDrive(robotInfo,bl1SetUp);
+            chassis.quickDrive(robotInfo,bl1SetUp, 0.4);
             chassis.driveTo(robotInfo,bl1);
             backup.y = bl1.y;
+            RobotLog.ii(tag2, "Block 1");
         } else if(detectionState.detectedState == 2) {
-            chassis.quickDrive(robotInfo,bl2SetUp);
+            chassis.quickDrive(robotInfo,bl2SetUp, 0.4);
             chassis.driveTo(robotInfo,bl2);
             backup.y = bl2.y;
+            RobotLog.ii(tag2, "Block 2");
         } else if(detectionState.detectedState == 3){
-            chassis.quickDrive(robotInfo,bl3SetUp);
+            chassis.quickDrive(robotInfo,bl3SetUp, 0.4);
             chassis.driveTo(robotInfo,bl3);
             backup.y = bl3.y;
+            RobotLog.ii(tag2, "Block 3");
         }
 
         //grab block
@@ -113,19 +150,32 @@ public class BlueLoadAuto extends LinearOpMode{
         function.grabber.setPower(-0.5);
         //raise lifter slightly
         function.lifter.setPower(1);
-        sleep(90);
+        sleep(50);
         function.lifter.setPower(0);
         //Drive to other side
-        chassis.quickDrive(robotInfo, backup);
-        //chassis.quickDrive(robotInfo, side);
-        chassis.driveTo(robotInfo, side);
+        chassis.quickDrive(robotInfo, backup, 0.4);
+        chassis.quickDrive(robotInfo, side, 0.4);
+        //raise lifter slightly
+        function.lifter.setPower(0.76);
+        //sleep(500);
+        //function.lifter.setPower(0);
+        //Move to foundation
+        chassis.driveTo(robotInfo, lineClose);
+        function.lifter.setPower(0);
+        chassis.quickDrive(robotInfo, foundMove, 0.4);
+        chassis.driveTo(robotInfo, foundation);
+        //chassis.turnTo(robotInfo, leave);
         //release skystone
         function.grabber.setPower(0.8);
         sleep(900);
         function.grabber.setPower(0);
-        chassis.turnTo(robotInfo, leave);
         //park on line
-        chassis.quickDrive(robotInfo, line);
+        chassis.quickDrive(robotInfo, foundMove, 0.4);
+        //raise lifter slightly
+        function.lifter.setPower(-0.5);//changed
+        chassis.quickDrive(robotInfo, lineClose, 0.4);
+        function.lifter.setPower(0);
+        chassis.quickDrive(robotInfo, line, 0.4);
 
 
         //chassis.simpleDrive(3, 1);
