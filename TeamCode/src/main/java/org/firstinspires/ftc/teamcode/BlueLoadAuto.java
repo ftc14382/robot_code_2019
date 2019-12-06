@@ -53,7 +53,7 @@ public class BlueLoadAuto extends LinearOpMode{
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
         robotInfo.x = 65*changeX;
-        robotInfo.y = -40.3;
+        robotInfo.y = -40.52;
         robotInfo.degrees = 0;//This needs changed for different sides
         //Set up positions
         forward.x = 55*changeX;
