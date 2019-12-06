@@ -186,7 +186,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             else if(detectedX > 90 && detectedX < 180) {//390,300
                 currentDetectionState.detectedState = 2;
             }
-            else if((detectedX < 325 && detectedX > 425) || (detectedX < 80 && detectedX > 30)) {//155,55 and 450,400
+            else if((detectedX > 325 && detectedX < 425) || (detectedX < 80 && detectedX > 30)) {//155,55 and 450,400
                 currentDetectionState.detectedState = 3;
             }
         }//blue side
