@@ -55,7 +55,7 @@ public class RedFoundation extends LinearOpMode{
         setUp.x = forward.x;
         setUp.y = 47;//Was 50.05
         turn.x = setUp.x;
-        turn.y = setUp.y + 5*changeX;
+        turn.y = forward.y + 5*changeX;
         foundation.y = setUp.y;
         foundation.x = 29*changeX;
         templateP.y = foundation.y;
