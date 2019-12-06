@@ -81,8 +81,8 @@ public class AutonomousByEncoder extends LinearOpMode{
         side.y = 15;
         foundation.x = 18.75*changeX;
         foundation.y = 27;
-        leave.x = foundation.x;//60
-        leave.y = foundation.y + 3;
+        leave.x = side.x;//60
+        leave.y = side.y + 3;
         foundMove.x = foundation.x;
         foundMove.y = foundation.y - 6;
         line.x = 61*changeX;//changed
@@ -158,35 +158,15 @@ public class AutonomousByEncoder extends LinearOpMode{
         function.lifter.setPower(0);
         //Drive to other side
         chassis.quickDrive(robotInfo, backup);
+        camSensor.detector.detectorType = 1;//0=Skystone, 1=Red foundation, 2=Blue foundation
         chassis.quickDrive(robotInfo, side);
-        //raise lifter slightly
-        function.lifter.setPower(1);
-        sleep(500);
-        function.lifter.setPower(0);
-        //Move to foundation
-        chassis.driveTo(robotInfo, lineClose);
-        chassis.quickDrive(robotInfo, foundMove);
-        chassis.driveTo(robotInfo, foundation);
-        //chassis.turnTo(robotInfo, leave);
+        chassis.turnTo(robotInfo, leave);
         //release skystone
         function.grabber.setPower(0.8);
         sleep(900);
         function.grabber.setPower(0);
         //park on line
-        chassis.quickDrive(robotInfo, foundMove);
-        //raise lifter slightly
-        function.lifter.setPower(-0.44);
-        chassis.quickDrive(robotInfo, lineClose);
-        function.lifter.setPower(0);
         chassis.quickDrive(robotInfo, line);
-
-
-        //chassis.simpleDrive(3, 1);
-        //chassis.sideDrive(40, 1);
-
-        //chassis.turn(90, 1);
-        //chassis.sideDrive(12, 1);
-        //encoderDrive(36.0, 36.0, 30.0);
     }
 
 }
