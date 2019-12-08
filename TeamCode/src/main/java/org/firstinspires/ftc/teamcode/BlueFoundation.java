@@ -51,7 +51,7 @@ public class BlueFoundation extends LinearOpMode{
         foundation.y = setUp.y;
         foundation.x = 29*changeX;
         templateP.y = foundation.y;
-        templateP.x = 70*changeX;
+        templateP.x = 72*changeX;
         /*for(int i=1; i<9; i ++) {
             templateP.x = foundation.x + 4.63*i*changeX;
             foundationOutPositions.add(templateP);
@@ -80,7 +80,9 @@ public class BlueFoundation extends LinearOpMode{
         /*for(Position p : foundationOutPositions) {
             chassis.quickDrive(robotInfo, p, 0.5);
         }*/
+        function.grabber.setPower(-0.5);
         chassis.quickDrive(robotInfo, templateP, 0.5);
+        function.grabber.setPower(0);
         /*chassis.turn(-90*changeX, 1, 1.3);
         robotInfo.degrees = chassis.getIMUField();*/
         function.foundMover.setPosition(0.7);

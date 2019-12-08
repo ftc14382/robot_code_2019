@@ -88,7 +88,9 @@ public class RedFoundation extends LinearOpMode{
         /*for(Position p : foundationOutPositions) {
             chassis.quickDrive(robotInfo, p, 0.5);
         }*/
+        function.grabber.setPower(-0.5);
         chassis.quickDrive(robotInfo, templateP, 0.5);
+        function.grabber.setPower(0);
         /*chassis.turn(-90*changeX, 1, 1.3);
         robotInfo.degrees = chassis.getIMUField();*/
         function.foundMover.setPosition(0.7);

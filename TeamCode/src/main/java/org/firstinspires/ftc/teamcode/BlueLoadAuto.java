@@ -66,13 +66,13 @@ public class BlueLoadAuto extends LinearOpMode{
         bl2SetUp.y = -36;
         bl3SetUp.x = forward.x;
         bl3SetUp.y = -28;
-        bl1.x = 32*changeX;
+        bl1.x = 30*changeX;//was 32
         bl1.y = bl1SetUp.y;
         bl2.x = bl1.x;
         bl2.y = bl2SetUp.y;
         bl3.x = bl1.x;
         bl3.y = bl3SetUp.y;
-        backup.x = 44*changeX;
+        backup.x = 46*changeX;//Was 44
         side.x = backup.x;//changed
         side.y = 15;
         foundation.x = 18.75*changeX;

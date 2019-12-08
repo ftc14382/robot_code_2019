@@ -77,7 +77,7 @@ public class NewTeleOp extends LinearOpMode {
         double leftBackPower;
         double rightFrontPower;
         double rightBackPower;
-        double servoPosition = 0;
+        double servoPosition = 1;
         //normal drive
         double h;
         double robotAngle;
@@ -256,6 +256,9 @@ public class NewTeleOp extends LinearOpMode {
             function.grabber.setPower(functionSpeedChange*grabberPower);
 
 
+            if(gamepad2.left_stick_y != 0) {
+                bottomPos = function.lifter.getCurrentPosition() - 50;
+            }
             //normal lifter control
             functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
             if(gamepad2.dpad_up) {

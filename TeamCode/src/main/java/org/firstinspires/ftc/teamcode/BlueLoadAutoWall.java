@@ -66,7 +66,7 @@ public class BlueLoadAutoWall extends LinearOpMode{
         bl2SetUp.y = -36;
         bl3SetUp.x = forward.x;
         bl3SetUp.y = -28;
-        bl1.x = 32*changeX;
+        bl1.x = 30*changeX;//was 32
         bl1.y = bl1SetUp.y;
         bl2.x = bl1.x;
         bl2.y = bl2SetUp.y;
