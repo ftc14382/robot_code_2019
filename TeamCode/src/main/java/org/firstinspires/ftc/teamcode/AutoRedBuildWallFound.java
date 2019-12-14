@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Autonomous(name="Foundation Move(RED)", group="Linear OpMode")
-public class RedFoundation extends LinearOpMode{
+@Autonomous(name="AutoRedBuildWallFound", group="Linear OpMode")
+public class AutoRedBuildWallFound extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
     public CamSensor camSensor;

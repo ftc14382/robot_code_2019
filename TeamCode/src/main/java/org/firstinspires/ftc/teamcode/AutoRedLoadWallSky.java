@@ -18,8 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 import java.io.File;
 
-@Autonomous(name="Autonomous by Encoder(RED)(Wall)", group="Linear OpMode")
-public class AutonomousByEncoder extends LinearOpMode{
+@Autonomous(name="AutoRedLoadWallSky", group="Linear OpMode")
+public class AutoRedLoadWallSky extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
     public CamSensor camSensor;
