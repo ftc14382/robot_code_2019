@@ -111,7 +111,7 @@ public class NewTeleOp extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         chassis.runtime.reset();
-        startIMUAngle = 0;
+        startIMUAngle = 90;
         originalAngle = 0;
         bottomPos = function.lifter.getCurrentPosition() - 50;
 
