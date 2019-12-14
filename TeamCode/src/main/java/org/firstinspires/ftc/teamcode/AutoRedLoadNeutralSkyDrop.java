@@ -14,8 +14,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Autonomous(name="AutoRedLoadNeutralSkyFound", group="Linear OpMode")
-public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
+@Autonomous(name="AutoRedLoadNeutralSkyDrop", group="Linear OpMode")
+public class AutoRedLoadNeutralSkyDrop extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
     public CamSensor camSensor;
