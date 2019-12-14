@@ -79,9 +79,9 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             upperMask = new Scalar(60, 255, 255);//was(40, 255, 255)
             //Define what area we are cropping
             cropX = 0;
-            cropY = 270;//Was 160
+            cropY = 295;//Was 270
             cropWidth = 480;
-            cropHeight = 100;
+            cropHeight = 70;//100
         } //Skystone
         else if(detectorType == 1) {
             //Define upper and lower range of color
