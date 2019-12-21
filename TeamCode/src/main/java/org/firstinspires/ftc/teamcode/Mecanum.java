@@ -32,7 +32,7 @@ public class Mecanum {
 
     static final double COUNTS_PER_INCH_FORWARD = 30.36;
     static final double COUNTS_PER_INCH_SIDE = 32.29;
-    static final double COUNTS_PER_DEGREE = 4.79;
+    static final double COUNTS_PER_DEGREE = 4.69; //4.79
 
     public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
         robot = Arobot;
@@ -59,6 +59,12 @@ public class Mecanum {
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
     public void simpleDrive(double distance, double dir) {
         int lFTarget;

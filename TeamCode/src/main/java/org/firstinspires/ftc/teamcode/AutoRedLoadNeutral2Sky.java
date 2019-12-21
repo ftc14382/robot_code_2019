@@ -47,7 +47,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
 
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
-        robotInfo.x = 65*changeX;
+        robotInfo.x = 63*changeX;
         robotInfo.y = -40.3;
         robotInfo.degrees = 180;//This needs changed for different sides!!!!
         //Set up positions
@@ -57,7 +57,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         turntoPosition.y = forward.y - 5*changeX;
         firstBlSetUp.x = robotInfo.x;
         firstBl.x = 30*changeX;
-        backup.x = 46*changeX;//Was 44
+        backup.x = 40*changeX;//Was 44
         side.x = backup.x;//changed
         side.y = 15;
         secondBlSetUp.x = backup.x;
@@ -104,7 +104,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         String imgFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + dateFormat.format(now) + "-robocap.png";
         Imgcodecs.imwrite(imgFileName, detectionState.display);
 
-
+        chassis.simpleDrive(2,1);
 
         if(detectionState.detectedState == 1) {
             firstBlSetUp.y =  -44;
