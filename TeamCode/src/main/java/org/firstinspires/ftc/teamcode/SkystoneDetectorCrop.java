@@ -79,9 +79,9 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             upperMask = new Scalar(60, 255, 255);//was(40, 255, 255)
             //Define what area we are cropping
             cropX = 0;
-            cropY = 270;//Was 160
+            cropY = 254;//Was 270
             cropWidth = 480;
-            cropHeight = 100;
+            cropHeight = 70;//100
         } //Skystone
         else if(detectorType == 1) {
             //Define upper and lower range of color
@@ -191,18 +191,18 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             }
         }//blue side
         else if(color == 0) {
-            if (detectedX < 270 && detectedX > 180 && detectorType == 0) {
+            if (detectedX < 245 && detectedX > 185 && detectorType == 0) {
                 currentDetectionState.detectedState = 1;
-            } else if (detectedX < 390 && detectedX > 300 && detectorType == 0) {
+            } else if (((detectedX < 80 && detectedX > 0) || (detectedX < 340 && detectedX > 260)) && detectorType == 0) {
                 currentDetectionState.detectedState = 2;
-            } else if (((detectedX < 155 && detectedX > 55) || (detectedX < 450 && detectedX > 400)) && detectorType == 0 ) {
+            } else if (((detectedX < 165 && detectedX > 85) || (detectedX < 430 && detectedX > 355)) && detectorType == 0 ) {
                 currentDetectionState.detectedState = 3;
             }
         }//Red side
 
 
         // If we detect something, we update currentDetectionState.
-        if(detectorType == 0 && (maxAreaCrop<25021 && maxAreaCrop>4501)) { //50000 9000
+        if(detectorType == 0 && (maxAreaCrop<10001 && maxAreaCrop>4000)) { //50000 9000
             currentDetectionState.telemetry1 = "Skystone found!";
             currentDetectionState.telemetry2 = detectedX + "," + maxAreaCrop;
             currentDetectionState.detected = true;
