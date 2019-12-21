@@ -333,7 +333,7 @@ public class Mecanum {
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned+90))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned+90))*Math.abs(distance);
-        } else if(turnSide > -45 && turnSide < 0) {//Move right
+        } else if(turnSide > -45 && turnSide <= 0) {//Move right
             sideDrive(distance, 1);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned-90))*Math.abs(distance);
