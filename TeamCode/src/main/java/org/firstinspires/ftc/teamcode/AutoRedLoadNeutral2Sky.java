@@ -48,7 +48,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
         robotInfo.x = 63*changeX;
-        robotInfo.y = -40.3;
+        robotInfo.y = -40.875;
         robotInfo.degrees = 180;//This needs changed for different sides!!!!
         //Set up positions
         forward.x = 55*changeX;
@@ -135,11 +135,11 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         //Drive to other side
         chassis.quickDrive(robotInfo, backup, 0.4);
         chassis.driveTo(robotInfo, side);
-        function.grabber.setPower(0.6);
+        function.grabber.setPower(0.8);
         function.lifter.setPower(-0.4);
         sleep(258);
         function.lifter.setPower(0);
-        function.grabber.setPower(0);
+        function.grabber.setPower(0.4);
 
         chassis.quickDrive(robotInfo,secondBlSetUp);
         chassis.driveTo(robotInfo,secondBl);
@@ -153,7 +153,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         backup.y=secondBlSetUp.y;
         chassis.quickDrive(robotInfo, backup);
         chassis.driveTo(robotInfo, side);
-        function.grabber.setPower(0.6);
+        function.grabber.setPower(0.8);
         chassis.quickDrive(robotInfo, line);
         function.grabber.setPower(0);
 
