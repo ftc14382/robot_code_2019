@@ -244,9 +244,11 @@ public class Mecanum {
             robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }*/
         IMUTurned = getIMUField();
+        r.x += Math.cos(Math.toRadians(IMUTurned))*distance;
+        r.y += Math.sin(Math.toRadians(IMUTurned))*distance;
 
-        r.x = p.x;
-        r.y = p.y;
+        //r.x = p.x;
+        //r.y = p.y;
         if(Math.abs(IMUTurned - Math.toDegrees(theta)) < 9) {
             r.degrees = getIMUField();
         } else {
@@ -326,20 +328,36 @@ public class Mecanum {
 
 
         turn(turn, 1, timeOut);
-        if(Math.abs(turnSide) < 45) {
+        if(turnSide < 45 && turnSide > 0 ) {//Move left
             sideDrive(distance, 1);
+            IMUTurned = getIMUField();
+            r.x += Math.cos(Math.toRadians(IMUTurned+90))*Math.abs(distance);
+            r.y += Math.sin(Math.toRadians(IMUTurned+90))*Math.abs(distance);
+        } else if(turnSide > -45 && turnSide < 0) {//Move right
+            sideDrive(distance, 1);
+            IMUTurned = getIMUField();
+            r.x += Math.cos(Math.toRadians(IMUTurned-90))*Math.abs(distance);
+            r.y += Math.sin(Math.toRadians(IMUTurned-90))*Math.abs(distance);
+        } else if(Math.abs(turnBack) < 45) {
+            simpleDrive(distance, 1);
+            IMUTurned = getIMUField();
+            r.x -= Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
+            r.y -= Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
         } else {
             simpleDrive(distance, 1);//was 0.7
+            IMUTurned = getIMUField();
+            r.x += Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
+            r.y += Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
         }
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }*/
-        IMUTurned = getIMUField();
+        //IMUTurned = getIMUField();
 
-        r.x = p.x;
-        r.y = p.y;
+        //r.x = p.x;
+        //r.y = p.y;
         r.degrees = getIMUField();
         RobotLog.ii(tag, "End Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
 
