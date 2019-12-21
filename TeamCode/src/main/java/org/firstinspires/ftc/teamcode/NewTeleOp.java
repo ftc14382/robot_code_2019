@@ -99,11 +99,15 @@ public class NewTeleOp extends LinearOpMode {
         double lifterPower;
         int bottomPos;
 
+        int turnAngle;
+        int lfturn;
+        int lbturn;
+        int rbturn;
+        int rfturn;
         int COUNTS_PER_LEVEL;
         double startIMUAngle;
         double offset;
         double offsetDegrees;
-        double originalAngle;
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -112,9 +116,9 @@ public class NewTeleOp extends LinearOpMode {
         waitForStart();
         chassis.runtime.reset();
         startIMUAngle = 0;
-        originalAngle = 0;
         bottomPos = function.lifter.getCurrentPosition() - 50;
 
+        COUNTS_PER_LEVEL = 0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             //driving for mecanum wheels
@@ -151,8 +155,8 @@ public class NewTeleOp extends LinearOpMode {
             }
             */
 
-            if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
-            if (gamepad1.b) startIMUAngle = originalAngle;
+            if (gamepad1.a) startIMUAngle = 0; //Red
+            if (gamepad1.b) startIMUAngle = 180; //Blue
 
             //trig
             offsetDegrees = startIMUAngle-chassis.getIMUAngle();
@@ -218,6 +222,23 @@ public class NewTeleOp extends LinearOpMode {
                 v4 = v4s;
             }
 
+            if (gamepad1.left_bumper) {
+                turnAngle = -90 - (int)chassis.getIMUAngle();
+                turnAngle *= chassis.COUNTS_PER_DEGREE;
+                lfturn = chassis.leftFront.getCurrentPosition() - turnAngle;
+                lbturn = chassis.leftBack.getCurrentPosition() - turnAngle;
+                rfturn = chassis.rightFront.getCurrentPosition() - turnAngle;
+                rbturn = chassis.rightBack.getCurrentPosition() - turnAngle;
+            } else {
+                lfturn = chassis.leftFront.getCurrentPosition();
+                lbturn = chassis.leftBack.getCurrentPosition();
+                rfturn = chassis.rightFront.getCurrentPosition();
+                rbturn = chassis.rightBack.getCurrentPosition();
+            }
+            chassis.leftFront.setTargetPosition(lfturn);
+            chassis.leftBack.setTargetPosition(lbturn);
+            chassis.rightFront.setTargetPosition(rfturn);
+            chassis.rightBack.setTargetPosition(rbturn);
             //set power
             chassis.leftFront.setPower(v1 + turn);
             chassis.leftBack.setPower(v2 + turn);
@@ -270,7 +291,12 @@ public class NewTeleOp extends LinearOpMode {
             }
             function.lifter.setPower(functionSpeedChange*lifterPower);
 
-
+            if (gamepad2.left_bumper) {
+                function.lifter.setTargetPosition(function.lifter.getCurrentPosition() + COUNTS_PER_LEVEL);
+            }
+            if (gamepad2.right_bumper) {
+                function.lifter.setTargetPosition(function.lifter.getCurrentPosition() - COUNTS_PER_LEVEL);
+            }
 
             if(gamepad2.left_bumper) {
                 servoPosition = 1;

@@ -202,7 +202,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
 
         // If we detect something, we update currentDetectionState.
-        if(detectorType == 0 && (maxAreaCrop<50000 && maxAreaCrop>9000)) {
+        if(detectorType == 0 && (maxAreaCrop<25021 && maxAreaCrop>4501)) { //50000 9000
             currentDetectionState.telemetry1 = "Skystone found!";
             currentDetectionState.telemetry2 = detectedX + "," + maxAreaCrop;
             currentDetectionState.detected = true;
