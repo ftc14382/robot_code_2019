@@ -55,12 +55,12 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         forward.y = -40.1;
         turntoPosition.x = forward.x;
         turntoPosition.y = forward.y - 5*changeX;
-        firstBlSetUp.x = forward.x;
+        firstBlSetUp.x = robotInfo.x;
         firstBl.x = 30*changeX;
         backup.x = 46*changeX;//Was 44
         side.x = backup.x;//changed
         side.y = 15;
-        secondBlSetUp.x = firstBlSetUp.x;
+        secondBlSetUp.x = backup.x;
         secondBl.x = firstBl.x;
         line.x = 40*changeX;//changed
         line.y = 0.99;
@@ -77,9 +77,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
 
         waitForStart();
 
-        chassis.driveTo(robotInfo, forward);
-        chassis.turnTo(robotInfo, turntoPosition);
-        sleep(800);//Was 1000
+        //chassis.driveTo(robotInfo, forward);
+        //chassis.turnTo(robotInfo, turntoPosition);
+        //sleep(800);//Was 1000
 
         //For Camera
         detectionState = new SkystoneDetectionState();
