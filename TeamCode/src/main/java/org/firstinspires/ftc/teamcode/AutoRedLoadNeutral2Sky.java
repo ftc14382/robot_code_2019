@@ -81,6 +81,8 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         //chassis.turnTo(robotInfo, turntoPosition);
         //sleep(800);//Was 1000
 
+        chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
+
         //For Camera
         detectionState = new SkystoneDetectionState();
         detectionState.detectedPosition = camSensor.detector.currentDetectionState.detectedPosition;
@@ -122,7 +124,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         secondBlSetUp.y=firstBlSetUp.y-24;
         secondBl.y=secondBlSetUp.y;
         chassis.quickDrive(robotInfo,firstBlSetUp, 0.4);
-        chassis.driveTo(robotInfo, firstBl);
+        chassis.driveTo(robotInfo, firstBl, 0.6);
 
         //grab block
         function.grabber.setPower(-0.8);
@@ -142,7 +144,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         function.grabber.setPower(0.4);
 
         chassis.quickDrive(robotInfo,secondBlSetUp);
-        chassis.driveTo(robotInfo,secondBl);
+        chassis.driveTo(robotInfo,secondBl, 0.6);
         function.grabber.setPower(-0.8);
         sleep(900);
         function.grabber.setPower(-0.5);
