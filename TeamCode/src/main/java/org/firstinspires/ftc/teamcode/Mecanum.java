@@ -32,7 +32,7 @@ public class Mecanum {
 
     static final double COUNTS_PER_INCH_FORWARD = 30.36;
     static final double COUNTS_PER_INCH_SIDE = 32.29;
-    static final double COUNTS_PER_DEGREE = 4.69; //4.79
+    static final double COUNTS_PER_DEGREE = 4.68; //4.69
 
     public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
         robot = Arobot;
@@ -208,7 +208,11 @@ public class Mecanum {
 
     }
 
-    public void driveTo(RobotInfo r, Position p/*, boolean brake*/) {
+    public void driveTo(RobotInfo r, Position p) {
+        driveTo(r, p, 1);
+    }
+
+    public void driveTo(RobotInfo r, Position p, double power) {
         String tag = "Drive To";
         RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
         double deltaX = p.x - r.x;
@@ -236,8 +240,8 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 1, 1.64);
-        simpleDrive(distance, 1);
+        turn(turn, power, 1.64);
+        simpleDrive(distance, power);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -328,7 +332,7 @@ public class Mecanum {
 
 
         turn(turn, 1, timeOut);
-        if(turnSide < 45 && turnSide > 0 ) {//Move left
+        if(turnSide < 45 && turnSide >= 0 && distance<0) {//Move left
             sideDrive(distance, 1);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned+90))*Math.abs(distance);
