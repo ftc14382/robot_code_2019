@@ -363,6 +363,7 @@ public class Mecanum {
         //r.x = p.x;
         //r.y = p.y;
         r.degrees = getIMUField();
+        RobotLog.ii(tag, "Distance: %.2f", distance);
         RobotLog.ii(tag, "End Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
 
         /*telemetry.addData("RobotX:", r.x);
@@ -417,6 +418,14 @@ public class Mecanum {
         telemetry.addData("RobotY", r.y);
         telemetry.addData("Robot Heading", r.degrees);*/
         //RobotLog.ii(Tag, "DriveTo: turned IMU angle: %.2f", getIMUAngle() - startIMUangle);
+    }
+
+    public void turnAcurrate(RobotInfo r, double degrees) {
+        String tag = "Turn Accurate";
+        RobotLog.ii(tag, "Start Pos: %.2f", r.degrees);
+        turn(degrees, 0.87, 5);
+        r.degrees = getIMUField();
+        RobotLog.ii(tag, "End Pos: %.2f", r.degrees);
     }
 
     public double getIMUAngle() {
