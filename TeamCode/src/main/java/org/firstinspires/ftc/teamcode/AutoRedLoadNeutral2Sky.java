@@ -27,6 +27,8 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
     private Position line = new Position();
     private Position secondBlSetUp = new Position();
     private Position secondBl = new Position();
+
+    private Position twoInchMove = new Position();
     private double changeX = 1;//1=red,-1=blue.  Change this, robotinfo, and detector.color!!!
     @Override
     public void runOpMode() {
@@ -46,12 +48,12 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
         robotInfo.x = 65*changeX;
-        robotInfo.y = -40.875;
+        robotInfo.y = -40.875;//41.25?
         robotInfo.degrees = 180;//This needs changed for different sides!!!!
         //Set up positions
         firstBlSetUp.x = robotInfo.x-2*changeX;
         firstBl.x = 30*changeX;
-        midPoint.x = firstBl.x + 8*changeX;
+        midPoint.x = firstBl.x + 12*changeX;
         backup.x = 40*changeX;//Was 44
         side.x = backup.x;//changed
         side.y = 15;
@@ -60,7 +62,8 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         line.x = 40*changeX;//changed
         line.y = 0.99;
 
-
+        twoInchMove.x = robotInfo.x - 2;
+        twoInchMove.y = robotInfo.y;
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
@@ -98,8 +101,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         String imgFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + dateFormat.format(now) + "-robocap.png";
         Imgcodecs.imwrite(imgFileName, detectionState.display);
 
-        chassis.simpleDrive(2,1);
-        robotInfo.x -= 2*changeX;
+        chassis.quickDrive(robotInfo, twoInchMove);
 
         if(detectionState.detectedState == 1) {
             firstBlSetUp.y =  -44;
