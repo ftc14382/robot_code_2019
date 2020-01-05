@@ -19,7 +19,7 @@ public class Function {
         grabber.setDirection(DcMotor.Direction.FORWARD);
 
         lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        grabber.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        grabber.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         grabber.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         foundMover.setPosition(1);
