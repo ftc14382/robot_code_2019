@@ -27,7 +27,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
     private Position line = new Position();
     private Position secondBlSetUp = new Position();
     private Position secondBl = new Position();
-
+    private Position forwardBl1 = new Position();
     private Position twoInchMove = new Position();
     private double changeX = 1;//1=red,-1=blue.  Change this, robotinfo, and detector.color!!!
     @Override
@@ -61,7 +61,8 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         secondBl.x = firstBl.x;
         line.x = 40*changeX;//changed
         line.y = 0.99;
-
+        forwardBl1.x = 23*changeX;
+        forwardBl1.y = -57;
         twoInchMove.x = robotInfo.x - 2;
         twoInchMove.y = robotInfo.y;
 
@@ -104,7 +105,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         chassis.quickDrive(robotInfo, twoInchMove);
 
         if(detectionState.detectedState == 1) {
-            firstBlSetUp.y =  -44;
+            firstBlSetUp.y =  -46;//Was -44, needed to fudge it
             RobotLog.ii(tag2, "Block 1");
             secondBlSetUp.y = -52;
         } else if(detectionState.detectedState == 2) {
@@ -145,8 +146,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         chassis.quickDrive(robotInfo,secondBlSetUp);
         if(detectionState.detectedState == 1) {
             chassis.turnAcurrate(robotInfo, 180);
-            secondBl.x = 23*changeX;
+            secondBl.x = forwardBl1.x;
             chassis.quickDrive(robotInfo, secondBl);
+            chassis.driveTo(robotInfo, forwardBl1);
         } else {
             chassis.driveTo(robotInfo,secondBl, 0.6);
         }
@@ -157,6 +159,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         function.lifter.setPower(1);
         sleep(50);
         function.lifter.setPower(0);
+        if(detectionState.detectedState == 1) {
+            chassis.quickDrive(robotInfo, secondBl, 1);
+        }
         backup.y=secondBlSetUp.y;
         chassis.quickDrive(robotInfo, backup);
         chassis.driveTo(robotInfo, side);
