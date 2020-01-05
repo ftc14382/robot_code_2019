@@ -273,6 +273,7 @@ public class Mecanum {
     public void quickDrive(RobotInfo r, Position p, double timeOut/*, boolean brake*/) {
         String tag = "Quick Drive";
         RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
+        RobotLog.ii(tag, "Target Pos: %.2f, %.2f", p.x, p.y);
         double deltaX = p.x - r.x;
         double deltaY = p.y - r.y;
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -332,12 +333,12 @@ public class Mecanum {
 
 
         turn(turn, 1, timeOut);
-        if(turnSide < 45 && turnSide >= 0 && distance<0) {//Move left
+        if(Math.abs(turnSide) < 45 && distance<0) {//Move left
             sideDrive(distance, 1);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned+90))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned+90))*Math.abs(distance);
-        } else if(turnSide > -45 && turnSide <= 0) {//Move right
+        } else if(Math.abs(turnSide) < 45) {//Move right
             sideDrive(distance, 1);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned-90))*Math.abs(distance);
