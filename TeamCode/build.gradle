@@ -17,3 +17,39 @@ dependencies {
     implementation project(':openCVLibrary3')
     implementation project(':DogeCV')
 }
+
+//
+// This is a function that takes a red class name
+// and produces a corresponding blue class.
+//
+ext.makeBlue = { srcName ->
+    String codePath    = "TeamCode/src/main/java/org/firstinspires/ftc/teamcode"
+    String tgtName     = srcName.replace("Red", "Blue")
+    String srcFileName = codePath + "/" + srcName + ".java"
+    String tgtFileName = codePath + "/" + tgtName + ".java"
+    File   inputFile   = new File(srcFileName)
+    String text        = inputFile.getText('UTF-8')
+    String outText     = text
+
+    outText = outText.replace("public class " + srcName, "public class " + tgtName)
+    outText = outText.replace("startSide = Side.RED", "startSide = Side.BLUE")
+    outText = outText.replace("\"" + srcName + "\"", "\"" + tgtName + "\"")
+
+    File outFile = new File(tgtFileName)
+    outFile.write outText
+}
+
+// This is a gradle task that use the makeBlue function.
+task genBlueTask  {
+    println "Generating Blue OpModes..."
+
+    // One line for each OpMode.
+    makeBlue("AutoRedLoadNeutral2Sky")
+    makeBlue("AutoRedBuildWallFound")
+}
+
+// Make the java compile task depend on our genBlue task.
+// so that it always gets run before we compile.
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn genBlueTask
+}
