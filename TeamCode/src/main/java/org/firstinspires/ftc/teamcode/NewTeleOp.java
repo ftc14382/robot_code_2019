@@ -154,10 +154,13 @@ public class NewTeleOp extends LinearOpMode {
                 v4 = 0;
             }
             */
-
+            /*
             if (gamepad1.a) startIMUAngle = 0; //Red
+            if (gamepad1.x) startIMUAngle = 90;
             if (gamepad1.b) startIMUAngle = 180; //Blue
-
+            if (gamepad1.y) startIMUAngle = 270;
+            */
+            if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
             //trig
             offsetDegrees = startIMUAngle-chassis.getIMUAngle();
             offset = Math.toRadians(offsetDegrees);
@@ -229,21 +232,53 @@ public class NewTeleOp extends LinearOpMode {
                 lbturn = chassis.leftBack.getCurrentPosition() - turnAngle;
                 rfturn = chassis.rightFront.getCurrentPosition() - turnAngle;
                 rbturn = chassis.rightBack.getCurrentPosition() - turnAngle;
-            } else {
-                lfturn = chassis.leftFront.getCurrentPosition();
-                lbturn = chassis.leftBack.getCurrentPosition();
-                rfturn = chassis.rightFront.getCurrentPosition();
-                rbturn = chassis.rightBack.getCurrentPosition();
+
+                chassis.leftFront.setTargetPosition(lfturn);
+                chassis.leftBack.setTargetPosition(lbturn);
+                chassis.rightFront.setTargetPosition(rfturn);
+                chassis.rightBack.setTargetPosition(rbturn);
+
+                chassis.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chassis.leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chassis.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chassis.rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                chassis.leftFront.setPower(-1);
+                chassis.leftBack.setPower(-1);
+                chassis.rightFront.setPower(-1);
+                chassis.rightBack.setPower(-1);
+            } else if (gamepad1.right_bumper) {
+                turnAngle = 90 - (int)chassis.getIMUAngle();
+                turnAngle *= chassis.COUNTS_PER_DEGREE;
+                lfturn = chassis.leftFront.getCurrentPosition() + turnAngle;
+                lbturn = chassis.leftBack.getCurrentPosition() + turnAngle;
+                rfturn = chassis.rightFront.getCurrentPosition() + turnAngle;
+                rbturn = chassis.rightBack.getCurrentPosition() + turnAngle;
+
+                chassis.leftFront.setTargetPosition(lfturn);
+                chassis.leftBack.setTargetPosition(lbturn);
+                chassis.rightFront.setTargetPosition(rfturn);
+                chassis.rightBack.setTargetPosition(rbturn);
+
+                chassis.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chassis.leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chassis.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chassis.rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                chassis.leftFront.setPower(.5);
+                chassis.leftBack.setPower(.5);
+                chassis.rightFront.setPower(.5);
+                chassis.rightBack.setPower(.5);
             }
-            chassis.leftFront.setTargetPosition(lfturn);
-            chassis.leftBack.setTargetPosition(lbturn);
-            chassis.rightFront.setTargetPosition(rfturn);
-            chassis.rightBack.setTargetPosition(rbturn);
+
+
             //set power
-            chassis.leftFront.setPower(v1 + turn);
-            chassis.leftBack.setPower(v2 + turn);
-            chassis.rightFront.setPower(v3 - turn);
-            chassis.rightBack.setPower(v4 - turn);
+
+            if (!(chassis.leftFront.isBusy() || chassis.rightFront.isBusy()))
+                chassis.leftFront.setPower(v1 + turn);
+                chassis.leftBack.setPower(v2 + turn);
+                chassis.rightFront.setPower(v3 - turn);
+                chassis.rightBack.setPower(v4 - turn);
 
             //for telemetry
             leftFrontPower = v1;
