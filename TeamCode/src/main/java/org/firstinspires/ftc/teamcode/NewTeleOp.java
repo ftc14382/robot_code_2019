@@ -230,8 +230,8 @@ public class NewTeleOp extends LinearOpMode {
                 turnAngle *= chassis.COUNTS_PER_DEGREE;
                 lfturn = chassis.leftFront.getCurrentPosition() - turnAngle;
                 lbturn = chassis.leftBack.getCurrentPosition() - turnAngle;
-                rfturn = chassis.rightFront.getCurrentPosition() - turnAngle;
-                rbturn = chassis.rightBack.getCurrentPosition() - turnAngle;
+                rfturn = chassis.rightFront.getCurrentPosition() + turnAngle;
+                rbturn = chassis.rightBack.getCurrentPosition() + turnAngle;
 
                 chassis.leftFront.setTargetPosition(lfturn);
                 chassis.leftBack.setTargetPosition(lbturn);
@@ -252,8 +252,8 @@ public class NewTeleOp extends LinearOpMode {
                 turnAngle *= chassis.COUNTS_PER_DEGREE;
                 lfturn = chassis.leftFront.getCurrentPosition() + turnAngle;
                 lbturn = chassis.leftBack.getCurrentPosition() + turnAngle;
-                rfturn = chassis.rightFront.getCurrentPosition() + turnAngle;
-                rbturn = chassis.rightBack.getCurrentPosition() + turnAngle;
+                rfturn = chassis.rightFront.getCurrentPosition() - turnAngle;
+                rbturn = chassis.rightBack.getCurrentPosition() - turnAngle;
 
                 chassis.leftFront.setTargetPosition(lfturn);
                 chassis.leftBack.setTargetPosition(lbturn);
@@ -265,10 +265,10 @@ public class NewTeleOp extends LinearOpMode {
                 chassis.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 chassis.rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                chassis.leftFront.setPower(.5);
-                chassis.leftBack.setPower(.5);
-                chassis.rightFront.setPower(.5);
-                chassis.rightBack.setPower(.5);
+                chassis.leftFront.setPower(1);
+                chassis.leftBack.setPower(1);
+                chassis.rightFront.setPower(1);
+                chassis.rightBack.setPower(1);
             }
 
 
