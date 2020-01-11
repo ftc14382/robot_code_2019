@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous(name="Foundation Move(BLUE)", group="Linear OpMode")
+@Disabled
 public class BlueFoundation extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
@@ -74,19 +76,19 @@ public class BlueFoundation extends LinearOpMode{
 
         chassis.driveTo(robotInfo, forward);
         chassis.turnTo(robotInfo, turn);
-        chassis.quickDrive(robotInfo, setUp, 0.5);
-        chassis.quickDrive(robotInfo, foundation, 0.5);
+        chassis.quickDrive(robotInfo, setUp, 0.5, 3);
+        chassis.quickDrive(robotInfo, foundation, 0.5, 3);
         function.foundMover.setPosition(0);
         /*for(Position p : foundationOutPositions) {
             chassis.quickDrive(robotInfo, p, 0.5);
         }*/
         function.grabber.setPower(-0.5);
-        chassis.quickDrive(robotInfo, templateP, 0.5);
+        chassis.quickDrive(robotInfo, templateP, 0.5, 3);
         function.grabber.setPower(0);
         /*chassis.turn(-90*changeX, 1, 1.3);
         robotInfo.degrees = chassis.getIMUField();*/
         function.foundMover.setPosition(0.7);
-        chassis.quickDrive(robotInfo, line, 1);
+        chassis.quickDrive(robotInfo, line, 1, 3);
 
 
         //For Camera

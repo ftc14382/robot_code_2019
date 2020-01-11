@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Autonomous(name="Autonomous by Encoder(BLUE)(Wall)", group="Linear OpMode")
+@Disabled
 public class BlueLoadAutoWall extends LinearOpMode{
     public Mecanum chassis;
     public Function function;

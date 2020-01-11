@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.os.Environment;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import java.io.File;
 
 @Autonomous(name="AutoRedLoadWallSky", group="Linear OpMode")
+@Disabled
 public class AutoRedLoadWallSky extends LinearOpMode{
     public Mecanum chassis;
     public Function function;

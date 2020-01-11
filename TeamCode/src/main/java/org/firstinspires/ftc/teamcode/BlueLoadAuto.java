@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Autonomous(name="Autonomous by Encoder(BLUE)(Neutral)", group="Linear OpMode")
+@Disabled
 public class BlueLoadAuto extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
@@ -128,17 +130,17 @@ public class BlueLoadAuto extends LinearOpMode{
 
 
         if(detectionState.detectedState == 1) {
-            chassis.quickDrive(robotInfo,bl1SetUp, 0.4);
+            chassis.quickDrive(robotInfo,bl1SetUp, 0.4, 3);
             chassis.driveTo(robotInfo,bl1);
             backup.y = bl1.y;
             RobotLog.ii(tag2, "Block 1");
         } else if(detectionState.detectedState == 2) {
-            chassis.quickDrive(robotInfo,bl2SetUp, 0.4);
+            chassis.quickDrive(robotInfo,bl2SetUp, 0.4, 3);
             chassis.driveTo(robotInfo,bl2);
             backup.y = bl2.y;
             RobotLog.ii(tag2, "Block 2");
         } else if(detectionState.detectedState == 3){
-            chassis.quickDrive(robotInfo,bl3SetUp, 0.4);
+            chassis.quickDrive(robotInfo,bl3SetUp, 0.4, 3);
             chassis.driveTo(robotInfo,bl3);
             backup.y = bl3.y;
             RobotLog.ii(tag2, "Block 3");
@@ -153,8 +155,8 @@ public class BlueLoadAuto extends LinearOpMode{
         sleep(50);
         function.lifter.setPower(0);
         //Drive to other side
-        chassis.quickDrive(robotInfo, backup, 0.4);
-        chassis.quickDrive(robotInfo, side, 0.4);
+        chassis.quickDrive(robotInfo, backup, 0.4, 3);
+        chassis.quickDrive(robotInfo, side, 0.4, 3);
         //raise lifter slightly
         function.lifter.setPower(0.76);
         //sleep(500);
@@ -162,7 +164,7 @@ public class BlueLoadAuto extends LinearOpMode{
         //Move to foundation
         chassis.driveTo(robotInfo, lineClose);
         function.lifter.setPower(0);
-        chassis.quickDrive(robotInfo, foundMove, 0.4);
+        chassis.quickDrive(robotInfo, foundMove, 0.4, 3);
         chassis.driveTo(robotInfo, foundation);
         //chassis.turnTo(robotInfo, leave);
         //release skystone
@@ -170,12 +172,12 @@ public class BlueLoadAuto extends LinearOpMode{
         sleep(900);
         function.grabber.setPower(0);
         //park on line
-        chassis.quickDrive(robotInfo, foundMove, 0.4);
+        chassis.quickDrive(robotInfo, foundMove, 0.4, 3);
         //raise lifter slightly
         function.lifter.setPower(-0.5);//changed
-        chassis.quickDrive(robotInfo, lineClose, 0.4);
+        chassis.quickDrive(robotInfo, lineClose, 0.4, 3);
         function.lifter.setPower(0);
-        chassis.quickDrive(robotInfo, line, 0.4);
+        chassis.quickDrive(robotInfo, line, 0.4, 3);
 
 
         //chassis.simpleDrive(3, 1);
