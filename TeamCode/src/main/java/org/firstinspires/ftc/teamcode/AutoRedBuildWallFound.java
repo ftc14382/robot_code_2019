@@ -26,8 +26,10 @@ public class AutoRedBuildWallFound extends LinearOpMode{
     private Position turn = new Position();
     private Position foundation = new Position();
     List<Position> foundationOutPositions = new ArrayList<>();
-    private Position templateP = new Position();
+    private Position turnFound1 = new Position();
+    private Position turnFound2 = new Position();
     private Position line = new Position();
+    private Position setUpLine = new Position();
     private double changeX = 1;//1=red,-1=blue.  Change this, robotinfo, and detector.color
     @Override
     public void runOpMode() {
@@ -53,18 +55,17 @@ public class AutoRedBuildWallFound extends LinearOpMode{
         forward.x = 48*changeX;
         forward.y = robotInfo.y;
         setUp.x = forward.x;
-        setUp.y = 47;//Was 50.05
+        setUp.y = 50;
         turn.x = setUp.x;
         turn.y = forward.y + 5*changeX;
         foundation.y = setUp.y;
         foundation.x = 29*changeX;
-        templateP.y = foundation.y;
-        templateP.x = 70;
-        /*for(int i=1; i<9; i ++) {
-            templateP.x = foundation.x + 4.63*i*changeX;
-            foundationOutPositions.add(templateP);
-        }*/
-
+        turnFound1.y = 35;
+        turnFound1.x = 60*changeX;
+        turnFound2.x = turnFound1.x;
+        turnFound2.y = turnFound1.y + 15;
+        setUpLine.x = turnFound2.x;
+        setUpLine.y = turnFound2.y - 10;
         line.x = 70*changeX;//changed
         line.y = -2;
 
@@ -82,19 +83,27 @@ public class AutoRedBuildWallFound extends LinearOpMode{
 
         chassis.driveTo(robotInfo, forward);
         chassis.turnTo(robotInfo, turn);
-        chassis.quickDrive(robotInfo, setUp, 0.5);
-        chassis.quickDrive(robotInfo, foundation, 0.5);
+        chassis.quickDrive(robotInfo, setUp, 0.5, 1);
+        chassis.quickDrive(robotInfo, foundation, 0.5, 1);
         function.foundMover.setPosition(0);
+        sleep(300);
         /*for(Position p : foundationOutPositions) {
             chassis.quickDrive(robotInfo, p, 0.5);
         }*/
         function.grabber.setPower(-0.5);
-        chassis.quickDrive(robotInfo, templateP, 0.5);
+        chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.7);
+        chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.7);//Turn farther because of load
         function.grabber.setPower(0);
+
+        chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.7);
+        robotInfo.y = 47.5;
         /*chassis.turn(-90*changeX, 1, 1.3);
         robotInfo.degrees = chassis.getIMUField();*/
-        function.foundMover.setPosition(0.7);
-        chassis.quickDrive(robotInfo, line, 1);
+        function.foundMover.setPosition(1);
+        sleep(200);
+        chassis.quickDrive(robotInfo, setUpLine, 1, 2);
+        chassis.turnAcurrate(robotInfo, 90);
+        chassis.quickDrive(robotInfo, line, 1, 5);
 
 
         //For Camera
