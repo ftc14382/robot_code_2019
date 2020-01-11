@@ -180,13 +180,13 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
 
         if(color == 1 && detectorType == 0) {
-            if(detectedX > 210 && detectedX<300) {//270,180
+            if(detectedX > 235 && detectedX<295) {//245, 185
                 currentDetectionState.detectedState = 1;
             }
-            else if(detectedX > 90 && detectedX < 180) {//390,300
+            else if((detectedX > 400 && detectedX < 480) || (detectedX > 140 && detectedX < 220)) {//0, 80   340, 260
                 currentDetectionState.detectedState = 2;
             }
-            else if((detectedX > 325 && detectedX < 425) || (detectedX < 80 && detectedX > 30)) {//155,55 and 450,400
+            else if((detectedX > 315 && detectedX < 395) || (detectedX > 50 && detectedX < 125)) {//85, 165   430, 355
                 currentDetectionState.detectedState = 3;
             }
         }//blue side
