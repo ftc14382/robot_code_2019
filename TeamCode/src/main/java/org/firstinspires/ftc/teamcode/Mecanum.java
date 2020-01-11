@@ -162,7 +162,7 @@ public class Mecanum {
 
     }
 
-    public void sideDrive(double distance, double dir) {//Positive is to the left
+    public void sideDrive(double distance, double dir, double timeoutS) {//Positive is to the left
         int lFTarget;
         int lBTarget;
         int rFTarget;
@@ -191,8 +191,9 @@ public class Mecanum {
         }
             robot.telemetry.addData("Path", "Moving %.2f inches sideways", distance);
             robot.telemetry.update();
+            runtime.reset();
 
-            while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()){
+            while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()&& (runtime.seconds() < timeoutS)){
                 robot.telemetry.addData("Path", "Crab Walking. . .");
                 robot.telemetry.update();
             }
@@ -267,10 +268,10 @@ public class Mecanum {
     }
 
     public void quickDrive(RobotInfo r, Position p) {
-        quickDrive(r, p, 0.8);
+        quickDrive(r, p, 0.8, 3);
     }
 
-    public void quickDrive(RobotInfo r, Position p, double timeOut/*, boolean brake*/) {
+    public void quickDrive(RobotInfo r, Position p, double timeOut, double sideTimeOut/*, boolean brake*/) {
         String tag = "Quick Drive";
         RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
         RobotLog.ii(tag, "Target Pos: %.2f, %.2f", p.x, p.y);
@@ -334,12 +335,12 @@ public class Mecanum {
 
         turn(turn, 1, timeOut);
         if(Math.abs(turnSide) < 45 && distance<0) {//Move left
-            sideDrive(distance, 1);
+            sideDrive(distance, 1, sideTimeOut);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned+90))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned+90))*Math.abs(distance);
         } else if(Math.abs(turnSide) < 45) {//Move right
-            sideDrive(distance, 1);
+            sideDrive(distance, 1, sideTimeOut);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned-90))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned-90))*Math.abs(distance);
@@ -350,6 +351,109 @@ public class Mecanum {
             r.y -= Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
         } else {
             simpleDrive(distance, 1);//was 0.7
+            IMUTurned = getIMUField();
+            r.x += Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
+            r.y += Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
+        }
+
+        /*if(brake == true) {
+            robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }*/
+        //IMUTurned = getIMUField();
+
+        //r.x = p.x;
+        //r.y = p.y;
+        r.degrees = getIMUField();
+        RobotLog.ii(tag, "Distance: %.2f", distance);
+        RobotLog.ii(tag, "End Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
+
+        /*telemetry.addData("RobotX:", r.x);
+        telemetry.addData("RobotY", r.y);
+        telemetry.addData("Robot Heading", r.degrees);*/
+        //RobotLog.ii(Tag, "DriveTo: turned IMU angle: %.2f", getIMUAngle() - startIMUangle);
+    }
+
+    public void hardDrive(RobotInfo r, Position p, double timeOut, double sideTimeOut, double factor/*, boolean brake*/) {
+        String tag = "Quick Drive";
+        RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
+        RobotLog.ii(tag, "Target Pos: %.2f, %.2f", p.x, p.y);
+        double deltaX = p.x - r.x;
+        double deltaY = p.y - r.y;
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double theta = Math.atan2(deltaY, deltaX);
+        double turn = Math.toDegrees(theta) - r.degrees;
+        double turnBack;
+        double turnSide;
+
+        double startIMUangle = getIMUAngle();//for logging
+        double IMUTurned;
+
+        //RobotLog.ii(Tag, "driveTo: initial(x,y,degrees): %.2f, %.2f, %.2f", r.x, r.y, r.degrees);
+        //RobotLog.ii(Tag, "driveTo: target(x,y,degrees): %.2f, %.2f", p.x, p.y);
+
+        //Make sure the robot isn't turing more than 180
+        if (turn > 180) {
+            turn -= 360;
+        }
+        if (turn < -180) {
+            turn += 360;
+        }
+
+        //Calculate values
+        turnBack = turn - 180;
+        turnSide = turn - 90;
+        //Go backwards
+        if (turnBack > 180) {
+            turnBack -= 360;
+        } else if (turnBack < -180) {
+            turnBack += 360;
+        }
+
+
+
+        //Go sideways
+        if (turnSide > 90) {
+            turnSide -= 180;
+        } else if (turnSide < -90) {
+            turnSide += 180;
+        }
+        if(Math.abs(turnSide) < 45){
+            if(turn - turnSide > 0){
+                distance = -distance;
+            }
+            turn = turnSide;
+        } else if(Math.abs(turnBack) < 45){
+            turn = turnBack;
+            distance *= -1;
+        }
+
+
+        //RobotLog.ii(Tag, "DriveTo: comanded angle: %.2f", turn);
+        /*if(brake == true) {
+            robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }*/
+
+
+        turn(turn*factor, 1, timeOut);
+        if(Math.abs(turnSide) < 45 && distance<0) {//Move left
+            sideDrive(distance*factor, 1, sideTimeOut);
+            IMUTurned = getIMUField();
+            r.x += Math.cos(Math.toRadians(IMUTurned+90))*Math.abs(distance);
+            r.y += Math.sin(Math.toRadians(IMUTurned+90))*Math.abs(distance);
+        } else if(Math.abs(turnSide) < 45) {//Move right
+            sideDrive(distance*factor, 1, sideTimeOut);
+            IMUTurned = getIMUField();
+            r.x += Math.cos(Math.toRadians(IMUTurned-90))*Math.abs(distance);
+            r.y += Math.sin(Math.toRadians(IMUTurned-90))*Math.abs(distance);
+        } else if(Math.abs(turnBack) < 45) {
+            simpleDrive(distance*factor, 1);
+            IMUTurned = getIMUField();
+            r.x -= Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
+            r.y -= Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
+        } else {
+            simpleDrive(distance*factor, 1);//was 0.7
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
@@ -424,7 +528,7 @@ public class Mecanum {
     public void turnAcurrate(RobotInfo r, double degrees) {
         String tag = "Turn Accurate";
         RobotLog.ii(tag, "Start Pos: %.2f", r.degrees);
-        turn(degrees, 0.87, 5);
+        turn(degrees, 1, 5);
         r.degrees = getIMUField();
         RobotLog.ii(tag, "End Pos: %.2f", r.degrees);
     }
