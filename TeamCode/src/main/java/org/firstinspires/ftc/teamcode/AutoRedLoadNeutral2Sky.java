@@ -16,6 +16,8 @@ import java.util.Date;
 
 @Autonomous(name="AutoRedLoadNeutral2Sky", group="Linear OpMode")
 public class AutoRedLoadNeutral2Sky extends LinearOpMode{
+    public enum Side{RED, BLUE}
+    private static final Side startSide = Side.RED;
     public Mecanum chassis;
     public Function function;
     public CamSensor camSensor;
@@ -29,7 +31,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
     private Position secondBl = new Position();
     private Position forwardBl1 = new Position();
     private Position twoInchMove = new Position();
-    private double changeX = 1;//1=red,-1=blue.  Change this, robotinfo, and detector.color!!!
+    private double changeX;
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
@@ -41,29 +43,36 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         //For Camera
         SkystoneDetectionState detectionState;
         camSensor.detector.detectorType = 0;//0=Skystone, 1=Red foundation, 2=Blue foundation
-        camSensor.detector.color = 0;//0=red, 1=blue.  This needs changed for different sides!!!!!
         String tag = "Detection";
         String tag2 = "Block";
 
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
+        if(startSide == Side.RED) {
+            changeX = 1;//1=red,-1=blue
+            camSensor.detector.color = 0;//0=red, 1=blue
+            robotInfo.degrees = 180;
+        } else {
+            changeX = -1;
+            camSensor.detector.color = 1;
+            robotInfo.degrees = 0;
+        }
         robotInfo.x = 65*changeX;
         robotInfo.y = -40.875;//41.25?
-        robotInfo.degrees = 180;//This needs changed for different sides!!!!
         //Set up positions
         firstBlSetUp.x = robotInfo.x-2*changeX;
         firstBl.x = 30*changeX;
         midPoint.x = firstBl.x + 12*changeX;
         backup.x = 40*changeX;//Was 44
-        side.x = backup.x;//changed
+        side.x = backup.x-3;//always drifts to right
         side.y = 15;
-        secondBlSetUp.x = backup.x;
+        secondBlSetUp.x = backup.x-5;//always drifts to right
         secondBl.x = firstBl.x;
         line.x = 40*changeX;//changed
         line.y = 0.99;
         forwardBl1.x = 23*changeX;
         forwardBl1.y = -57;
-        twoInchMove.x = robotInfo.x - 2;
+        twoInchMove.x = robotInfo.x - 2*changeX;
         twoInchMove.y = robotInfo.y;
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
@@ -122,7 +131,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         midPoint.y = firstBl.y;
         backup.y= firstBlSetUp.y;
         secondBl.y=secondBlSetUp.y;
-        chassis.quickDrive(robotInfo,firstBlSetUp, 0.4);
+        chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 1);
         chassis.driveTo(robotInfo, midPoint, 0.9);
         chassis.driveTo(robotInfo, firstBl, 0.6);
 
@@ -135,7 +144,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         sleep(50);
         function.lifter.setPower(0);
         //Drive to other side
-        chassis.quickDrive(robotInfo, backup, 0.4);
+        chassis.quickDrive(robotInfo, backup, 0.4, 1);
         chassis.driveTo(robotInfo, side);
         function.grabber.setPower(0.8);
         function.lifter.setPower(-0.4);
@@ -160,7 +169,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         sleep(50);
         function.lifter.setPower(0);
         if(detectionState.detectedState == 1) {
-            chassis.quickDrive(robotInfo, secondBl, 1);
+            chassis.quickDrive(robotInfo, secondBl, 1, 1);
         }
         backup.y=secondBlSetUp.y;
         chassis.quickDrive(robotInfo, backup);
