@@ -154,12 +154,12 @@ public class NewTeleOp extends LinearOpMode {
                 v4 = 0;
             }
             */
-            /*
+
             if (gamepad1.a) startIMUAngle = 0; //Red
             if (gamepad1.x) startIMUAngle = 90;
             if (gamepad1.b) startIMUAngle = 180; //Blue
             if (gamepad1.y) startIMUAngle = 270;
-            */
+
             if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
             //trig
             offsetDegrees = startIMUAngle-chassis.getIMUAngle();
@@ -226,7 +226,8 @@ public class NewTeleOp extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper) {
-                turnAngle = -90 - (int)chassis.getIMUAngle();
+                turnAngle = -90;
+
                 turnAngle *= chassis.COUNTS_PER_DEGREE;
                 lfturn = chassis.leftFront.getCurrentPosition() - turnAngle;
                 lbturn = chassis.leftBack.getCurrentPosition() - turnAngle;
@@ -243,12 +244,15 @@ public class NewTeleOp extends LinearOpMode {
                 chassis.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 chassis.rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                chassis.leftFront.setPower(-1);
-                chassis.leftBack.setPower(-1);
-                chassis.rightFront.setPower(-1);
-                chassis.rightBack.setPower(-1);
+                chassis.leftFront.setPower(1);
+                chassis.leftBack.setPower(1);
+                chassis.rightFront.setPower(1);
+                chassis.rightBack.setPower(1);
+
+
             } else if (gamepad1.right_bumper) {
                 turnAngle = 90 - (int)chassis.getIMUAngle();
+                /*
                 turnAngle *= chassis.COUNTS_PER_DEGREE;
                 lfturn = chassis.leftFront.getCurrentPosition() + turnAngle;
                 lbturn = chassis.leftBack.getCurrentPosition() + turnAngle;
@@ -269,6 +273,19 @@ public class NewTeleOp extends LinearOpMode {
                 chassis.leftBack.setPower(1);
                 chassis.rightFront.setPower(1);
                 chassis.rightBack.setPower(1);
+                */
+                if (chassis.getIMUAngle() < turnAngle) {
+                    chassis.leftFront.setPower(1);
+                    chassis.leftBack.setPower(1);
+                    chassis.rightFront.setPower(-1);
+                    chassis.rightBack.setPower(-1);
+                } else {
+                    chassis.leftFront.setPower(0);
+                    chassis.leftBack.setPower(0);
+                    chassis.rightFront.setPower(0);
+                    chassis.rightBack.setPower(0);
+                }
+
             }
 
 
