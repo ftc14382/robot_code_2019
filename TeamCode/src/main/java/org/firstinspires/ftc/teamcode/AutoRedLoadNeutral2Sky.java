@@ -65,10 +65,10 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         midPoint.x = firstBl.x + 12*changeX;
         backup.x = 40*changeX;//Was 44
         side.x = backup.x-3;//always drifts to right
-        side.y = 15;
+        side.y = 10;//was 15
         secondBlSetUp.x = backup.x-5;//always drifts to right
         secondBl.x = firstBl.x;
-        line.x = 40*changeX;//changed
+        line.x = 38*changeX;
         line.y = 0.99;
         forwardBl1.x = 23*changeX;
         forwardBl1.y = -57;
@@ -111,7 +111,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         String imgFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + dateFormat.format(now) + "-robocap.png";
         Imgcodecs.imwrite(imgFileName, detectionState.display);
 
+        function.grabber.setPower(0.8);
         chassis.quickDrive(robotInfo, twoInchMove);
+        function.grabber.setPower(0);
 
         if(detectionState.detectedState == 1) {
             firstBlSetUp.y =  -46;//Was -44, needed to fudge it
@@ -131,38 +133,39 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         midPoint.y = firstBl.y;
         backup.y= firstBlSetUp.y;
         secondBl.y=secondBlSetUp.y;
-        chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 1);
-        chassis.driveTo(robotInfo, midPoint, 0.9);
-        chassis.driveTo(robotInfo, firstBl, 0.6);
+        chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 1.2);
+        chassis.driveTo(robotInfo, midPoint, 1);
+        chassis.driveTo(robotInfo, firstBl, 0.75);
 
         //grab block
-        function.grabber.setPower(-0.8);
-        sleep(900);
+        function.grabber.setPower(-1);
+        sleep(720);
         function.grabber.setPower(-0.5);
         //raise lifter slightly
         function.lifter.setPower(1);
         sleep(50);
         function.lifter.setPower(0);
         //Drive to other side
+        backup.y = robotInfo.y;
         chassis.quickDrive(robotInfo, backup, 0.4, 1);
         chassis.driveTo(robotInfo, side);
-        function.grabber.setPower(0.8);
-        function.lifter.setPower(-0.4);
-        sleep(258);
+        function.grabber.setPower(1);
+        function.lifter.setPower(-0.5);
+        sleep(205);
         function.lifter.setPower(0);
         function.grabber.setPower(0.5);
 
         chassis.quickDrive(robotInfo,secondBlSetUp);
         if(detectionState.detectedState == 1) {
-            chassis.turnAcurrate(robotInfo, 180);
+            chassis.turnAcurrate(robotInfo, 175);
             secondBl.x = forwardBl1.x;
             chassis.quickDrive(robotInfo, secondBl);
             chassis.driveTo(robotInfo, forwardBl1);
         } else {
-            chassis.driveTo(robotInfo,secondBl, 0.6);
+            chassis.driveTo(robotInfo,secondBl, 0.76);
         }
-        function.grabber.setPower(-0.8);
-        sleep(900);
+        function.grabber.setPower(-1);
+        sleep(720);
         function.grabber.setPower(-0.5);
         //raise lifter slightly
         function.lifter.setPower(1);
