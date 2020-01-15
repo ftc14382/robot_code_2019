@@ -18,6 +18,8 @@ import java.util.List;
 
 @Autonomous(name="AutoRedBuildWallFound", group="Linear OpMode")
 public class AutoRedBuildWallFound extends LinearOpMode{
+    public enum Side{RED, BLUE}
+    private static final Side startSide = Side.RED;
     public Mecanum chassis;
     public Function function;
     public CamSensor camSensor;
@@ -48,9 +50,15 @@ public class AutoRedBuildWallFound extends LinearOpMode{
 
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
+        if(startSide == Side.RED) {
+            robotInfo.degrees = 180;
+            changeX = 1;
+        } else {
+            robotInfo.degrees = 0;
+            changeX = -1;
+        }
         robotInfo.x = 65*changeX;
         robotInfo.y = 41.87;
-        robotInfo.degrees = 180;//This needs changed for different sides
         //Set up positions
         forward.x = 48*changeX;
         forward.y = robotInfo.y;
