@@ -155,10 +155,10 @@ public class NewTeleOp extends LinearOpMode {
             }
             */
 
-            if (gamepad1.a) startIMUAngle = 0; //Red
-            if (gamepad1.x) startIMUAngle = 90;
-            if (gamepad1.b) startIMUAngle = 180; //Blue
-            if (gamepad1.y) startIMUAngle = 270;
+            if (gamepad1.y) startIMUAngle = 90; //Red
+            if (gamepad1.b) startIMUAngle = 180;
+            if (gamepad1.a) startIMUAngle = 0; //Blue
+            if (gamepad1.x) startIMUAngle = 270;
 
             if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
             //trig
