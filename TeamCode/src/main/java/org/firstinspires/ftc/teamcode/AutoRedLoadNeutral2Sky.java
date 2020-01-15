@@ -89,6 +89,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
         //For Camera
+        camSensor.detector.doDetection = true;
         detectionState = new SkystoneDetectionState();
         detectionState.detectedPosition = camSensor.detector.currentDetectionState.detectedPosition;
         detectionState.detectedState = camSensor.detector.currentDetectionState.detectedState;
