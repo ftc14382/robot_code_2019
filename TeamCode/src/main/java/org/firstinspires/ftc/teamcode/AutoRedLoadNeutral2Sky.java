@@ -52,21 +52,24 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             changeX = 1;//1=red,-1=blue
             camSensor.detector.color = 0;//0=red, 1=blue
             robotInfo.degrees = 180;
+            robotInfo.y = -40.875;//41.25?
+            backup.x = 40*changeX;
+            secondBlSetUp.x = backup.x - 5;
         } else {
             changeX = -1;
             camSensor.detector.color = 1;
             robotInfo.degrees = 0;
+            robotInfo.y = -41.75;
+            backup.x = 37*changeX;
+            secondBlSetUp.x = backup.x - 8;
         }
         robotInfo.x = 65*changeX;
-        robotInfo.y = -40.875;//41.25?
         //Set up positions
         firstBlSetUp.x = robotInfo.x-2*changeX;
         firstBl.x = 30*changeX;
         midPoint.x = firstBl.x + 12*changeX;
-        backup.x = 40*changeX;//Was 44
         side.x = backup.x-3;//always drifts to right
         side.y = 10;//was 15
-        secondBlSetUp.x = backup.x-5;//always drifts to right
         secondBl.x = firstBl.x;
         line.x = 38*changeX;
         line.y = 0.99;
@@ -89,13 +92,14 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
         //For Camera
-        camSensor.detector.doDetection = true;
+        camSensor.detector.runTimes = 2;
+        while(camSensor.detector.runTimes > 0) { }//Wait for the detection
         detectionState = new SkystoneDetectionState();
         detectionState.detectedPosition = camSensor.detector.currentDetectionState.detectedPosition;
         detectionState.detectedState = camSensor.detector.currentDetectionState.detectedState;
         detectionState.telemetry1 = camSensor.detector.currentDetectionState.telemetry1;
         detectionState.telemetry2 = camSensor.detector.currentDetectionState.telemetry2;
-        detectionState.display = camSensor.detector.currentDetectionState.display;
+        //detectionState.display = camSensor.detector.currentDetectionState.display;
         telemetry.addData("Skystone State:", "%d", detectionState.detectedState);
         if (!detectionState.telemetry1.isEmpty()){
             telemetry.addData("Skystone: ",  detectionState.telemetry1 );
@@ -107,12 +111,12 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         //Log detected info
         RobotLog.ii(tag, "Stone %d", detectionState.detectedState);
         RobotLog.ii(tag, "X Position: %2d", detectionState.detectedPosition);
-        Date now = new Date();
+        /*Date now = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyymmddhhmmss");
         String imgFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + dateFormat.format(now) + "-robocap.png";
-        Imgcodecs.imwrite(imgFileName, detectionState.display);
+        Imgcodecs.imwrite(imgFileName, detectionState.display);*/
 
-        function.grabber.setPower(0.8);
+        function.grabber.setPower(-0.008);
         chassis.quickDrive(robotInfo, twoInchMove);
         function.grabber.setPower(0);
 
@@ -143,17 +147,17 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         sleep(720);
         function.grabber.setPower(-0.5);
         //raise lifter slightly
-        function.lifter.setPower(1);
+        /*function.lifter.setPower(1);
         sleep(50);
-        function.lifter.setPower(0);
+        function.lifter.setPower(0);*/
         //Drive to other side
         backup.y = robotInfo.y;
         chassis.quickDrive(robotInfo, backup, 0.4, 1);
         chassis.driveTo(robotInfo, side);
         function.grabber.setPower(1);
-        function.lifter.setPower(-0.5);
+        //function.lifter.setPower(-0.5);
         sleep(205);
-        function.lifter.setPower(0);
+        //function.lifter.setPower(0);
         function.grabber.setPower(0.5);
 
         chassis.quickDrive(robotInfo,secondBlSetUp);
@@ -169,9 +173,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         sleep(720);
         function.grabber.setPower(-0.5);
         //raise lifter slightly
-        function.lifter.setPower(1);
+        /*function.lifter.setPower(1);
         sleep(50);
-        function.lifter.setPower(0);
+        function.lifter.setPower(0);*/
         if(detectionState.detectedState == 1) {
             chassis.quickDrive(robotInfo, secondBl, 1, 1);
         }
