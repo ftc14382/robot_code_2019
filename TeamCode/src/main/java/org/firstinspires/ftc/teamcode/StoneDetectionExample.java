@@ -56,7 +56,7 @@ public class StoneDetectionExample extends LinearOpMode {
 //            if (gamepad1.a) {
 //                camsensor.saveSnapshot();
 //            }
-
+            camSensor.detector.runTimes = 1;
             detectionState = camSensor.detector.currentDetectionState;
 
             telemetry.addData("Gamepad1:", "%s", gamepad1.toString());

@@ -25,7 +25,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
     public SkystoneDetectionState currentDetectionState;
     public int detectorType = 0;//0=skyStone, 1=redFoundation, 2=blueFoundation
     public int color = 0;//0=red, 1=blue
-    public boolean doDetection = false;
+    public int runTimes = 0;
 
 
     // This is our constructor. Call the constructor on our parent.
@@ -50,7 +50,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
     // We transpose the output back to 480x640 before returning it.
     @Override
     public Mat process(Mat input) {
-        if(doDetection) {
+        if(runTimes > 0) {
             Size imageSize;
             Scalar colorRed = new Scalar(0, 0, 255);
             int lineThickness = 2;
@@ -216,7 +216,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                 currentDetectionState.detectedPosition = 0;
             }
 
-            doDetection = false;
+            runTimes -= 1;
 
             // This gets displayMat back to the portrait mode that the rest of the pipeline is expecting.
             Core.transpose(displayMat, displayMat);
