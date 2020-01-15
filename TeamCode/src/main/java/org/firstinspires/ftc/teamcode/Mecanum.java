@@ -96,8 +96,8 @@ public class Mecanum {
         robot.telemetry.addData("Path", "Running forwards %.2f inches", distance);
         robot.telemetry.update();
         while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) {
-            robot.telemetry.addData("Path", "Running. . .");
-            robot.telemetry.update();
+            //robot.telemetry.addData("Path", "Running. . .");
+            //robot.telemetry.update();
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
@@ -145,8 +145,8 @@ public class Mecanum {
 
 
         while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy() && (runtime.seconds() < timeoutS)){
-            robot.telemetry.addData("Path", "Turning. . .");
-            robot.telemetry.update();
+            //robot.telemetry.addData("Path", "Turning. . .");
+            //robot.telemetry.update();
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
@@ -194,8 +194,8 @@ public class Mecanum {
             runtime.reset();
 
             while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()&& (runtime.seconds() < timeoutS)){
-                robot.telemetry.addData("Path", "Crab Walking. . .");
-                robot.telemetry.update();
+                //robot.telemetry.addData("Path", "Crab Walking. . .");
+                //robot.telemetry.update();
             }
             leftFront.setPower(0);
             leftBack.setPower(0);
