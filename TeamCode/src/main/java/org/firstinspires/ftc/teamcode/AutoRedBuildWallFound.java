@@ -74,7 +74,7 @@ public class AutoRedBuildWallFound extends LinearOpMode{
         turnFound2.y = turnFound1.y + 15;
         setUpLine.x = turnFound2.x;
         setUpLine.y = turnFound2.y - 10;
-        line.x = 70*changeX;//changed
+        line.x = 62*changeX;//was 70
         line.y = -2;
 
 
@@ -105,6 +105,7 @@ public class AutoRedBuildWallFound extends LinearOpMode{
 
         chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.7);
         robotInfo.y = 47.5;
+        robotInfo.x = 48*changeX;
         /*chassis.turn(-90*changeX, 1, 1.3);
         robotInfo.degrees = chassis.getIMUField();*/
         function.foundMover.setPosition(1);
