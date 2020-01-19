@@ -74,7 +74,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         line.x = 38*changeX;
         line.y = 0.99;
         forwardBl1.x = 23*changeX;
-        forwardBl1.y = -57;
+        forwardBl1.y = -59;//was 57
         twoInchMove.x = robotInfo.x - 2*changeX;
         twoInchMove.y = robotInfo.y;
 

@@ -99,11 +99,11 @@ public class AutoRedBuildWallFound extends LinearOpMode{
             chassis.quickDrive(robotInfo, p, 0.5);
         }*/
         function.grabber.setPower(-0.5);
-        chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.7);
-        chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.7);//Turn farther because of load
+        chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.9);
+        chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.9);//Turn farther because of load
         function.grabber.setPower(0);
 
-        chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.7);
+        chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.9);
         robotInfo.y = 47.5;
         robotInfo.x = 48*changeX;
         /*chassis.turn(-90*changeX, 1, 1.3);
