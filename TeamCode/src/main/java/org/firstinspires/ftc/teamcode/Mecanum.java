@@ -30,9 +30,9 @@ public class Mecanum {
     //(WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    static final double COUNTS_PER_INCH_FORWARD = 30.36;
-    static final double COUNTS_PER_INCH_SIDE = 32.29;
-    static final double COUNTS_PER_DEGREE = 4.68; //4.69
+    static final double COUNTS_PER_INCH_FORWARD = 30.36/2;
+    static final double COUNTS_PER_INCH_SIDE = 32.29/2;
+    static final double COUNTS_PER_DEGREE = 2.8225;//4.68/2
 
     public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
         robot = Arobot;
@@ -45,9 +45,9 @@ public class Mecanum {
         rightFront = ahwMap.get(DcMotor.class, "right_front");
         rightBack = ahwMap.get(DcMotor.class, "right_back");
 
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
 
         /*leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
