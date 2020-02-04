@@ -42,19 +42,6 @@ public class Test extends LinearOpMode{
         RobotInfo robotInfo = new RobotInfo();
         robotInfo.degrees = 0;
         robotInfo.x = 65*changeX;
-        //Set up positions
-        firstBlSetUp.x = robotInfo.x-2*changeX;
-        firstBl.x = 30*changeX;
-        midPoint.x = firstBl.x + 12*changeX;
-        side.x = backup.x-3;//always drifts to right
-        side.y = 10;//was 15
-        secondBl.x = firstBl.x;
-        line.x = 38*changeX;
-        line.y = 0.99;
-        forwardBl1.x = 23*changeX;
-        forwardBl1.y = -59;//was 57
-        twoInchMove.x = robotInfo.x - 2*changeX;
-        twoInchMove.y = robotInfo.y;
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
@@ -69,7 +56,11 @@ public class Test extends LinearOpMode{
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
-        chassis.turn(250, 1, 5);
+        chassis.rampTurn(90, 0.75, 5);
+        telemetry.addData("new angle", chassis.getIMUField());
+        telemetry.update();
+        sleep(5000);
+        chassis.rampTurn(-90, 0.75, 5);
         telemetry.addData("new angle", chassis.getIMUField());
         telemetry.update();
         sleep(5000);

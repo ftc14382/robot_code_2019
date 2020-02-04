@@ -21,6 +21,7 @@ public class Mecanum {
     public DcMotor leftBack = null;
     public DcMotor rightFront = null;
     public DcMotor rightBack = null;
+    public Planner planner;
 
     public LinearOpMode robot;
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;
@@ -147,6 +148,53 @@ public class Mecanum {
         while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy() && (runtime.seconds() < timeoutS)){
             //robot.telemetry.addData("Path", "Turning. . .");
             //robot.telemetry.update();
+        }
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+
+
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void rampTurn(double degrees, double dir, double timeoutS) {
+        planner = new Planner(getIMUAngle(), getIMUAngle()+degrees, dir);
+        int lFTarget;
+        int lBTarget;
+        int rFTarget;
+        int rBTarget;
+        if(robot.opModeIsActive()) {
+            lFTarget = leftFront.getCurrentPosition() - (int)(degrees * COUNTS_PER_DEGREE);
+            lBTarget = leftBack.getCurrentPosition() - (int)(degrees * COUNTS_PER_DEGREE);
+            rFTarget = rightFront.getCurrentPosition() + (int)(degrees * COUNTS_PER_DEGREE);
+            rBTarget = rightBack.getCurrentPosition() + (int)(degrees * COUNTS_PER_DEGREE);
+
+            leftFront.setTargetPosition(lFTarget);
+            leftBack.setTargetPosition(lBTarget);
+            rightFront.setTargetPosition(rFTarget);
+            rightBack.setTargetPosition(rBTarget);
+
+            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            
+
+        }
+
+        robot.telemetry.addData("Path", "Turning %.2f degrees", degrees);
+        robot.telemetry.update();
+        runtime.reset();
+
+
+        while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy() && (runtime.seconds() < timeoutS)){
+            planner.getPower(getIMUAngle());
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
