@@ -6,7 +6,7 @@ public class Planner {
     double yMax = 1;
     double target;
     double a = 0.05;
-    double b = 0.5;
+    double b = -0.5;
     double x1;
     double x2;
 
@@ -31,7 +31,7 @@ public class Planner {
         } else if(x>x2) {
             return (b*(x-target));
         } else {
-            return (target);
+            return (yMax);
         }
     }
 }
