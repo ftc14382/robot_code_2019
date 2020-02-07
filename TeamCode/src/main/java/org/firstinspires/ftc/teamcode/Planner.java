@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 public class Planner {
-    double xStart;
     double yIntercept = 0.1;
     double yMax = 1;
     double target;
@@ -9,23 +8,22 @@ public class Planner {
     double b = -0.5;
     double x1;
     double x2;
+    double offset;
 
     public Planner(double startX, double t, double power) {
-        xStart = startX;
-        target = t;
+        offset = startX;//Only operate greater than or equal to 0
+        target = Math.abs(t-offset);
         yMax = power;
-        x1 = startX + (yMax-yIntercept)/a;
+        x1 = (yMax-yIntercept)/a;
         x2 = yMax/b+target;
         if(x1>x2) {
             x1 = (-b * target - yIntercept) / (a - b);
             x2 = x1;
         }
-        x1 = Math.abs(x1);
-        x2 = Math.abs(x2);
     }
 
     public double getPower(double x) {
-        x= Math.abs(x);
+        x= Math.abs(x-offset);
         if(x<x1){
             return(x*a+yIntercept);
         } else if(x>x2) {
