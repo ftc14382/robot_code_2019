@@ -224,7 +224,7 @@ public class NewTeleOp extends LinearOpMode {
                 v3 = v3s;
                 v4 = v4s;
             }
-
+            /*
             if (gamepad1.left_bumper) {
                 turnAngle = -90;
 
@@ -273,7 +273,7 @@ public class NewTeleOp extends LinearOpMode {
                 chassis.leftBack.setPower(1);
                 chassis.rightFront.setPower(1);
                 chassis.rightBack.setPower(1);
-                */
+
                 if (chassis.getIMUAngle() < turnAngle) {
                     chassis.leftFront.setPower(1);
                     chassis.leftBack.setPower(1);
@@ -287,7 +287,7 @@ public class NewTeleOp extends LinearOpMode {
                 }
 
             }
-
+            */
 
             //set power
 
