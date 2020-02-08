@@ -25,4 +25,8 @@ public class Function {
         foundMover.setPosition(1);
     }
 
+    public void liftTo(double position) {
+        
+    }
+
 }

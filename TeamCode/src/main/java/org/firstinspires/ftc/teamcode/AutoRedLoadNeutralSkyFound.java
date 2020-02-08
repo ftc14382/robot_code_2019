@@ -24,7 +24,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
     private Position forwardBl1 = new Position();
     private Position twoInchMove = new Position();
 
-    private Position sideFoundTransition = new Position();
+    private Position moveOut = new Position();
     private Position putOnFound = new Position();
 
     private Position setUp = new Position();
@@ -82,10 +82,12 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
 
         /*sideFoundTransition.x = 48*changeX;
         sideFoundTransition.y = */
+        putOnFound.x = 31;
+        putOnFound.y = 50;
 
         //Foundation
         setUp.x = 48*changeX;
-        setUp.y = 50;
+        setUp.y = putOnFound.y;
         turn.x = setUp.x;
         turn.y = 42 + 5*changeX;
         foundation.y = setUp.y;
@@ -94,6 +96,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         turnFound1.x = 60*changeX;
         turnFound2.x = turnFound1.x;
         turnFound2.y = turnFound1.y + 15;
+        moveOut.y = 35;
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
@@ -163,6 +166,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         chassis.quickDrive(robotInfo, backup, 0.4, 1);
         //chassis.driveTo(robotInfo, side);
         chassis.driveTo(robotInfo, setUp);
+        chassis.driveTo(robotInfo, putOnFound);
 
         function.grabber.setPower(1);
         sleep(205);
@@ -170,6 +174,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
 
 
         //Move foundation
+        chassis.quickDrive(robotInfo, setUp);
         chassis.turnTo(robotInfo, turn);
         chassis.quickDrive(robotInfo, setUp, 0.5, 1);
         chassis.quickDrive(robotInfo, foundation, 0.5, 1);
@@ -183,7 +188,8 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         function.foundMover.setPosition(1);
         sleep(200);
 
-
+        moveOut.x = robotInfo.x;
+        chassis.quickDrive(robotInfo, moveOut, 0.3, 3);
 
         chassis.quickDrive(robotInfo,secondBlSetUp);
         if(detectionState.detectedState == 1) {
