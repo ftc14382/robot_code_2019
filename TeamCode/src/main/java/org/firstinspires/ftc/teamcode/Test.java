@@ -56,11 +56,20 @@ public class Test extends LinearOpMode{
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
-        chassis.rampTurn(90, 0.75, 5);
+        chassis.rampTurn(90, 1, 5);
         telemetry.addData("new angle", chassis.getIMUField());
         telemetry.update();
         sleep(5000);
-        chassis.rampTurn(-90, 0.75, 5);
+        chassis.rampTurn(-90, 1, 5);
+        telemetry.addData("new angle", chassis.getIMUField());
+        telemetry.update();
+        sleep(5000);
+
+        chassis.turn(90, 0.75, 5);
+        telemetry.addData("new angle", chassis.getIMUField());
+        telemetry.update();
+        sleep(5000);
+        chassis.turn(-90, 0.75, 5);
         telemetry.addData("new angle", chassis.getIMUField());
         telemetry.update();
         sleep(5000);

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 public class Planner {
     double yIntercept = 0.1;
     double yMax = 1;
@@ -20,6 +22,8 @@ public class Planner {
             x1 = (-b * target - yIntercept) / (a - b);
             x2 = x1;
         }
+        RobotLog.ii("Planner", "X1: %.2f", x1);
+        RobotLog.ii("Planner", "X2: %.2f", x2);
     }
 
     public double getPower(double x) {

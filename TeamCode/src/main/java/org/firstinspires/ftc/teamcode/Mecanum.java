@@ -23,6 +23,7 @@ public class Mecanum {
     public DcMotor rightBack = null;
     public Planner planner;
 
+
     public LinearOpMode robot;
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;
@@ -163,12 +164,12 @@ public class Mecanum {
 
     }
 
-    public void rampTurn(double degrees, double dir, double timeoutS) {
-        planner = new Planner(getIMUAngle(), getIMUAngle()+degrees, dir);
-        int lFTarget;
-        int lBTarget;
-        int rFTarget;
-        int rBTarget;
+    public void rampTurn(double degrees, double power, double timeoutS) {
+        planner = new Planner(getIMUAngle(), getIMUAngle()+degrees, power);
+        int lFTarget = 0;
+        int lBTarget = 0;
+        int rFTarget = 0;
+        int rBTarget = 0;
         if(robot.opModeIsActive()) {
             lFTarget = leftFront.getCurrentPosition() - (int)(degrees * COUNTS_PER_DEGREE);
             lBTarget = leftBack.getCurrentPosition() - (int)(degrees * COUNTS_PER_DEGREE);
@@ -193,8 +194,16 @@ public class Mecanum {
         runtime.reset();
 
 
-        while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy() && (runtime.seconds() < timeoutS)){
-            planner.getPower(getIMUAngle());
+        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>3) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>3) &&
+                (Math.abs(rFTarget - rightFront.getCurrentPosition())>3) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>3)
+                && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
+            power = planner.getPower(getIMUAngle());
+            leftFront.setPower(power);
+            leftBack.setPower(power);
+            rightFront.setPower(power);
+            rightBack.setPower(power);
+            robot.telemetry.addData("Ramp turn", "Power: %.2f", power);
+            robot.telemetry.update();
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
