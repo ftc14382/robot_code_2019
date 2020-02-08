@@ -150,11 +150,6 @@ public class SoloControl extends LinearOpMode {
             }
             */
 
-            if (gamepad1.y) startIMUAngle = 90; //Red
-            if (gamepad1.b) startIMUAngle = 180;
-            if (gamepad1.a) startIMUAngle = 0; //Blue
-            if (gamepad1.x) startIMUAngle = 270;
-
             if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
             //trig
             offsetDegrees = startIMUAngle - chassis.getIMUAngle();
@@ -206,6 +201,7 @@ public class SoloControl extends LinearOpMode {
             v4s = (v4s / 2) * hs;
             */
             //trig
+            /*
             h = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x);
             robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) + offset;
             v1s = .5 * h * (Math.sin(robotAngle) + Math.cos(robotAngle));
@@ -218,11 +214,12 @@ public class SoloControl extends LinearOpMode {
                 v2 = v2s;
                 v3 = v3s;
                 v4 = v4s;
-            }
+            }*/
             int lFTarget;
             int lBTarget;
             int rFTarget;
             int rBTarget;
+            /*
             if (gamepad1.left_bumper || gamepad1.right_bumper) {
                 if (gamepad1.left_bumper) degrees = -90;
                 else degrees = 90;
@@ -257,7 +254,7 @@ public class SoloControl extends LinearOpMode {
                 chassis.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 chassis.rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
-
+            */
 
             //set power
 
