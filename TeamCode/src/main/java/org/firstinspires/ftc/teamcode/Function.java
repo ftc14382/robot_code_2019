@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Function {
     public DcMotor lifter;
     public DcMotor grabber;
     public Servo foundMover;
+    public LinearOpMode robot;
+    public ElapsedTime runtime = new ElapsedTime();
 
     public void init(HardwareMap ahwMap) {
         lifter = ahwMap.get(DcMotor.class, "lifter");
@@ -25,8 +29,12 @@ public class Function {
         foundMover.setPosition(1);
     }
 
-    public void liftTo(double position) {
-        
+    public void liftTo(int position, double timeoutS) {
+        lifter.setTargetPosition(position);
+        lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lifter.setPower(1);
+        while (lifter.isBusy() && (runtime.seconds() < timeoutS) && robot.opModeIsActive()){}
+        lifter.setPower(0);
     }
 
 }
