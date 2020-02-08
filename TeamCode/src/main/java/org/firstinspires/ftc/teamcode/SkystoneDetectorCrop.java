@@ -23,7 +23,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
     private Mat hierarchy  = new Mat(); // hierarchy used by contours
     private Mat cropMask    = new Mat();
     public SkystoneDetectionState currentDetectionState;
-    public int detectorType = 0;//0=skyStone, 1=redFoundation, 2=blueFoundation
+    public int detectorType = 0;//0=skyStone, 1=redFoundation, 2=blueFoundation, 3=yellow stone
     public int color = 0;//0=red, 1=blue
     public int runTimes = 0;
 
@@ -75,7 +75,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             int cropWidth = 0;
             int cropHeight = 0;
 
-            if (detectorType == 0) {
+            if (detectorType == 0 || detectorType == 3) {
                 //Define upper and lower range of color
                 lowerMask = new Scalar(10, 40, 40);//was(20, 50, 50)  I am trying to change it so it sees better
                 upperMask = new Scalar(60, 255, 255);//was(40, 255, 255)
@@ -132,7 +132,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
 
                 // Now we take our grayscale maskYellow image and create an RGB image.
                 Imgproc.cvtColor(maskYellow, displayMat, Imgproc.COLOR_GRAY2RGB);
-            }//For blue foundations
+            }//For blue foundation or yellow stone
 
 
             //Crop image
@@ -161,7 +161,13 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                     maxAreaCrop = areaCrop;
                     greatestContour.clear();
                     greatestContour.add(c);//Make sure we are only selecting one countour
-                    detectedX = (int) (Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width / 2);//Middle of selected area
+                    if(detectorType == 1) {
+                        detectedX = Imgproc.boundingRect(c).x;//Red
+                    } else if(detectorType == 2) {
+                        detectedX = Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width;//Blue
+                    } else {
+                        detectedX = (int) (Imgproc.boundingRect(c).x + Imgproc.boundingRect(c).width / 2);//Middle of selected area
+                    }
                     circleCenter = new Point(detectedX, (int) (Imgproc.boundingRect(c).y + Imgproc.boundingRect(c).height / 2));//Create point for the center of the selected image
                 }
             }
@@ -207,6 +213,9 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             } else if ((detectorType == 1 || detectorType == 2) && maxAreaCrop > 700) {
                 currentDetectionState.telemetry1 = "Foundation found!";
                 currentDetectionState.telemetry2 = "" + detectedX;
+                currentDetectionState.detected = true;
+                currentDetectionState.detectedPosition = detectedX;
+            } else if(detectorType == 3 && maxAreaCrop > 5000) {
                 currentDetectionState.detected = true;
                 currentDetectionState.detectedPosition = detectedX;
             } else {

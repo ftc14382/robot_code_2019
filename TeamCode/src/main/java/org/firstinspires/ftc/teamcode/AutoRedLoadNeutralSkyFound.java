@@ -110,6 +110,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
 
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
+        int startLifterPosition = function.lifter.getCurrentPosition();
 
         //For Camera
         camSensor.detector.runTimes = 2;
@@ -166,11 +167,14 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         chassis.quickDrive(robotInfo, backup, 0.4, 1);
         //chassis.driveTo(robotInfo, side);
         chassis.driveTo(robotInfo, setUp);
+        function.liftTo(0, 1);
         chassis.driveTo(robotInfo, putOnFound);
 
+        function.liftTo(startLifterPosition, 1);
         function.grabber.setPower(1);
         sleep(205);
         function.grabber.setPower(0.5);
+
 
 
         //Move foundation

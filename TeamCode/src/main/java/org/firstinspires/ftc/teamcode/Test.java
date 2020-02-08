@@ -24,6 +24,7 @@ public class Test extends LinearOpMode{
     private Position forwardBl1 = new Position();
     private Position twoInchMove = new Position();
     private double changeX;
+    private double dis;
     @Override
     public void runOpMode() {
         chassis = new Mecanum();
@@ -55,16 +56,20 @@ public class Test extends LinearOpMode{
 
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
-
-        chassis.rampTurn(90, 1, 5);
-        telemetry.addData("new angle", chassis.getIMUField());
+        dis = chassis.leftFront.getCurrentPosition();
+        chassis.rampDrive(1000, 1, 5);
+        //chassis.rampTurn(180, 1, 5);
+        //telemetry.addData("new angle", chassis.getIMUField());
+        telemetry.addData("new distance", Math.abs(chassis.leftFront.getCurrentPosition() - dis)* chassis.COUNTS_PER_INCH_FORWARD);
+        telemetry.update();
+        //sleep(5000);
+        //chassis.rampDrive(-24, 1, 5);
+        telemetry.addData("new distance", Math.abs(chassis.leftFront.getCurrentPosition() - dis)* chassis.COUNTS_PER_INCH_FORWARD);
+        //chassis.rampTurn(-90, 1, 5);
+        //telemetry.addData("new angle", chassis.getIMUField());
         telemetry.update();
         sleep(5000);
-        chassis.rampTurn(-90, 1, 5);
-        telemetry.addData("new angle", chassis.getIMUField());
-        telemetry.update();
-        sleep(5000);
-
+        /*
         chassis.turn(90, 0.75, 5);
         telemetry.addData("new angle", chassis.getIMUField());
         telemetry.update();
@@ -73,6 +78,8 @@ public class Test extends LinearOpMode{
         telemetry.addData("new angle", chassis.getIMUField());
         telemetry.update();
         sleep(5000);
+
+         */
     }
 
 }

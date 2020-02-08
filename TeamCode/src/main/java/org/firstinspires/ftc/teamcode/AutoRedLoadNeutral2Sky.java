@@ -117,7 +117,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         Imgcodecs.imwrite(imgFileName, detectionState.display);*/
 
         function.grabber.setPower(-0.008);
-        chassis.quickDrive(robotInfo, twoInchMove);
+        chassis.quickDrive(robotInfo, twoInchMove, 0.5, 0.5);
         function.grabber.setPower(0);
 
         if(detectionState.detectedState == 1) {

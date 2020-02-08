@@ -358,7 +358,8 @@ public class NewTeleOp extends LinearOpMode {
             function.foundMover.setPosition(servoPosition);
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
+            //telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
+            telemetry.addData("Lifter", "Position: %d", function.lifter.getCurrentPosition());
             telemetry.addData("Turn", "Turn Value: " + turn);
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
