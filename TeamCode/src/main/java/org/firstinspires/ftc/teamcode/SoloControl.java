@@ -249,10 +249,10 @@ public class SoloControl extends LinearOpMode {
                 chassis.rightFront.setPower(0);
                 chassis.rightBack.setPower(0);
 
-                chassis.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                chassis.leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                chassis.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                chassis.rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                chassis.leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                chassis.leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                chassis.rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                chassis.rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             */
 
@@ -263,7 +263,7 @@ public class SoloControl extends LinearOpMode {
                 chassis.leftBack.setPower(v2 + turn);
                 chassis.rightFront.setPower(v3 - turn);
                 chassis.rightBack.setPower(v4 - turn);
-
+            */
             //for telemetry
             leftFrontPower = v1;
             leftBackPower = v2;
