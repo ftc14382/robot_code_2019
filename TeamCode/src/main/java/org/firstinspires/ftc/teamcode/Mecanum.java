@@ -32,7 +32,7 @@ public class Mecanum {
     //(WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    static final double COUNTS_PER_INCH_FORWARD = 30.36/2;
+    static final double COUNTS_PER_INCH_FORWARD = 14.814;//30.36/2
     static final double COUNTS_PER_INCH_SIDE = 32.29/2;
     static final double COUNTS_PER_DEGREE = 2.8225;//4.68/2
 
@@ -185,7 +185,7 @@ public class Mecanum {
             leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            
+
 
         }
 
@@ -298,8 +298,10 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, power, 1.64);
-        simpleDrive(distance, power);
+        //turn(turn, power, 1.64);
+        rampTurn(turn, power, 1.64);
+        //simpleDrive(distance, power);
+        rampDrive(distance, power, 7);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -328,7 +330,7 @@ public class Mecanum {
         quickDrive(r, p, 0.8, 3);
     }
 
-    public void quickDrive(RobotInfo r, Position p, double timeOut, double sideTimeOut/*, boolean brake*/) {
+    public void quickDrive(RobotInfo r, Position p, double turnTimeOut, double moveTimeOut/*, boolean brake*/) {
         String tag = "Quick Drive";
         RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
         RobotLog.ii(tag, "Target Pos: %.2f, %.2f", p.x, p.y);
@@ -390,24 +392,27 @@ public class Mecanum {
         }*/
 
 
-        turn(turn, 1, timeOut);
+        //turn(turn, 1, timeOut);
+        rampTurn(turn, 1, turnTimeOut);
         if(Math.abs(turnSide) < 45 && distance<0) {//Move left
-            sideDrive(distance, 1, sideTimeOut);
+            sideDrive(distance, 1, moveTimeOut);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned+90))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned+90))*Math.abs(distance);
         } else if(Math.abs(turnSide) < 45) {//Move right
-            sideDrive(distance, 1, sideTimeOut);
+            sideDrive(distance, 1, moveTimeOut);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned-90))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned-90))*Math.abs(distance);
         } else if(Math.abs(turnBack) < 45) {
-            simpleDrive(distance, 1);
+            //simpleDrive(distance, 1);
+            rampDrive(distance, 1, moveTimeOut);
             IMUTurned = getIMUField();
             r.x -= Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
             r.y -= Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
         } else {
-            simpleDrive(distance, 1);//was 0.7
+            //simpleDrive(distance, 1);
+            rampDrive(distance, 1, moveTimeOut);
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
@@ -493,7 +498,7 @@ public class Mecanum {
         }*/
 
 
-        turn(turn*factor, 1, timeOut);
+        rampTurn(turn*factor, 1, timeOut);
         if(Math.abs(turnSide) < 45 && distance<0) {//Move left
             sideDrive(distance*factor, 1, sideTimeOut);
             IMUTurned = getIMUField();
@@ -628,4 +633,62 @@ public class Mecanum {
             rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+
+    public void rampDrive(double distance, double power, double timeoutS) {
+        planner = new Planner(leftFront.getCurrentPosition(), leftFront.getCurrentPosition()+distance*COUNTS_PER_INCH_FORWARD, power);
+        int lFTarget = 0;
+        int lBTarget = 0;
+        int rFTarget = 0;
+        int rBTarget = 0;
+        if(robot.opModeIsActive()) {
+            lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
+            lBTarget = leftBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
+            rFTarget = rightFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
+            rBTarget = rightBack.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_FORWARD);
+
+            leftFront.setTargetPosition(lFTarget);
+            leftBack.setTargetPosition(lBTarget);
+            rightFront.setTargetPosition(rFTarget);
+            rightBack.setTargetPosition(rBTarget);
+
+            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        }
+
+        robot.telemetry.addData("Path", "Moving %.2f inches", distance);
+        robot.telemetry.update();
+        runtime.reset();
+
+
+        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>3) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>3) &&
+                (Math.abs(rFTarget - rightFront.getCurrentPosition())>3) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>3)
+                && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
+            power = planner.getPower(leftFront.getCurrentPosition());
+            leftFront.setPower(power);
+            leftBack.setPower(power);
+            rightFront.setPower(power);
+            rightBack.setPower(power);
+            robot.telemetry.addData("Ramp drive", "Power: %.2f", power);
+            robot.telemetry.update();
+        }
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+
+
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+
+
 }
