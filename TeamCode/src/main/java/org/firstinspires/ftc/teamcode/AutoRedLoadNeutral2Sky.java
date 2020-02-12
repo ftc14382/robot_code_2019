@@ -52,28 +52,28 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             changeX = 1;//1=red,-1=blue
             camSensor.detector.color = 0;//0=red, 1=blue
             robotInfo.degrees = 180;
-            robotInfo.y = -40.875;//41.25?
+            robotInfo.y = -40.5;//40.875
             backup.x = 40*changeX;
-            secondBlSetUp.x = backup.x - 5;
+            secondBlSetUp.x = backup.x;//-5
         } else {
             changeX = -1;
             camSensor.detector.color = 1;
             robotInfo.degrees = 0;
-            robotInfo.y = -41.75;
-            backup.x = 37*changeX;
-            secondBlSetUp.x = backup.x - 8;
+            robotInfo.y = -40.5;//41.75
+            backup.x = 42*changeX;
+            secondBlSetUp.x = backup.x;//-8
         }
         robotInfo.x = 65*changeX;
         //Set up positions
         firstBlSetUp.x = robotInfo.x-2*changeX;
         firstBl.x = 30*changeX;
         midPoint.x = firstBl.x + 12*changeX;
-        side.x = backup.x-3;//always drifts to right
+        side.x = backup.x;//always drifts to right -3
         side.y = 10;//was 15
         secondBl.x = firstBl.x;
         line.x = 38*changeX;
         line.y = 0.99;
-        forwardBl1.x = 23*changeX;
+        forwardBl1.x = 24*changeX;//23
         forwardBl1.y = -59;//was 57
         twoInchMove.x = robotInfo.x - 2*changeX;
         twoInchMove.y = robotInfo.y;
@@ -138,9 +138,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         midPoint.y = firstBl.y;
         backup.y= firstBlSetUp.y;
         secondBl.y=secondBlSetUp.y;
-        chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 1.2);
-        chassis.driveTo(robotInfo, midPoint, 1);
-        chassis.driveTo(robotInfo, firstBl, 0.75);
+        chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 2);
+        chassis.driveTo(robotInfo, midPoint, 1,1.5);
+        chassis.driveTo(robotInfo, firstBl, 0.75,1.5);
 
         //grab block
         function.grabber.setPower(-1);
@@ -152,7 +152,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         function.lifter.setPower(0);*/
         //Drive to other side
         backup.y = robotInfo.y;
-        chassis.quickDrive(robotInfo, backup, 0.4, 1);
+        chassis.quickDrive(robotInfo, backup, 0.4, 2);
         chassis.driveTo(robotInfo, side);
         function.grabber.setPower(1);
         //function.lifter.setPower(-0.5);
@@ -165,9 +165,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             chassis.turnAcurrate(robotInfo, 175);
             secondBl.x = forwardBl1.x;
             chassis.quickDrive(robotInfo, secondBl);
-            chassis.driveTo(robotInfo, forwardBl1);
+            chassis.driveTo(robotInfo, forwardBl1, 1, 1);
         } else {
-            chassis.driveTo(robotInfo,secondBl, 0.76);
+            chassis.driveTo(robotInfo,secondBl, 0.76,3);
         }
         function.grabber.setPower(-1);
         sleep(720);
@@ -177,11 +177,11 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         sleep(50);
         function.lifter.setPower(0);*/
         if(detectionState.detectedState == 1) {
-            chassis.quickDrive(robotInfo, secondBl, 1, 1);
+            chassis.quickDrive(robotInfo, secondBl, 1, 2.01);
         }
         backup.y=secondBlSetUp.y;
         chassis.quickDrive(robotInfo, backup);
-        chassis.driveTo(robotInfo, side);
+        chassis.driveTo(robotInfo, side, 1, 4);
         function.grabber.setPower(0.8);
         chassis.quickDrive(robotInfo, line);
         function.grabber.setPower(0);

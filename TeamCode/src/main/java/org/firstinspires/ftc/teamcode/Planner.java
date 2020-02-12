@@ -3,18 +3,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 public class Planner {
-    double yIntercept = 0.25;//Was 0.1
+    double yIntercept = 0.27;//Was 0.1
     double yMax = 1;
     double target;
-    double a = 0.05;
-    double b = -0.5;
+    double a = 0.1;
+    double b = -0.6;
     double x1;
     double x2;
     double offset;
 
     public Planner(double startX, double t, double power) {
         offset = startX;//Only operate greater than or equal to 0
-        target = Math.abs(t-offset);
+        target = Math.abs(t-offset)+1.5;
         yMax = power;
         x1 = (yMax-yIntercept)/a;
         x2 = yMax/b+target;

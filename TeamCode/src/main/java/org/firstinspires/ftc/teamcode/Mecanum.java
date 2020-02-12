@@ -194,8 +194,8 @@ public class Mecanum {
         runtime.reset();
 
 
-        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>3) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>3) &&
-                (Math.abs(rFTarget - rightFront.getCurrentPosition())>3) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>3)
+        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>4) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>4) &&
+                (Math.abs(rFTarget - rightFront.getCurrentPosition())>4) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>4)
                 && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
             power = planner.getPower(getIMUAngle());
             leftFront.setPower(power);
@@ -220,10 +220,10 @@ public class Mecanum {
     }
 
     public void sideDrive(double distance, double dir, double timeoutS) {//Positive is to the left
-        int lFTarget;
-        int lBTarget;
-        int rFTarget;
-        int rBTarget;
+        int lFTarget = 0;
+        int lBTarget = 0;
+        int rFTarget = 0;
+        int rBTarget = 0;
         if(robot.opModeIsActive()) {
             lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_SIDE);
             lBTarget = leftBack.getCurrentPosition() - (int)(distance * COUNTS_PER_INCH_SIDE);
@@ -250,7 +250,10 @@ public class Mecanum {
             robot.telemetry.update();
             runtime.reset();
 
-            while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()&& (runtime.seconds() < timeoutS)){
+            //while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()&& (runtime.seconds() < timeoutS)){
+            while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>4) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>4) &&
+                    (Math.abs(rFTarget - rightFront.getCurrentPosition())>4) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>4)
+                    && robot.opModeIsActive() && (runtime.seconds() < timeoutS)) {
                 //robot.telemetry.addData("Path", "Crab Walking. . .");
                 //robot.telemetry.update();
             }
@@ -267,10 +270,10 @@ public class Mecanum {
     }
 
     public void driveTo(RobotInfo r, Position p) {
-        driveTo(r, p, 1);
+        driveTo(r, p, 1, 7);
     }
 
-    public void driveTo(RobotInfo r, Position p, double power) {
+    public void driveTo(RobotInfo r, Position p, double power, double timeout) {
         String tag = "Drive To";
         RobotLog.ii(tag, "Start Pos: (%.2f, %.2f), (%.2f)", r.x, r.y, r.degrees);
         double deltaX = p.x - r.x;
@@ -301,7 +304,7 @@ public class Mecanum {
         //turn(turn, power, 1.64);
         rampTurn(turn, power, 1.64);
         //simpleDrive(distance, power);
-        rampDrive(distance, power, 7);
+        rampDrive(distance, power, timeout);
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -664,8 +667,8 @@ public class Mecanum {
         runtime.reset();
 
 
-        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>3) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>3) &&
-                (Math.abs(rFTarget - rightFront.getCurrentPosition())>3) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>3)
+        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>4) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>4) &&
+                (Math.abs(rFTarget - rightFront.getCurrentPosition())>4) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>4)
                 && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
             power = planner.getPower(leftFront.getCurrentPosition());
             leftFront.setPower(power);
