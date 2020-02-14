@@ -263,7 +263,7 @@ public class SoloControl extends LinearOpMode {
                 chassis.leftBack.setPower(v2 + turn);
                 chassis.rightFront.setPower(v3 - turn);
                 chassis.rightBack.setPower(v4 - turn);
-            */
+            
             //for telemetry
             leftFrontPower = v1;
             leftBackPower = v2;
