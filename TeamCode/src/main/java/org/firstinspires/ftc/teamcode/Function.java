@@ -33,6 +33,7 @@ public class Function {
         lifter.setTargetPosition(position);
         lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lifter.setPower(1);
+        runtime.reset();
         while (lifter.isBusy() && (runtime.seconds() < timeoutS) && robot.opModeIsActive()){}
         lifter.setPower(0);
     }
