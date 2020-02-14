@@ -75,7 +75,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
             int cropWidth = 0;
             int cropHeight = 0;
 
-            if (detectorType == 0 || detectorType == 3) {
+            if (detectorType == 0) {
                 //Define upper and lower range of color
                 lowerMask = new Scalar(10, 40, 40);//was(20, 50, 50)  I am trying to change it so it sees better
                 upperMask = new Scalar(60, 255, 255);//was(40, 255, 255)
@@ -85,6 +85,16 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                 cropWidth = 480;
                 cropHeight = 70;//100
             } //Skystone
+            else if(detectorType == 3) {
+                //Define upper and lower range of color
+                lowerMask = new Scalar(20, 50, 50);
+                upperMask = new Scalar(40, 255, 255);
+                //Define what area we are cropping
+                cropX = 10;
+                cropY = 254;//Was 270
+                cropWidth = 460;
+                cropHeight = 100;//100
+            }
             else if (detectorType == 1) {
                 //Define upper and lower range of color
                 lowerMask = new Scalar(10, 50, 40);//The color red is 0 hue so we either have to create two masks or find all of the non-red and invert it
@@ -215,7 +225,7 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                 currentDetectionState.telemetry2 = "" + detectedX;
                 currentDetectionState.detected = true;
                 currentDetectionState.detectedPosition = detectedX;
-            } else if(detectorType == 3 && maxAreaCrop > 5000) {
+            } else if(detectorType == 3 && maxAreaCrop > 5000 && maxAreaCrop<40500) {
                 currentDetectionState.detected = true;
                 currentDetectionState.detectedPosition = detectedX;
             } else {
