@@ -12,9 +12,10 @@ public class Planner {
     double x2;
     double offset;
 
+
     public Planner(double startX, double t, double power) {
         offset = startX;//Only operate greater than or equal to 0
-        target = Math.abs(t-offset)+1.5;
+        target = Math.abs(t-offset);
         yMax = power;
         x1 = (yMax-yIntercept)/a;
         x2 = yMax/b+target;
@@ -22,18 +23,22 @@ public class Planner {
             x1 = (-b * target - yIntercept) / (a - b);
             x2 = x1;
         }
-        RobotLog.ii("Planner", "X1: %.2f", x1);
-        RobotLog.ii("Planner", "X2: %.2f", x2);
     }
 
     public double getPower(double x) {
+        double returnVal;
         x= Math.abs(x-offset);
         if(x<x1){
-            return(x*a+yIntercept);
+            returnVal = x*a+yIntercept;
         } else if(x>x2) {
-            return (b*(x-target));
+            returnVal = b*(x-target);
         } else {
-            return (yMax);
+            returnVal = yMax;
         }
+
+        if(returnVal < 0.1) {
+            returnVal = 0.1;
+        }
+        return(returnVal);
     }
 }
