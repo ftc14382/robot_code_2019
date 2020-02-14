@@ -98,6 +98,7 @@ public class NewTeleOp extends LinearOpMode {
         double grabberPower;
         double lifterPower;
         int bottomPos;
+        int currentLifterPos;
 
         int turnAngle;
         int lfturn;
@@ -117,6 +118,7 @@ public class NewTeleOp extends LinearOpMode {
         chassis.runtime.reset();
         startIMUAngle = 0;
         bottomPos = function.lifter.getCurrentPosition() - 50;
+        currentLifterPos = function.lifter.getCurrentPosition();
 
         COUNTS_PER_LEVEL = 0;
         // run until the end of the match (driver presses STOP)
@@ -335,13 +337,21 @@ public class NewTeleOp extends LinearOpMode {
             //normal lifter control
             functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
             if(gamepad2.dpad_up) {
+                function.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 lifterPower = 1.0;
+                currentLifterPos= function.lifter.getCurrentPosition();
+                function.lifter.setPower(functionSpeedChange*lifterPower);
             } else if(gamepad2.dpad_down && function.lifter.getCurrentPosition() > bottomPos) {
+                function.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 lifterPower = -1.0;
+                currentLifterPos= function.lifter.getCurrentPosition();
+                function.lifter.setPower(functionSpeedChange*lifterPower);
             } else {
-                lifterPower = 0.0;
+                function.lifter.setTargetPosition(currentLifterPos);
+                function.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                function.lifter.setPower(0.2);
             }
-            function.lifter.setPower(functionSpeedChange*lifterPower);
+
 
             if (gamepad2.left_bumper) {
                 function.lifter.setTargetPosition(function.lifter.getCurrentPosition() + COUNTS_PER_LEVEL);
