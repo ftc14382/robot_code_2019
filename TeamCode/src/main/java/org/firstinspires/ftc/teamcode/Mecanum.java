@@ -194,16 +194,14 @@ public class Mecanum {
         runtime.reset();
 
 
-        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>4) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>4) &&
-                (Math.abs(rFTarget - rightFront.getCurrentPosition())>4) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>4)
+        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>6) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>6) &&
+                (Math.abs(rFTarget - rightFront.getCurrentPosition())>6) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>6)
                 && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
             power = planner.getPower(getIMUAngle());
             leftFront.setPower(power);
             leftBack.setPower(power);
             rightFront.setPower(power);
             rightBack.setPower(power);
-            robot.telemetry.addData("Ramp turn", "Power: %.2f", power);
-            robot.telemetry.update();
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
@@ -675,8 +673,6 @@ public class Mecanum {
             leftBack.setPower(power);
             rightFront.setPower(power);
             rightBack.setPower(power);
-            robot.telemetry.addData("Ramp drive", "Power: %.2f", power);
-            robot.telemetry.update();
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
