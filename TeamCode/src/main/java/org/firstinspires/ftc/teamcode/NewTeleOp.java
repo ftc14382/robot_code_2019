@@ -361,11 +361,16 @@ public class NewTeleOp extends LinearOpMode {
             }
 
             if(gamepad2.left_bumper) {
-                servoPosition = 1;
+                //servoPosition = 1;
+                servoPosition = 0.5;
             } else if(gamepad2.right_bumper) {
                 servoPosition = 0;
+                servoPosition = -0.5;
+            } else{
+                servoPosition = 0;
             }
-            function.foundMover.setPosition(servoPosition);
+            //function.foundMover.setPosition(servoPosition);
+            function.foundMover2.setPower(servoPosition);
 
             // Show the elapsed game time and wheel power.
             //telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
