@@ -39,7 +39,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         chassis = new Mecanum();
         chassis.init(hardwareMap, this, true);
         function = new Function();
-        function.init(hardwareMap);
+        function.init(hardwareMap, this);
         camSensor = new CamSensor();
         camSensor.init(hardwareMap);
         //For Camera
@@ -54,28 +54,28 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
             changeX = 1;//1=red,-1=blue
             camSensor.detector.color = 0;//0=red, 1=blue
             robotInfo.degrees = 180;
-            robotInfo.y = -40.875;//41.25?
+            robotInfo.y = -40.5;//40.875
             backup.x = 40*changeX;
-            secondBlSetUp.x = backup.x - 5;
+            secondBlSetUp.x = backup.x;
         } else {
             changeX = -1;
             camSensor.detector.color = 1;
             robotInfo.degrees = 0;
-            robotInfo.y = -41.75;
-            backup.x = 37*changeX;
-            secondBlSetUp.x = backup.x - 8;
+            robotInfo.y = -40.5;//41.75
+            backup.x = 42*changeX;
+            secondBlSetUp.x = backup.x;
         }
         robotInfo.x = 65*changeX;
         //Set up positions
         firstBlSetUp.x = robotInfo.x-2*changeX;
         firstBl.x = 30*changeX;
         midPoint.x = firstBl.x + 12*changeX;
-        side.x = backup.x-3;//always drifts to right
-        side.y = 5;//was 10
+        side.x = backup.x;//always drifts to right
+        side.y = 10;//was 15
         secondBl.x = firstBl.x;
         line.x = 38*changeX;
         line.y = 0.99;
-        forwardBl1.x = 23*changeX;
+        forwardBl1.x = 24*changeX;
         forwardBl1.y = -59;//was 57
         twoInchMove.x = robotInfo.x - 2*changeX;
         twoInchMove.y = robotInfo.y;
@@ -134,7 +134,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         RobotLog.ii(tag, "X Position: %2d", detectionState.detectedPosition);
 
         function.grabber.setPower(-0.008);
-        chassis.quickDrive(robotInfo, twoInchMove);
+        chassis.quickDrive(robotInfo, twoInchMove, 0.5, 0.5);
         function.grabber.setPower(0);
 
         if(detectionState.detectedState == 1) {
@@ -156,8 +156,8 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         backup.y= firstBlSetUp.y;
         secondBl.y=secondBlSetUp.y;
         chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 1.2);
-        chassis.driveTo(robotInfo, midPoint, 1);
-        chassis.driveTo(robotInfo, firstBl, 0.75);
+        chassis.driveTo(robotInfo, midPoint, 1, 1.5);
+        chassis.driveTo(robotInfo, firstBl, 0.75, 1.5);
 
         //grab block
         function.grabber.setPower(-1);
@@ -167,7 +167,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         chassis.quickDrive(robotInfo, backup, 0.4, 1);
         //chassis.driveTo(robotInfo, side);
         chassis.driveTo(robotInfo, setUp);
-        function.liftTo(0, 1);
+        function.liftTo(startLifterPosition+550, 1);
         chassis.driveTo(robotInfo, putOnFound);
 
         function.liftTo(startLifterPosition, 1);
@@ -180,17 +180,21 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         //Move foundation
         chassis.quickDrive(robotInfo, setUp);
         chassis.turnTo(robotInfo, turn);
-        chassis.quickDrive(robotInfo, setUp, 0.5, 1);
+        //chassis.quickDrive(robotInfo, setUp, 0.5, 1);
         chassis.quickDrive(robotInfo, foundation, 0.5, 1);
-        function.foundMover.setPosition(0);
+        //function.foundMover.setPosition(0);
+        function.foundMover2.setPower(-0.5);
         sleep(300);
+        function.foundMover2.setPower(0);
         chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.9);
         chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.9);//Turn farther because foundation drags
         chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.9);
         robotInfo.y = 47.5;
         robotInfo.x = 48*changeX;
-        function.foundMover.setPosition(1);
+        //function.foundMover.setPosition(1);
+        function.foundMover2.setPower(0.5);
         sleep(200);
+        function.foundMover2.setPower(0);
 
         moveOut.x = robotInfo.x;
         chassis.quickDrive(robotInfo, moveOut, 0.3, 3);
@@ -200,9 +204,9 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
             chassis.turnAcurrate(robotInfo, 175);
             secondBl.x = forwardBl1.x;
             chassis.quickDrive(robotInfo, secondBl);
-            chassis.driveTo(robotInfo, forwardBl1);
+            chassis.driveTo(robotInfo, forwardBl1, 1, 1);
         } else {
-            chassis.driveTo(robotInfo,secondBl, 0.76);
+            chassis.driveTo(robotInfo,secondBl, 0.76, 3);
         }
         function.grabber.setPower(-1);
         sleep(720);
@@ -216,7 +220,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         }
         backup.y=secondBlSetUp.y;
         chassis.quickDrive(robotInfo, backup);
-        chassis.driveTo(robotInfo, side);
+        chassis.driveTo(robotInfo, side, 1, 4);
         function.grabber.setPower(0.8);
         chassis.quickDrive(robotInfo, line);
         function.grabber.setPower(0);
