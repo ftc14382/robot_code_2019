@@ -343,7 +343,7 @@ public class NewTeleOp extends LinearOpMode {
                 function.lifter.setPower(functionSpeedChange*lifterPower);
             } else if(gamepad2.dpad_down && function.lifter.getCurrentPosition() > bottomPos) {
                 function.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                lifterPower = -1.0;
+                lifterPower = -0.8;
                 currentLifterPos= function.lifter.getCurrentPosition();
                 function.lifter.setPower(functionSpeedChange*lifterPower);
             } else {
