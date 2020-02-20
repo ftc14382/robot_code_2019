@@ -86,10 +86,10 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         putOnFound.y = 50;
 
         //Foundation
-        setUp.x = 48*changeX;
+        setUp.x = 37*changeX;
         setUp.y = putOnFound.y;
         turn.x = setUp.x;
-        turn.y = 42 + 5*changeX;
+        turn.y = setUp.y + 5*changeX;
         foundation.y = setUp.y;
         foundation.x = 29*changeX;
         turnFound1.y = 35;
@@ -167,7 +167,7 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         chassis.quickDrive(robotInfo, backup, 0.4, 1);
         //chassis.driveTo(robotInfo, side);
         chassis.driveTo(robotInfo, setUp);
-        function.liftTo(startLifterPosition+550, 1);
+        function.liftTo(startLifterPosition+580, 1);
         chassis.driveTo(robotInfo, putOnFound);
 
         function.liftTo(startLifterPosition, 1);
@@ -183,8 +183,8 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         //chassis.quickDrive(robotInfo, setUp, 0.5, 1);
         chassis.quickDrive(robotInfo, foundation, 0.5, 1);
         //function.foundMover.setPosition(0);
-        function.foundMover2.setPower(-0.5);
-        sleep(300);
+        function.foundMover2.setPower(-1);
+        sleep(600);
         function.foundMover2.setPower(0);
         chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.9);
         chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.9);//Turn farther because foundation drags
