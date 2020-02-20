@@ -54,7 +54,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             robotInfo.degrees = 180;
             robotInfo.y = -40.5;//40.875
             backup.x = 40*changeX;
-            secondBlSetUp.x = backup.x+3*changeX;//-5
+            secondBlSetUp.x = backup.x+5.5*changeX;//+3
         } else {
             changeX = -1;
             camSensor.detector.color = 1;
@@ -167,9 +167,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             chassis.quickDrive(robotInfo, secondBl);
             chassis.driveTo(robotInfo, forwardBl1, 1, 1);
         } else {
-            function.grabber.setPower(-1);
-            sleep(25);
-            function.grabber.setPower(0);
+            function.grabber.setPower(-0.1);
             chassis.driveTo(robotInfo,secondBl, 0.76,3);
         }
         function.grabber.setPower(-1);
