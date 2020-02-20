@@ -300,7 +300,7 @@ public class Mecanum {
 
 
         //turn(turn, power, 1.64);
-        rampTurn(turn, power, 1.64);
+        rampTurn(turn, power, 2);
         //simpleDrive(distance, power);
         rampDrive(distance, power, timeout);
 
