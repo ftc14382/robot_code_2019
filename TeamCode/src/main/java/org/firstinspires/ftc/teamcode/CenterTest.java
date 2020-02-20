@@ -60,12 +60,12 @@ public class CenterTest extends LinearOpMode{
                 chassis.leftFront.setPower(0.4);
                 chassis.rightFront.setPower(-0.4);
                 chassis.leftBack.setPower(-0.4);
-            } else break;
+            } else break;*/
 
-            if(Math.abs(camSensor.detector.currentDetectionState.detectedPosition - 240) < 5) {
+            if(Math.abs(camSensor.detector.currentDetectionState.detectedPosition - 240) < 7) {
                 break;
-            }*/
-            power = (camSensor.detector.currentDetectionState.detectedPosition-240)*0.004;
+            }
+            power = (camSensor.detector.currentDetectionState.detectedPosition-240)*0.0018;
             if(Math.abs(power)>1) {
                 power /= Math.abs(power);
             }
