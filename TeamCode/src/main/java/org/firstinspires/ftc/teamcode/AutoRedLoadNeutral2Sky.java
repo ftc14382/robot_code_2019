@@ -75,7 +75,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         line.y = 0.99;
         forwardBl1.x = 24*changeX;//23
         forwardBl1.y = -59;//was 57
-        twoInchMove.x = robotInfo.x - 4*changeX;//2
+        twoInchMove.x = robotInfo.x - 2*changeX;//2
         twoInchMove.y = robotInfo.y;
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
@@ -138,7 +138,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         midPoint.y = firstBl.y;
         backup.y= firstBlSetUp.y;
         secondBl.y=secondBlSetUp.y;
-        //chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 2);
+        chassis.quickDrive(robotInfo,firstBlSetUp, 0.4, 2);
         chassis.driveTo(robotInfo, midPoint, 1,1.8);
         chassis.driveTo(robotInfo, firstBl, 0.75,1.5);
 
@@ -167,7 +167,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             chassis.quickDrive(robotInfo, secondBl);
             chassis.driveTo(robotInfo, forwardBl1, 1, 1);
         } else {
-            function.grabber.setPower(-0.1);
+            //function.grabber.setPower(-0.1);
             chassis.driveTo(robotInfo,secondBl, 0.76,3);
         }
         function.grabber.setPower(-1);
