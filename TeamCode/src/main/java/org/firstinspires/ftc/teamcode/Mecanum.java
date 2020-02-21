@@ -32,7 +32,7 @@ public class Mecanum {
     //(WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    static final double COUNTS_PER_INCH_FORWARD = 14.814;//30.36/2
+    static final double COUNTS_PER_INCH_FORWARD = 14.2857;//14.814
     static final double COUNTS_PER_INCH_SIDE = 32.29/2;
     static final double COUNTS_PER_DEGREE = 2.8225;//4.68/2
 
@@ -165,7 +165,8 @@ public class Mecanum {
     }
 
     public void rampTurn(double degrees, double power, double timeoutS) {
-        planner = new Planner(getIMUAngle(), getIMUAngle()+degrees, power);
+        double targetAngle = getIMUAngle()+degrees;
+        planner = new Planner(getIMUAngle(), targetAngle, power);
         int lFTarget = 0;
         int lBTarget = 0;
         int rFTarget = 0;
@@ -196,12 +197,13 @@ public class Mecanum {
 
         while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>6) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>6) &&
                 (Math.abs(rFTarget - rightFront.getCurrentPosition())>6) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>6)
-                && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
+                && (Math.abs(targetAngle-getIMUAngle())>6) && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
             power = planner.getPower(getIMUAngle());
             leftFront.setPower(power);
             leftBack.setPower(power);
             rightFront.setPower(power);
             rightBack.setPower(power);
+            RobotLog.ii("Ramp Turn", "Amount left: %.2f    Power: %.2f", targetAngle-getIMUAngle(), power);
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
@@ -300,7 +302,7 @@ public class Mecanum {
 
 
         //turn(turn, power, 1.64);
-        rampTurn(turn, power, 2);
+        rampTurn(turn, power, 4);
         //simpleDrive(distance, power);
         rampDrive(distance, power, timeout);
 
@@ -673,6 +675,7 @@ public class Mecanum {
             leftBack.setPower(power);
             rightFront.setPower(power);
             rightBack.setPower(power);
+            RobotLog.ii("Ramp Drive", "Left: %d", lFTarget-leftFront.getCurrentPosition());
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
