@@ -36,8 +36,8 @@ public class Planner {
             returnVal = yMax;
         }
 
-        if(returnVal < 0.1) {
-            returnVal = 0.1;
+        if(returnVal < 0.18) {
+            returnVal = 0.18;
         }
         return(returnVal);
     }
