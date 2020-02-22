@@ -71,7 +71,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         side.x = backup.x;//always drifts to right -3
         side.y = 10;//was 15
         secondBl.x = firstBl.x;
-        line.x = 38*changeX;
+        line.x = 40*changeX;//38
         line.y = 0.99;
         forwardBl1.x = 24*changeX;//23
         forwardBl1.y = -59;//was 57
