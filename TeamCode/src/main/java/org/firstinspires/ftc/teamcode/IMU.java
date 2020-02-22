@@ -21,7 +21,7 @@ public class IMU {
         BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
         parameters2.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters2.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters2.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        //parameters2.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters2.loggingEnabled = true;
         parameters2.loggingTag = "IMU";
         parameters2.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
