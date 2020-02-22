@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.opencv.core.Mat;
 
 
 public class Mecanum {
@@ -33,7 +34,7 @@ public class Mecanum {
 
 
     static final double COUNTS_PER_INCH_FORWARD = 14.2857;//14.814
-    static final double COUNTS_PER_INCH_SIDE = 32.29/2;
+    static final double COUNTS_PER_INCH_SIDE = 17.493;//32.29/2
     static final double COUNTS_PER_DEGREE = 2.8225;//4.68/2
 
     public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
@@ -165,8 +166,10 @@ public class Mecanum {
     }
 
     public void rampTurn(double degrees, double power, double timeoutS) {
-        double targetAngle = getIMUAngle()+degrees;
-        planner = new Planner(getIMUAngle(), targetAngle, power);
+        double current = getIMUAngle();
+        double previous = current;
+        double targetAngle = current+degrees;
+        planner = new Planner(current, targetAngle, power);
         int lFTarget = 0;
         int lBTarget = 0;
         int rFTarget = 0;
@@ -198,7 +201,12 @@ public class Mecanum {
         while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>6) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>6) &&
                 (Math.abs(rFTarget - rightFront.getCurrentPosition())>6) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>6)
                 && (Math.abs(targetAngle-getIMUAngle())>6) && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
-            power = planner.getPower(getIMUAngle());
+            current = getIMUAngle();
+            previous = current;
+            if(Math.abs(current - previous) > 300) {
+                current = current+360;
+            }
+            power = planner.getPower(current);
             leftFront.setPower(power);
             leftBack.setPower(power);
             rightFront.setPower(power);
@@ -608,6 +616,7 @@ public class Mecanum {
         return(actual);
     }
 
+
     public void encoderDrive(double upInches, double rightInches) {
         double distance = Math.hypot(upInches, rightInches);
         double robotAngle = Math.atan2(upInches, rightInches) + Math.PI / 4;
@@ -638,6 +647,12 @@ public class Mecanum {
     }
 
     public void rampDrive(double distance, double power, double timeoutS) {
+        double leftPower;
+        double rightPower;
+        double startIMUangle = getIMUAngle();
+        double adjust;
+        double max;
+        double tolerance = 12;
         planner = new Planner(leftFront.getCurrentPosition(), leftFront.getCurrentPosition()+distance*COUNTS_PER_INCH_FORWARD, power);
         int lFTarget = 0;
         int lBTarget = 0;
@@ -667,14 +682,21 @@ public class Mecanum {
         runtime.reset();
 
 
-        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>4) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>4) &&
-                (Math.abs(rFTarget - rightFront.getCurrentPosition())>4) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>4)
+        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>tolerance) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>tolerance) &&
+                (Math.abs(rFTarget - rightFront.getCurrentPosition())>tolerance) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>tolerance)
                 && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
-            power = planner.getPower(leftFront.getCurrentPosition());
-            leftFront.setPower(power);
-            leftBack.setPower(power);
-            rightFront.setPower(power);
-            rightBack.setPower(power);
+            adjust = (getIMUAngle()-startIMUangle)*0.002;
+            leftPower = planner.getPower(leftFront.getCurrentPosition())+adjust;
+            rightPower = leftPower-adjust*2;
+            if (leftPower > 1 || rightPower > 1) {
+                max = Math.max(leftPower, rightPower);
+                leftPower /= max;
+                rightPower /= max;
+            }
+            leftFront.setPower(leftPower);
+            leftBack.setPower(leftPower);
+            rightFront.setPower(rightPower);
+            rightBack.setPower(rightPower);
             RobotLog.ii("Ramp Drive", "Left: %d", lFTarget-leftFront.getCurrentPosition());
         }
         leftFront.setPower(0);
