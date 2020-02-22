@@ -31,8 +31,8 @@ public class Function {
         grabber.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         grabber.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //foundMover.setPosition(1);
-        foundMover2.setPower(0);
+        foundMover.setPosition(1);
+        //foundMover2.setPower(0);
     }
 
     public void init(HardwareMap ahwMap) {
