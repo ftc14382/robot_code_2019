@@ -116,7 +116,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         String imgFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + dateFormat.format(now) + "-robocap.png";
         Imgcodecs.imwrite(imgFileName, detectionState.display);*/
 
-        function.grabber.setPower(-0.008);
+        function.grabber.setPower(-0.006);//-0.008
         chassis.quickDrive(robotInfo, twoInchMove, 0.5, 0.5);
         function.grabber.setPower(0);
 
@@ -162,7 +162,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
 
         chassis.quickDrive(robotInfo,secondBlSetUp);
         if(detectionState.detectedState == 1) {
-            chassis.turnAcurrate(robotInfo, 175);
+            chassis.turnAcurrate(robotInfo, -175*changeX);
             secondBl.x = forwardBl1.x;
             chassis.quickDrive(robotInfo, secondBl);
             chassis.driveTo(robotInfo, forwardBl1, 1, 1);
