@@ -35,7 +35,7 @@ public class Mecanum {
 
     static final double COUNTS_PER_INCH_FORWARD = 14.2857;//14.814
     static final double COUNTS_PER_INCH_SIDE = 17.493;//32.29/2
-    static final double COUNTS_PER_DEGREE = 2.8225;//4.68/2
+    static final double COUNTS_PER_DEGREE = 2.7826;//2.822
 
     public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
         robot = Arobot;
@@ -169,6 +169,8 @@ public class Mecanum {
         double current = getIMUAngle();
         double previous = current;
         double targetAngle = current+degrees;
+        double tolerance = 6;
+        targetAngle += (tolerance/COUNTS_PER_DEGREE)*(degrees/Math.abs(degrees));
         planner = new Planner(current, targetAngle, power);
         int lFTarget = 0;
         int lBTarget = 0;
@@ -198,8 +200,8 @@ public class Mecanum {
         runtime.reset();
 
 
-        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>6) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>6) &&
-                (Math.abs(rFTarget - rightFront.getCurrentPosition())>6) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>6)
+        while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>tolerance) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>tolerance) &&
+                (Math.abs(rFTarget - rightFront.getCurrentPosition())>tolerance) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>tolerance)
                 && (Math.abs(targetAngle-getIMUAngle())>6) && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
             current = getIMUAngle();
             previous = current;
@@ -232,6 +234,8 @@ public class Mecanum {
         int lBTarget = 0;
         int rFTarget = 0;
         int rBTarget = 0;
+        double tolerance = 5;
+        distance += (tolerance/COUNTS_PER_INCH_SIDE)*(distance/Math.abs(distance));
         if(robot.opModeIsActive()) {
             lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_SIDE);
             lBTarget = leftBack.getCurrentPosition() - (int)(distance * COUNTS_PER_INCH_SIDE);
@@ -259,8 +263,8 @@ public class Mecanum {
             runtime.reset();
 
             //while (robot.opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()&& (runtime.seconds() < timeoutS)){
-            while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>4) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>4) &&
-                    (Math.abs(rFTarget - rightFront.getCurrentPosition())>4) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>4)
+            while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>tolerance) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>tolerance) &&
+                    (Math.abs(rFTarget - rightFront.getCurrentPosition())>tolerance) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>tolerance)
                     && robot.opModeIsActive() && (runtime.seconds() < timeoutS)) {
                 //robot.telemetry.addData("Path", "Crab Walking. . .");
                 //robot.telemetry.update();
@@ -601,7 +605,8 @@ public class Mecanum {
     public void turnAcurrate(RobotInfo r, double degrees) {
         String tag = "Turn Accurate";
         RobotLog.ii(tag, "Start Pos: %.2f", r.degrees);
-        turn(degrees, 1, 5);
+        //turn(degrees, 1, 5);
+        rampTurn(degrees, 1, 4);
         r.degrees = getIMUField();
         RobotLog.ii(tag, "End Pos: %.2f", r.degrees);
     }
@@ -653,6 +658,7 @@ public class Mecanum {
         double adjust;
         double max;
         double tolerance = 12;
+        distance += (tolerance/COUNTS_PER_INCH_FORWARD)*(distance/Math.abs(distance));
         planner = new Planner(leftFront.getCurrentPosition(), leftFront.getCurrentPosition()+distance*COUNTS_PER_INCH_FORWARD, power);
         int lFTarget = 0;
         int lBTarget = 0;
@@ -685,7 +691,7 @@ public class Mecanum {
         while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>tolerance) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>tolerance) &&
                 (Math.abs(rFTarget - rightFront.getCurrentPosition())>tolerance) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>tolerance)
                 && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
-            adjust = (getIMUAngle()-startIMUangle)*0.002;
+            adjust = (getIMUAngle()-startIMUangle)*0.0021;
             leftPower = planner.getPower(leftFront.getCurrentPosition())+adjust;
             rightPower = leftPower-adjust*2;
             if (leftPower > 1 || rightPower > 1) {
