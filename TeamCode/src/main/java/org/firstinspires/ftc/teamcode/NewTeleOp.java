@@ -99,6 +99,7 @@ public class NewTeleOp extends LinearOpMode {
         double lifterPower;
         int bottomPos;
         int currentLifterPos;
+        double maximum;
 
         int turnAngle;
         int lfturn;
@@ -125,7 +126,7 @@ public class NewTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             //driving for mecanum wheels
             h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
+            v1 = -gamepad1.right_stick_y + gamepad1.right_stick_x;
             v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
             //robotAngle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) + Math.PI / 4;//Remember it is the angle moved + 45 degrees
 
@@ -164,7 +165,7 @@ public class NewTeleOp extends LinearOpMode {
 
             if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
             //trig
-            offsetDegrees = startIMUAngle-chassis.getIMUAngle();
+            offsetDegrees = startIMUAngle - chassis.getIMUAngle();
             offset = Math.toRadians(offsetDegrees);
             turn = gamepad1.right_trigger - gamepad1.left_trigger;
             h = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
@@ -173,22 +174,22 @@ public class NewTeleOp extends LinearOpMode {
             v2 = h * (Math.sin(robotAngle) - Math.cos(robotAngle));
             v3 = v2;
             v4 = v1;
-            if(gamepad1.dpad_up) {
-               v1 = 0.5;
-               v2 = 0.5;
-               v3 = 0.5;
-               v4 = 0.5;
-            } else if(gamepad1.dpad_down) {
+            if (gamepad1.dpad_up) {
+                v1 = 0.5;
+                v2 = 0.5;
+                v3 = 0.5;
+                v4 = 0.5;
+            } else if (gamepad1.dpad_down) {
                 v1 = -0.5;
                 v2 = -0.5;
                 v3 = -0.5;
                 v4 = -0.5;
-            } else if(gamepad1.dpad_right) {
+            } else if (gamepad1.dpad_right) {
                 v1 = 0.5;
                 v4 = 0.5;
                 v2 = -0.5;
                 v3 = -0.5;
-            } else if(gamepad1.dpad_left) {
+            } else if (gamepad1.dpad_left) {
                 v1 = -0.5;
                 v4 = -0.5;
                 v2 = 0.5;
@@ -293,17 +294,31 @@ public class NewTeleOp extends LinearOpMode {
 
             //set power
 
-            if (!(chassis.leftFront.isBusy() || chassis.rightFront.isBusy()))
-                chassis.leftFront.setPower(v1 + turn);
-                chassis.leftBack.setPower(v2 + turn);
-                chassis.rightFront.setPower(v3 - turn);
-                chassis.rightBack.setPower(v4 - turn);
 
+            if (!(chassis.leftFront.isBusy() || chassis.rightFront.isBusy())) {
+                v1 += turn;
+                v2 += turn;
+                v3 -= turn;
+                v4 -= turn;
+                maximum = 1;
+                if (Math.abs(v1) > 1 || Math.abs(v2) > 1 || Math.abs(v3) > 1 || Math.abs(v4) > 1) {
+                    maximum = Math.max(Math.abs(v1), Math.abs(v2));
+                    maximum = Math.max(maximum, Math.abs(v3));
+                    maximum = Math.max(maximum, Math.abs(v4));
+                }
+                chassis.leftFront.setPower(v1 / maximum);
+                chassis.leftBack.setPower(v2 / maximum);
+                chassis.rightFront.setPower(v3 / maximum);
+                chassis.rightBack.setPower(v4 / maximum);
+            }
             //for telemetry
             leftFrontPower = v1;
             leftBackPower = v2;
             rightFrontPower = v3;
             rightBackPower = v4;
+
+
+
 
             functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
             /*
