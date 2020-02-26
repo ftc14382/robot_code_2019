@@ -54,14 +54,14 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             robotInfo.degrees = 180;
             robotInfo.y = -40.5;//40.875
             backup.x = 40*changeX;
-            secondBlSetUp.x = backup.x+5.5*changeX;//+3
+            secondBlSetUp.x = backup.x+0*changeX;//+3
         } else {
             changeX = -1;
             camSensor.detector.color = 1;
             robotInfo.degrees = 0;
             robotInfo.y = -40.5;//41.75
-            backup.x = 42*changeX;
-            secondBlSetUp.x = backup.x;//-8
+            backup.x = 40*changeX;//was 42
+            secondBlSetUp.x = backup.x-3;//-8
         }
         robotInfo.x = 65*changeX;
         //Set up positions
@@ -69,11 +69,11 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         firstBl.x = 30*changeX;
         midPoint.x = firstBl.x + 12*changeX;
         side.x = backup.x;//always drifts to right -3
-        side.y = 10;//was 15
+        side.y = 12;//was 10
         secondBl.x = firstBl.x;
         line.x = 40*changeX;//38
         line.y = 0.99;
-        forwardBl1.x = 24*changeX;//23
+        forwardBl1.x = 22.5*changeX;//24
         forwardBl1.y = -59;//was 57
         twoInchMove.x = robotInfo.x - 2*changeX;//2
         twoInchMove.y = robotInfo.y;
@@ -116,7 +116,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         String imgFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + dateFormat.format(now) + "-robocap.png";
         Imgcodecs.imwrite(imgFileName, detectionState.display);*/
 
-        function.grabber.setPower(-0.006);//-0.008
+        function.grabber.setPower(-0.008);//-0.008
         chassis.quickDrive(robotInfo, twoInchMove, 0.5, 0.5);
         function.grabber.setPower(0);
 
@@ -162,13 +162,13 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
 
         chassis.quickDrive(robotInfo,secondBlSetUp);
         if(detectionState.detectedState == 1) {
-            chassis.turnAcurrate(robotInfo, -175*changeX);
+            chassis.turnAcurrate(robotInfo, -180*changeX);
             secondBl.x = forwardBl1.x;
             chassis.quickDrive(robotInfo, secondBl);
             chassis.driveTo(robotInfo, forwardBl1, 1, 1);
         } else {
-            //function.grabber.setPower(-0.1);
-            chassis.driveTo(robotInfo,secondBl, 0.76,3);
+            function.grabber.setPower(-0.00003);
+            chassis.driveTo(robotInfo,secondBl, 0.9,3);//Power was 0.76
         }
         function.grabber.setPower(-1);
         sleep(250);//720
