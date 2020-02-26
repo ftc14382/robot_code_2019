@@ -6,7 +6,7 @@ public class Planner {
     double yIntercept = 0.145;//Was 0.1
     double yMax = 1;
     double target;
-    double a = 0.1;
+    double a = 0.24;//0.1
     double b = -0.6;
     double x1;
     double x2;
