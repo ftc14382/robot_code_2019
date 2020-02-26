@@ -169,7 +169,7 @@ public class Mecanum {
         double current = getIMUAngle();
         double previous = current;
         double targetAngle = current+degrees;
-        double tolerance = 6;
+        double tolerance = 8.5;
         targetAngle += (tolerance/COUNTS_PER_DEGREE)*(degrees/Math.abs(degrees));
         planner = new Planner(current, targetAngle, power);
         int lFTarget = 0;
@@ -202,18 +202,18 @@ public class Mecanum {
 
         while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>tolerance) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>tolerance) &&
                 (Math.abs(rFTarget - rightFront.getCurrentPosition())>tolerance) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>tolerance)
-                && (Math.abs(targetAngle-getIMUAngle())>6) && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
+                && (Math.abs(targetAngle-getIMUAngle())>8.50) && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
             current = getIMUAngle();
-            previous = current;
             if(Math.abs(current - previous) > 300) {
-                current = current+360;
+                current = current+360*(previous/Math.abs(previous));
             }
+            previous = current;
             power = planner.getPower(current);
             leftFront.setPower(power);
             leftBack.setPower(power);
             rightFront.setPower(power);
             rightBack.setPower(power);
-            RobotLog.ii("Ramp Turn", "Amount left: %.2f    Power: %.2f", targetAngle-getIMUAngle(), power);
+            RobotLog.ii("Ramp Turn", "Target: %.2f  Current: %.2f  Power: %.2f", targetAngle, current, power);
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
@@ -234,7 +234,7 @@ public class Mecanum {
         int lBTarget = 0;
         int rFTarget = 0;
         int rBTarget = 0;
-        double tolerance = 5;
+        double tolerance = 8;
         distance += (tolerance/COUNTS_PER_INCH_SIDE)*(distance/Math.abs(distance));
         if(robot.opModeIsActive()) {
             lFTarget = leftFront.getCurrentPosition() + (int)(distance * COUNTS_PER_INCH_SIDE);
