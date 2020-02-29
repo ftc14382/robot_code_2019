@@ -201,6 +201,8 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                     currentDetectionState.detectedState = 2;
                 } else if ((detectedX > 315 && detectedX < 395) || (detectedX > 50 && detectedX < 125)) {//85, 165   430, 355
                     currentDetectionState.detectedState = 3;
+                } else {
+                    currentDetectionState.detectedState = 2;//default
                 }
             }//blue side
             else if (color == 0) {
@@ -210,6 +212,8 @@ public class SkystoneDetectorCrop extends DogeCVDetector {
                     currentDetectionState.detectedState = 2;
                 } else if (((detectedX < 165 && detectedX > 85) || (detectedX < 430 && detectedX > 355)) && detectorType == 0) {
                     currentDetectionState.detectedState = 3;
+                } else {
+                    currentDetectionState.detectedState = 2;//default
                 }
             }//Red side
 
