@@ -33,9 +33,9 @@ public class Mecanum {
     //(WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    static final double COUNTS_PER_INCH_FORWARD = 14.2857;//14.814
-    static final double COUNTS_PER_INCH_SIDE = 17.493;//32.29/2
-    static final double COUNTS_PER_DEGREE = 2.7826;//2.822
+    static final double COUNTS_PER_INCH_FORWARD = 14.286;//14.2857
+    static final double COUNTS_PER_INCH_SIDE = 16.8114;//17.493
+    static final double COUNTS_PER_DEGREE = 2.762;//2.7826
 
     public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
         robot = Arobot;
@@ -316,7 +316,10 @@ public class Mecanum {
         //turn(turn, power, 1.64);
         rampTurn(turn, power, 4);
         //simpleDrive(distance, power);
+        double start = leftFront.getCurrentPosition();
         rampDrive(distance, power, timeout);
+        double end = leftFront.getCurrentPosition();
+        distance = (end - start)/COUNTS_PER_INCH_FORWARD;
 
         /*if(brake == true) {
             robot.leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -525,12 +528,12 @@ public class Mecanum {
             r.x += Math.cos(Math.toRadians(IMUTurned-90))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned-90))*Math.abs(distance);
         } else if(Math.abs(turnBack) < 45) {
-            simpleDrive(distance*factor, 1);
+            rampDrive(distance*factor, 1, 6);
             IMUTurned = getIMUField();
             r.x -= Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
             r.y -= Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
         } else {
-            simpleDrive(distance*factor, 1);//was 0.7
+            rampDrive(distance*factor, 1, 6);//was 0.7
             IMUTurned = getIMUField();
             r.x += Math.cos(Math.toRadians(IMUTurned))*Math.abs(distance);
             r.y += Math.sin(Math.toRadians(IMUTurned))*Math.abs(distance);
@@ -682,7 +685,8 @@ public class Mecanum {
 
 
         }
-
+        double adjustSign = lFTarget - leftFront.getCurrentPosition();
+        adjustSign /= Math.abs(adjustSign);
         robot.telemetry.addData("Path", "Moving %.2f inches", distance);
         robot.telemetry.update();
         runtime.reset();
@@ -691,7 +695,7 @@ public class Mecanum {
         while ((Math.abs(lFTarget - leftFront.getCurrentPosition())>tolerance) && (Math.abs(lBTarget - leftBack.getCurrentPosition())>tolerance) &&
                 (Math.abs(rFTarget - rightFront.getCurrentPosition())>tolerance) && (Math.abs(rBTarget - rightBack.getCurrentPosition())>tolerance)
                 && robot.opModeIsActive() && (runtime.seconds() < timeoutS)){
-            adjust = (getIMUAngle()-startIMUangle)*0.0021;
+            adjust = (getIMUAngle()-startIMUangle)*0.005* adjustSign;//0.0021
             leftPower = planner.getPower(leftFront.getCurrentPosition())+adjust;
             rightPower = leftPower-adjust*2;
             if (leftPower > 1 || rightPower > 1) {
@@ -703,7 +707,7 @@ public class Mecanum {
             leftBack.setPower(leftPower);
             rightFront.setPower(rightPower);
             rightBack.setPower(rightPower);
-            RobotLog.ii("Ramp Drive", "Left: %d", lFTarget-leftFront.getCurrentPosition());
+            RobotLog.ii("Ramp Drive", "Left: %d,   Angle: %.2f", lFTarget-leftFront.getCurrentPosition(), getIMUAngle());
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
