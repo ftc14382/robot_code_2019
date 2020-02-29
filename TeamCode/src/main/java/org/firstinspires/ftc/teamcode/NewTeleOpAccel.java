@@ -61,7 +61,7 @@ public class NewTeleOpAccel extends LinearOpMode {
         double v4;
         //slow drive
         double v1s;
-        double v2s;n
+        double v2s;
         double v3s;
         double v4s;
         double hs;
@@ -80,10 +80,11 @@ public class NewTeleOpAccel extends LinearOpMode {
         double startIMUAngle;
         double offset;
         double offsetDegrees;
-        double myTimer = ElapsedTime();
+        ElapsedTime myTimer = new ElapsedTime();
         double timeLast, timeNow, deltaT;
-        doulbe hLast = 0.0;
-        final double maxAccel = 0.1;
+        double hLast = 0.0;
+        final double maxAccel = 1;
+        double accel;
         
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -99,40 +100,40 @@ public class NewTeleOpAccel extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
 
-        lastTime = myTimer.time();
+        timeLast = myTimer.time();
         while (opModeIsActive()) {
             //driving for mecanum wheels
             h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
 
             timeNow = myTimer.time();
-            deltaT = timeNow - lastTime;
+            deltaT = timeNow - timeLast;
             if (deltaT < 0.0001) {
                 continue;
             }
-            accel = Math.abs((h - hlast)/deltaT);
+            accel = Math.abs((h - hLast)/deltaT);
             if (accel > maxAccel) {
                 if (h > 0) {
-                    h = maxAccel * deltaT;
-                } else if (h < 0) {
-                    h = -1.0 * maxAccel * deltaT;
+                    h = maxAccel * deltaT + hLast;
                 } else {
                     h = 0;
                 }
             }
-            v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
-            v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
+            hLast = h;
+            timeLast = timeNow;
+            //v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
+            //v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
 
-            if (gamepad1.y) startIMUAngle = 90; //Red
-            if (gamepad1.b) startIMUAngle = 180;
-            if (gamepad1.a) startIMUAngle = 0; //Blue
-            if (gamepad1.x) startIMUAngle = 270;
+            if (gamepad1.y) startIMUAngle = 180 + chassis.getIMUAngle(); //Red
+            if (gamepad1.b) startIMUAngle = 90 + chassis.getIMUAngle();
+            if (gamepad1.a) startIMUAngle = 0 + chassis.getIMUAngle(); //Blue
+            if (gamepad1.x) startIMUAngle = 270 + chassis.getIMUAngle();
 
-            if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
+            //if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
             //trig
             offsetDegrees = startIMUAngle-chassis.getIMUAngle();
             offset = Math.toRadians(offsetDegrees);
             turn = gamepad1.right_trigger - gamepad1.left_trigger;
-            h = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
+            //h = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
             robotAngle = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x) + offset; //+offset
             v1 = h * (Math.sin(robotAngle) + Math.cos(robotAngle));
             v2 = h * (Math.sin(robotAngle) - Math.cos(robotAngle));
