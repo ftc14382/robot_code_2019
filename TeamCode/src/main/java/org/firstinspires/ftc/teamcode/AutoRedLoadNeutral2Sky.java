@@ -53,25 +53,25 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             camSensor.detector.color = 0;//0=red, 1=blue
             robotInfo.degrees = 180;
             robotInfo.y = -40.5;//40.875
-            backup.x = 40*changeX;
+            backup.x = 34.5*changeX;
             secondBlSetUp.x = backup.x+0*changeX;//+3
         } else {
             changeX = -1;
             camSensor.detector.color = 1;
             robotInfo.degrees = 0;
-            robotInfo.y = -40.5;//41.75
-            backup.x = 40*changeX;//was 42
+            robotInfo.y = -42.5;//40.5
+            backup.x = 40*changeX;//was 40
             secondBlSetUp.x = backup.x-3;//-8
         }
         robotInfo.x = 65*changeX;
         //Set up positions
         firstBlSetUp.x = robotInfo.x-2*changeX;
-        firstBl.x = 30*changeX;
+        firstBl.x = 28*changeX;//30
         midPoint.x = firstBl.x + 12*changeX;
         side.x = backup.x;//always drifts to right -3
-        side.y = 12;//was 10
+        side.y = 15;//was 10
         secondBl.x = firstBl.x;
-        line.x = 40*changeX;//38
+        line.x = backup.x;//38
         line.y = 0.99;
         forwardBl1.x = 22.5*changeX;//24
         forwardBl1.y = -59;//was 57
@@ -125,9 +125,9 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
             RobotLog.ii(tag2, "Block 1");
             secondBlSetUp.y = -52;
         } else if(detectionState.detectedState == 2) {
-            firstBlSetUp.y =  -36;
+            firstBlSetUp.y =  -35;
             RobotLog.ii(tag2, "Block 2");
-            secondBlSetUp.y=firstBlSetUp.y-24;
+            secondBlSetUp.y=-60;
         } else if(detectionState.detectedState == 3){
             firstBlSetUp.y =  -28;
             RobotLog.ii(tag2, "Block 3");
@@ -163,7 +163,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         chassis.quickDrive(robotInfo,secondBlSetUp);
         if(detectionState.detectedState == 1) {
             chassis.turnAcurrate(robotInfo, -180*changeX);
-            secondBl.x = forwardBl1.x;
+            secondBl.x = forwardBl1.x+4*changeX;
             chassis.quickDrive(robotInfo, secondBl);
             chassis.driveTo(robotInfo, forwardBl1, 1, 1);
         } else {
