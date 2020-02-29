@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 public class Planner {
-    double yIntercept = 0.145;//Was 0.1
+    double yIntercept = 0.1;//Was 0.1
     double yMax = 1;
     double target;
     double a = 0.24;//0.1
