@@ -70,6 +70,7 @@ public class NewTeleOpAccel extends LinearOpMode {
         double lifterPower;
         int bottomPos;
         int currentLifterPos;
+        double maximum;
 
         int turnAngle;
         int lfturn;
@@ -120,8 +121,8 @@ public class NewTeleOpAccel extends LinearOpMode {
             }
             hLast = h;
             timeLast = timeNow;
-            //v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
-            //v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
+            v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
+            v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
 
             if (gamepad1.y) startIMUAngle = 180 + chassis.getIMUAngle(); //Red
             if (gamepad1.b) startIMUAngle = 90 + chassis.getIMUAngle();
@@ -177,11 +178,22 @@ public class NewTeleOpAccel extends LinearOpMode {
             }
             //set power
 
-            if (!(chassis.leftFront.isBusy() || chassis.rightFront.isBusy()))
-                chassis.leftFront.setPower(v1 + turn);
-                chassis.leftBack.setPower(v2 + turn);
-                chassis.rightFront.setPower(v3 - turn);
-                chassis.rightBack.setPower(v4 - turn);
+            if (!(chassis.leftFront.isBusy() || chassis.rightFront.isBusy())) {
+                v1 += turn;
+                v2 += turn;
+                v3 -= turn;
+                v4 -= turn;
+                maximum = 1;
+                if (Math.abs(v1) > 1 || Math.abs(v2) > 1 || Math.abs(v3) > 1 || Math.abs(v4) > 1) {
+                    maximum = Math.max(Math.abs(v1), Math.abs(v2));
+                    maximum = Math.max(maximum, Math.abs(v3));
+                    maximum = Math.max(maximum, Math.abs(v4));
+                }
+                chassis.leftFront.setPower(v1 / maximum);
+                chassis.leftBack.setPower(v2 / maximum);
+                chassis.rightFront.setPower(v3 / maximum);
+                chassis.rightBack.setPower(v4 / maximum);
+            }
 
             //for telemetry
             leftFrontPower = v1;

@@ -182,10 +182,8 @@ public class AutoRedLoadNeutralSkyFound extends LinearOpMode{
         chassis.turnTo(robotInfo, turn);
         //chassis.quickDrive(robotInfo, setUp, 0.5, 1);
         chassis.quickDrive(robotInfo, foundation, 0.5, 1);
-        //function.foundMover.setPosition(0);
-        function.foundMover2.setPower(-1);
-        sleep(600);
-        function.foundMover2.setPower(0);
+        function.foundMover.setPosition(0);
+        sleep(300);
         chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.9);
         chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.9);//Turn farther because foundation drags
         chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.9);

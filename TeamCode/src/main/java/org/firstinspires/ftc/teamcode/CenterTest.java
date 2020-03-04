@@ -65,7 +65,7 @@ public class CenterTest extends LinearOpMode{
             if(Math.abs(camSensor.detector.currentDetectionState.detectedPosition - 240) < 7) {
                 break;
             }
-            power = (camSensor.detector.currentDetectionState.detectedPosition-240)*0.0018;
+            power = (camSensor.detector.currentDetectionState.detectedPosition-240)*0.0022;
             if(Math.abs(power)>1) {
                 power /= Math.abs(power);
             }

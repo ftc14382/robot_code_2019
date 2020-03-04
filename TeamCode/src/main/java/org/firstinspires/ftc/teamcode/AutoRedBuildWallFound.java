@@ -68,7 +68,7 @@ public class AutoRedBuildWallFound extends LinearOpMode{
         turn.y = forward.y + 5*changeX;
         foundation.y = setUp.y;
         foundation.x = 29*changeX;
-        turnFound1.y = 35;
+        turnFound1.y = 29;//35
         turnFound1.x = 60*changeX;
         turnFound2.x = turnFound1.x;
         turnFound2.y = turnFound1.y + 15;
@@ -99,19 +99,19 @@ public class AutoRedBuildWallFound extends LinearOpMode{
             chassis.quickDrive(robotInfo, p, 0.5);
         }*/
         function.grabber.setPower(-0.5);
-        chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.9);
-        chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.9);//Turn farther because of load
+        chassis.hardDrive(robotInfo, turnFound1, 0.7, 2, 1.9);//1.9        chassis.turnAcurrate(robotInfo, -chassis.getIMUField()*1.9);//Turn farther because of load
         function.grabber.setPower(0);
+        sleep(500);
 
-        chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.9);
-        robotInfo.y = 47.5;
-        robotInfo.x = 48*changeX;
+        //chassis.hardDrive(robotInfo, turnFound2, 1, 1.5, 1.9);
+        //robotInfo.y = 47.5;
+        //robotInfo.x = 48*changeX;
         /*chassis.turn(-90*changeX, 1, 1.3);
         robotInfo.degrees = chassis.getIMUField();*/
         function.foundMover.setPosition(1);
-        sleep(200);
+        /*sleep(200);
         chassis.quickDrive(robotInfo, setUpLine, 1, 2);
-        chassis.turnAcurrate(robotInfo, 90);
+        chassis.turnAcurrate(robotInfo, 90);*/
         chassis.quickDrive(robotInfo, line, 1, 5);
 
 

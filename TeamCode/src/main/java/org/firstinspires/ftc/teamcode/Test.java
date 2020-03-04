@@ -13,16 +13,8 @@ public class Test extends LinearOpMode{
     public Mecanum chassis;
     public Function function;
     public CamSensor camSensor;
-    private Position firstBlSetUp = new Position();
-    private Position firstBl = new Position();
-    private Position midPoint = new Position();
-    private Position backup = new Position();
-    private Position side = new Position();
-    private Position line = new Position();
-    private Position secondBlSetUp = new Position();
-    private Position secondBl = new Position();
-    private Position forwardBl1 = new Position();
-    private Position twoInchMove = new Position();
+    private Position start = new Position();
+    private Position end = new Position();
     private double changeX;
     private double dis;
     @Override
@@ -41,8 +33,14 @@ public class Test extends LinearOpMode{
 
         //Set up where the robot starts
         RobotInfo robotInfo = new RobotInfo();
-        robotInfo.degrees = 0;
-        robotInfo.x = 65*changeX;
+        robotInfo.degrees = 180;
+        robotInfo.x = 0*changeX;
+        robotInfo.y = 0;
+
+        start.x = robotInfo.x;
+        start.y = robotInfo.y;
+        end.x = start.x - 24;
+        end.y = start.y;
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
@@ -57,29 +55,25 @@ public class Test extends LinearOpMode{
 
         chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
         dis = chassis.leftFront.getCurrentPosition();
-        chassis.rampDrive(1000, 1, 5);
-        //chassis.rampTurn(180, 1, 5);
-        //telemetry.addData("new angle", chassis.getIMUField());
-        telemetry.addData("new distance", Math.abs(chassis.leftFront.getCurrentPosition() - dis)* chassis.COUNTS_PER_INCH_FORWARD);
-        telemetry.update();
-        //sleep(5000);
-        //chassis.rampDrive(-24, 1, 5);
-        telemetry.addData("new distance", Math.abs(chassis.leftFront.getCurrentPosition() - dis)* chassis.COUNTS_PER_INCH_FORWARD);
-        //chassis.rampTurn(-90, 1, 5);
-        //telemetry.addData("new angle", chassis.getIMUField());
-        telemetry.update();
-        sleep(5000);
-        /*
-        chassis.turn(90, 0.75, 5);
-        telemetry.addData("new angle", chassis.getIMUField());
-        telemetry.update();
-        sleep(5000);
-        chassis.turn(-90, 0.75, 5);
+        //chassis.sideDrive(500, 1, 3);
+
+        //telemetry.addData("new distance", Math.abs(chassis.leftFront.getCurrentPosition() - dis)* chassis.COUNTS_PER_INCH_FORWARD);
+        //chassis.rampTurn(360, 1, 5);
+        chassis.sideDrive(500, 1, 5);
         telemetry.addData("new angle", chassis.getIMUField());
         telemetry.update();
         sleep(5000);
 
-         */
+        /*chassis.turn(-360, 1, 5);
+        telemetry.addData("new angle", chassis.getIMUField());
+        telemetry.update();
+        sleep(5000);*/
+        /*
+        chassis.turn(-90, 0.75, 5);
+        telemetry.addData("new angle", chassis.getIMUField());
+        telemetry.update();
+        sleep(5000);*/
+
     }
 
 }

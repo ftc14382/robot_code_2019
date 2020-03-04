@@ -66,7 +66,7 @@ public class AutoRedLoadNeutral2Sky extends LinearOpMode{
         robotInfo.x = 65*changeX;
         //Set up positions
         firstBlSetUp.x = robotInfo.x-2*changeX;
-        firstBl.x = 28*changeX;//30
+        firstBl.x = 26*changeX;//30, 28
         midPoint.x = firstBl.x + 12*changeX;
         side.x = backup.x;//always drifts to right -3
         side.y = 15;//was 10

@@ -707,7 +707,7 @@ public class Mecanum {
             leftBack.setPower(leftPower);
             rightFront.setPower(rightPower);
             rightBack.setPower(rightPower);
-            RobotLog.ii("Ramp Drive", "Left: %d,   Angle: %.2f", lFTarget-leftFront.getCurrentPosition(), getIMUAngle());
+            RobotLog.ii("Ramp Drive", "Left: %d", lFTarget-leftFront.getCurrentPosition());
         }
         leftFront.setPower(0);
         leftBack.setPower(0);
