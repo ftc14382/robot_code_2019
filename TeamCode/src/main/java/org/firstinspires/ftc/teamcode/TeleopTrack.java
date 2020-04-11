@@ -60,6 +60,7 @@ public class TeleopTrack extends LinearOpMode {
         final double maxAccel = 1;
         double accel;
         final double angleFactor = Math.sqrt(2)/2;
+        final double COUNTSPERINCH = (chassis.COUNTS_PER_INCH_FORWARD + chassis.COUNTS_PER_INCH_SIDE)/2;
 
         double previousIMU;
         double currentIMU;
@@ -174,7 +175,7 @@ public class TeleopTrack extends LinearOpMode {
             directionAngle = Math.toDegrees(Math.atan2(forceY, forceX)) + robotInfo.degrees;
             distanceY = lFY*lFPercent+lBY*lBPercent+rFY*rFPercent+rBY*rBPercent;
             distanceX = lFX*lFPercent+lBX*lBPercent+rFX*rFPercent+rBX*rBPercent;
-            distanceMoved = Math.sqrt(distanceY*distanceY+distanceX*distanceX);
+            distanceMoved = Math.sqrt(distanceY*distanceY+distanceX*distanceX)/COUNTSPERINCH;
             robotInfo.x = Math.cos(Math.toRadians(directionAngle))*distanceMoved+robotInfo.x;
             robotInfo.y = Math.sin(Math.toRadians(directionAngle))*distanceMoved+robotInfo.y;
 
