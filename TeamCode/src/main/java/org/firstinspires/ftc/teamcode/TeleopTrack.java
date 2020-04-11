@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -30,6 +32,7 @@ public class TeleopTrack extends LinearOpMode {
         chassis.init(hardwareMap, this, true);
         function = new Function();
         function.init(hardwareMap);
+        RobotInfo robotInfo = new RobotInfo();
         telemetry.addData(":)", "Initialized");
         telemetry.update();
 
@@ -42,36 +45,12 @@ public class TeleopTrack extends LinearOpMode {
         double leftBackPower;
         double rightFrontPower;
         double rightBackPower;
-        double servoPosition = 1;
         //normal drive
         double h;
         double robotAngle;
-        double maxSpeed;
         double turn;
-        double speedChange;
-        double v1;
-        double v2;
-        double v3;
-        double v4;
-        //slow drive
-        double v1s;
-        double v2s;
-        double v3s;
-        double v4s;
-        double hs;
-        double functionSpeedChange;
-        double grabberPower;
-        double lifterPower;
-        int bottomPos;
-        int currentLifterPos;
         double maximum;
 
-        int turnAngle;
-        int lfturn;
-        int lbturn;
-        int rbturn;
-        int rfturn;
-        int COUNTS_PER_LEVEL;
         double startIMUAngle;
         double offset;
         double offsetDegrees;
@@ -80,18 +59,64 @@ public class TeleopTrack extends LinearOpMode {
         double hLast = 0.0;
         final double maxAccel = 1;
         double accel;
-        
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
+        final double angleFactor = Math.sqrt(2)/2;
+
+        double previousIMU;
+        double currentIMU;
+        double differenceIMU;
+        int previousLF;
+        int previousLB;
+        int previousRF;
+        int previousRB;
+        int currentLF;
+        int currentLB;
+        int currentRF;
+        int currentRB;
+        int differenceLF;
+        int differenceLB;
+        int differenceRF;
+        int differenceRB;
+        double totalMovement;
+        double lFPercent;
+        double lBPercent;
+        double rFPercent;
+        double rBPercent;
+        double lFX;
+        double lBX;
+        double rFX;
+        double rBX;
+        double lFY;
+        double lBY;
+        double rFY;
+        double rBY;
+
+        double directionAngle;
+        double distanceMoved;
+        double forceX;
+        double forceY;
+        double distanceX;
+        double distanceY;
+
+        Position startPosition = new Position();
+        startPosition.x = 0;
+        startPosition.y = 0;
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         chassis.runtime.reset();
         startIMUAngle = 90;//0
-        bottomPos = function.lifter.getCurrentPosition() - 50;
-        currentLifterPos = function.lifter.getCurrentPosition();
+        robotInfo.degrees = 90;
+        robotInfo.x = 0;
+        robotInfo.y = 0;
+        chassis.iMU.startIMUOffset = robotInfo.degrees - chassis.getIMUAngle();
 
-        COUNTS_PER_LEVEL = 0;
+        previousLF = chassis.leftFront.getCurrentPosition();
+        previousLB = chassis.leftBack.getCurrentPosition();
+        previousRF = chassis.rightFront.getCurrentPosition();
+        previousRB = chassis.rightBack.getCurrentPosition();
+        previousIMU = chassis.getIMUAngle();
+
+
         // run until the end of the match (driver presses STOP)
 
 
@@ -99,12 +124,68 @@ public class TeleopTrack extends LinearOpMode {
         while (opModeIsActive()) {
             //driving for mecanum wheels
             h = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-
+            currentIMU = chassis.getIMUAngle();
             timeNow = myTimer.time();
             deltaT = timeNow - timeLast;
             if (deltaT < 0.0001) {
                 continue;
             }
+            robotInfo.degrees = chassis.getIMUField();
+            //Tracking code
+            //Get wheel position
+            currentLF = chassis.leftFront.getCurrentPosition();
+            currentLB = chassis.leftBack.getCurrentPosition();
+            currentRF = chassis.rightFront.getCurrentPosition();
+            currentRB = chassis.rightBack.getCurrentPosition();
+            //Get the difference in the encoders
+            differenceLF = previousLF - currentLF;
+            differenceLB = previousLB - currentLB;
+            differenceRF = previousRF - currentRF;
+            differenceRB = previousRB - currentRB;
+            //Take out any turning
+            differenceIMU = previousIMU - currentIMU;//Positive means we have turned clockwise
+            if(differenceIMU > 180) {
+                differenceIMU -= 360;
+            } else if(differenceIMU < -180) {
+                differenceIMU += 360;
+            }
+            differenceLF -= differenceIMU*chassis.COUNTS_PER_DEGREE;
+            differenceLB -= differenceIMU*chassis.COUNTS_PER_DEGREE;
+            differenceRF += differenceIMU*chassis.COUNTS_PER_DEGREE;
+            differenceRB += differenceIMU*chassis.COUNTS_PER_DEGREE;
+            //Get the x and y values for each wheel
+            lFX = differenceLF*angleFactor;
+            lFY = differenceLF*angleFactor;
+            lBX = differenceLB*angleFactor*-1;
+            lBY = differenceLB*angleFactor;
+            rFX = differenceRF*angleFactor*-1;
+            rFY = differenceRF*angleFactor;
+            rBX = differenceRB*angleFactor;
+            rBY = differenceRB*angleFactor;
+            //Get how much each wheel moved out of total movement
+            totalMovement = Math.abs(differenceLF)+Math.abs(differenceLB)+Math.abs(differenceRF)+Math.abs(differenceRB);
+            lFPercent = Math.abs(differenceLF)/totalMovement;
+            lBPercent = Math.abs(differenceLB)/totalMovement;
+            rFPercent = Math.abs(differenceRF)/totalMovement;
+            rBPercent = Math.abs(differenceRB)/totalMovement;
+            //Calculate Values for the whole robot
+            forceY = lFY+lBY+rFY+rBY;
+            forceX = lFX+lBX+rFX+rBX;
+            directionAngle = Math.toDegrees(Math.atan2(forceY, forceX)) + robotInfo.degrees;
+            distanceY = lFY*lFPercent+lBY*lBPercent+rFY*rFPercent+rBY*rBPercent;
+            distanceX = lFX*lFPercent+lBX*lBPercent+rFX*rFPercent+rBX*rBPercent;
+            distanceMoved = Math.sqrt(distanceY*distanceY+distanceX*distanceX);
+            robotInfo.x = Math.cos(Math.toRadians(directionAngle))*distanceMoved+robotInfo.x;
+            robotInfo.y = Math.sin(Math.toRadians(directionAngle))*distanceMoved+robotInfo.y;
+
+
+            //Press down on the left stick to go to where the robot started to see if it the tracking works
+            if(gamepad1.left_stick_button){
+                chassis.driveTo(robotInfo, startPosition, 0.8, 10);
+            }
+
+
+            //Aceleration
             accel = Math.abs((h - hLast)/deltaT);
             if (accel > maxAccel) {
                 if (h > 0) {
@@ -115,150 +196,61 @@ public class TeleopTrack extends LinearOpMode {
             }
             hLast = h;
             timeLast = timeNow;
-            v1 = -gamepad1.right_stick_y+gamepad1.right_stick_x;
-            v2 = -gamepad1.right_stick_y - gamepad1.right_stick_x;
 
-            if (gamepad1.y) startIMUAngle = 180 + chassis.getIMUAngle(); //Red
-            if (gamepad1.b) startIMUAngle = 90 + chassis.getIMUAngle();
-            if (gamepad1.a) startIMUAngle = 0 + chassis.getIMUAngle(); //Blue
-            if (gamepad1.x) startIMUAngle = 270 + chassis.getIMUAngle();
+            //Adjust field-oriented driving angle
+            if (gamepad1.y) startIMUAngle = 180 + currentIMU; //Red
+            if (gamepad1.b) startIMUAngle = 90 + currentIMU;
+            if (gamepad1.a) startIMUAngle = 0 + currentIMU; //Blue
+            if (gamepad1.x) startIMUAngle = 270 + currentIMU;
 
-            //if (gamepad1.a) startIMUAngle = chassis.getIMUAngle();
-            //trig
-            offsetDegrees = startIMUAngle-chassis.getIMUAngle();
+            //Calculate right stick(fast)
+            offsetDegrees = startIMUAngle-currentIMU;
             offset = Math.toRadians(offsetDegrees);
             turn = gamepad1.right_trigger - gamepad1.left_trigger;
-            //h = Math.hypot(gamepad1.right_stick_y, gamepad1.right_stick_x);
             robotAngle = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x) + offset; //+offset
-            v1 = h * (Math.sin(robotAngle) + Math.cos(robotAngle));
-            v2 = h * (Math.sin(robotAngle) - Math.cos(robotAngle));
-            v3 = v2;
-            v4 = v1;
-            if(gamepad1.dpad_up) {
-               v1 = 0.5;
-               v2 = 0.5;
-               v3 = 0.5;
-               v4 = 0.5;
-            } else if(gamepad1.dpad_down) {
-                v1 = -0.5;
-                v2 = -0.5;
-                v3 = -0.5;
-                v4 = -0.5;
-            } else if(gamepad1.dpad_right) {
-                v1 = 0.5;
-                v4 = 0.5;
-                v2 = -0.5;
-                v3 = -0.5;
-            } else if(gamepad1.dpad_left) {
-                v1 = -0.5;
-                v4 = -0.5;
-                v2 = 0.5;
-                v3 = 0.5;
-            }
+            leftFrontPower = h * (Math.sin(robotAngle) + Math.cos(robotAngle));
+            leftBackPower = h * (Math.sin(robotAngle) - Math.cos(robotAngle));
+            rightFrontPower = leftBackPower;
+            rightBackPower = leftFrontPower;
 
-            //trig
-            h = Math.hypot(gamepad1.left_stick_y, gamepad1.left_stick_x);
-            robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) + offset;
-            v1s = .5 * h * (Math.sin(robotAngle) + Math.cos(robotAngle));
-            v2s = .5 * h * (Math.sin(robotAngle) - Math.cos(robotAngle));
-            v3s = v2s;
-            v4s = v1s;
 
-            if (gamepad1.left_stick_x != 0 || gamepad1.left_stick_y != 0) {
-                v1 = v1s;
-                v2 = v2s;
-                v3 = v3s;
-                v4 = v4s;
-            }
-            //set power
 
+            //Keep it below one and set power
             if (!(chassis.leftFront.isBusy() || chassis.rightFront.isBusy())) {
-                v1 += turn;
-                v2 += turn;
-                v3 -= turn;
-                v4 -= turn;
+                leftFrontPower += turn;
+                leftBackPower += turn;
+                rightFrontPower -= turn;
+                rightBackPower -= turn;
                 maximum = 1;
-                if (Math.abs(v1) > 1 || Math.abs(v2) > 1 || Math.abs(v3) > 1 || Math.abs(v4) > 1) {
-                    maximum = Math.max(Math.abs(v1), Math.abs(v2));
-                    maximum = Math.max(maximum, Math.abs(v3));
-                    maximum = Math.max(maximum, Math.abs(v4));
+                if (Math.abs(leftFrontPower) > 1 || Math.abs(leftBackPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightBackPower) > 1) {
+                    maximum = Math.max(Math.abs(leftFrontPower), Math.abs(leftBackPower));
+                    maximum = Math.max(maximum, Math.abs(rightFrontPower));
+                    maximum = Math.max(maximum, Math.abs(rightBackPower));
                 }
-                chassis.leftFront.setPower(v1 / maximum);
-                chassis.leftBack.setPower(v2 / maximum);
-                chassis.rightFront.setPower(v3 / maximum);
-                chassis.rightBack.setPower(v4 / maximum);
-            }
-
-            //for telemetry
-            leftFrontPower = v1;
-            leftBackPower = v2;
-            rightFrontPower = v3;
-            rightBackPower = v4;
-
-            functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
-
-            if (gamepad2.x) {
-                grabberPower = -0.5 - gamepad2.left_trigger*0.5;
-            } else if (gamepad2.b) {
-                grabberPower = 0.5 + gamepad2.left_trigger*0.5;
-            } else {
-                grabberPower = 0.0;
-            }
-            function.grabber.setPower(functionSpeedChange*grabberPower);
-
-
-            if(gamepad2.left_stick_y != 0) {
-                bottomPos = function.lifter.getCurrentPosition() - 50;
-            }
-            //normal lifter control
-            functionSpeedChange = 1-(gamepad2.right_trigger * 0.8);//Slow down the robot
-            if(gamepad2.dpad_up) {
-                function.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                lifterPower = 1.0;
-                currentLifterPos= function.lifter.getCurrentPosition();
-                function.lifter.setPower(functionSpeedChange*lifterPower);
-            } else if(gamepad2.dpad_down && function.lifter.getCurrentPosition() > bottomPos) {
-                function.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                lifterPower = -0.8;
-                currentLifterPos= function.lifter.getCurrentPosition();
-                function.lifter.setPower(functionSpeedChange*lifterPower);
-            } else {
-                function.lifter.setTargetPosition(currentLifterPos);
-                function.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                function.lifter.setPower(0.2);
+                chassis.leftFront.setPower(leftFrontPower / maximum);
+                chassis.leftBack.setPower(leftBackPower / maximum);
+                chassis.rightFront.setPower(rightFrontPower / maximum);
+                chassis.rightBack.setPower(rightBackPower / maximum);
             }
 
 
-            if (gamepad2.left_bumper) {
-                function.lifter.setTargetPosition(function.lifter.getCurrentPosition() + COUNTS_PER_LEVEL);
-            }
-            if (gamepad2.right_bumper) {
-                function.lifter.setTargetPosition(function.lifter.getCurrentPosition() - COUNTS_PER_LEVEL);
-            }
 
-            if(gamepad2.left_bumper) {
-                servoPosition = 1;
-                //servoPosition = 0.5;
-            } else if(gamepad2.right_bumper) {
-                servoPosition = 0;
-                //servoPosition = -0.5;
-            } else{
-                //servoPosition = 0;
-            }
-            function.foundMover.setPosition(servoPosition);
-            //function.foundMover2.setPower(servoPosition);
+
+
+
 
             // Show the elapsed game time and wheel power.
             //telemetry.addData("Status", "Run Time: " + chassis.runtime.toString());
-            telemetry.addData("Lifter", "Position: %d", function.lifter.getCurrentPosition());
-            telemetry.addData("Turn", "Turn Value: " + turn);
             telemetry.addData("Motors", "left front (%.2f), left back (%.2f), right front (%.2f), right back (%.2f)",
                     leftBackPower, leftFrontPower, rightFrontPower, rightBackPower);
             telemetry.addData("Position", "left front (%d), left back (%d), right front (%d), right back (%d)", chassis.leftBack.getCurrentPosition(), chassis.leftFront.getCurrentPosition(), chassis.rightFront.getCurrentPosition(), chassis.rightBack.getCurrentPosition());
-            //telemetry.addData("Lifter", "power (%.2f)", lifterPower);
-            //telemetry.addData("Grabber","power (%.2f)", grabberPower);
-
             telemetry.update();
+
+            previousIMU = currentIMU;
+            previousLF = currentLF;
+            previousLB = currentLB;
+            previousRF = currentRF;
+            previousRB = currentRB;
         }
     }
 }

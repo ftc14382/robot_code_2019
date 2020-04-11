@@ -33,9 +33,9 @@ public class Mecanum {
     //(WHEEL_DIAMETER_INCHES * Math.PI);
 
 
-    static final double COUNTS_PER_INCH_FORWARD = 14.286;//14.2857
-    static final double COUNTS_PER_INCH_SIDE = 16.8114;//17.493
-    static final double COUNTS_PER_DEGREE = 2.762;//2.7826
+    public static final double COUNTS_PER_INCH_FORWARD = 14.286;//14.2857
+    public static final double COUNTS_PER_INCH_SIDE = 16.8114;//17.493
+    public static final double COUNTS_PER_DEGREE = 2.762;//2.7826
 
     public void init(HardwareMap ahwMap, LinearOpMode Arobot, boolean useIMU) {
         robot = Arobot;
